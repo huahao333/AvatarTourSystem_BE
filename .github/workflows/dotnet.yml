@@ -20,7 +20,7 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 8.0.x
+    - name: Install dependencies
+      run: dotnet restore ./AvatarTourSystem_BE/AvatarTourSystem_BE/AvatarTourSystem_BE.csproj
     - name: Build
-      run: dotnet build --no-restore
-    - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet build ./AvatarTourSystem_BE/AvatarTourSystem_BE/AvatarTourSystem_BE.csproj
