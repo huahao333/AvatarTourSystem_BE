@@ -1,0 +1,28 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BusinessObjects.Models
+{
+    public partial class Destination
+    {
+        public Destination()
+        {
+            Locations = new HashSet<Location>();
+            TourSegments = new HashSet<TourSegment>();
+        }
+        public string? DestinationId { get; set; }
+        public string? CityId { get; set; }
+        public string? DestinationName { get; set; }
+        public float? PriceDestination { get; set; }
+        public DateTime? CreateDate { get; set; }
+        public DateTime? UpdateDate { get; set; }
+        public int? Status { get; set; }
+
+        public virtual City? Cities { get; set; }
+        public virtual ICollection<Location> Locations { get; set; }
+        public virtual ICollection<TourSegment> TourSegments { get; set; }
+    }
+}
