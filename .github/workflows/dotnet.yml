@@ -21,6 +21,6 @@ jobs:
       with:
         dotnet-version: 8.0.x
     - name: Install dependencies
-      run: dotnet restore ./AvatarTourSystem_BE/AvatarTourSystem_BE.csproj
+      run: dotnet restore ./AvatarTourSystem_BE/AvatarTourSystem_BE/AvatarTourSystem_BE.csproj
     - name: Build
-      run: dotnet build ./AvatarTourSystem_BE/AvatarTourSystem_BE.csproj
+      run: dotnet build ./AvatarTourSystem_BE/AvatarTourSystem_BE/AvatarTourSystem_BE.csproj
