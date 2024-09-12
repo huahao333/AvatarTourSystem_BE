@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 namespace Repositories.Interfaces
 {
     public interface IGenericRepository<T> : IGenericCommandRepository<T>,
-            IGenericQueryRepository<T>
-            where T : class
+           IGenericQueryRepository<T>
+           where T : class
     {
     }
 

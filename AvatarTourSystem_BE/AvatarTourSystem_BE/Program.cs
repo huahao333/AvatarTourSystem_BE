@@ -1,5 +1,13 @@
+using AutoMapper;
 using BusinessObjects.Models;
 using Microsoft.EntityFrameworkCore;
+using Repositories;
+using Repositories.Interfaces;
+using Repositories.Repositories;
+using Services.Common;
+using Services.Interfaces;
+using Services.Services;
+using System.Security.AccessControl;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +22,13 @@ builder.Services.AddDbContext<AvatarTourDBContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("AvatarTourSystem"));
 });
+
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+builder.Services.AddScoped<ISupplierService, SupplierService>();
+builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

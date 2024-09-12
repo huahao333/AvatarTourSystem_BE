@@ -1,4 +1,5 @@
-﻿using Azure.Core;
+﻿using AutoMapper;
+using Azure.Core;
 using BusinessObjects.Models;
 using Repositories.Interfaces;
 using System;
@@ -13,6 +14,7 @@ namespace Repositories
     public class UnitOfWork : IUnitOfWork
     {
         private readonly AvatarTourDBContext _context = new AvatarTourDBContext();
+        private readonly IMapper _mapper;
         private GenericRepository<Account> _accountRepository;
         private GenericRepository<Booking> _bookingtRepository;
         private GenericRepository<BookingByRevenue> _bookingByRevenueRepository;
@@ -41,6 +43,12 @@ namespace Repositories
         private GenericRepository<TourSegment> _tourSegmentRepository;
         private GenericRepository<TransactionsHistory> _transactionsHistoryRepository;
 
+
+        public UnitOfWork(AvatarTourDBContext context, IMapper mapper)
+        {
+            _context = context;
+            _mapper = mapper;
+        }
         public GenericRepository<Account> AccountRepository
         {
             get
