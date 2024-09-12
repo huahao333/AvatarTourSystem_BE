@@ -1,5 +1,6 @@
-﻿using BusinessObjects.Models;
+using BusinessObjects.Models;
 using Microsoft.EntityFrameworkCore;
+using Repositories.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Repositories
 {
-    public class GenericRepository<T> where T : class
+    public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
         protected AvatarTourDBContext _context;
         protected DbSet<T> _dbSet;
