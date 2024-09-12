@@ -1,5 +1,6 @@
 ﻿using Azure.Core;
 using BusinessObjects.Models;
+using Repositories.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Repositories
 {
-    public class UnitOfWork : IDisposable
+    public class UnitOfWork : IUnitOfWork
     {
         private readonly AvatarTourDBContext _context = new AvatarTourDBContext();
         private GenericRepository<Account> _accountRepository;
@@ -362,9 +363,9 @@ namespace Repositories
                 return _transactionsHistoryRepository;
             }
         }
-        public void Save() 
+        public int Save() 
         {
-            _context.SaveChanges();
+           return _context.SaveChanges();
         }
 
         private bool disposed = false;
