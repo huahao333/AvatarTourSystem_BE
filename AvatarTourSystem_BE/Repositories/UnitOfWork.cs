@@ -199,11 +199,11 @@ namespace Repositories
         {
             get
             {
-                if (this._pointOfInteresetdRepository == null)
+                if (this._pointOfInterestRepository == null)
                 {
-                    this._pointOfInteresetdRepository = new GenericRepository<PointOfInterest>(_context);
+                    this._pointOfInterestRepository = new GenericRepository<PointOfInterest>(_context);
                 }
-                return _pointOfInteresetdRepository;
+                return _pointOfInterestRepository;
             }
         }
 

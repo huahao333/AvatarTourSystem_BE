@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using BusinessObjects.Data;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -50,6 +51,7 @@ namespace BusinessObjects.Models
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            SeedData.Initialize(modelBuilder);
             modelBuilder.Entity<Account>(entity =>
             {
                 entity.ToTable("Account");
@@ -120,6 +122,7 @@ namespace BusinessObjects.Models
                     .HasColumnType("date");
                 entity.Property(e => e.UpdateDate)
                     .HasColumnType("date");
+              
 
             });
 
@@ -568,6 +571,7 @@ namespace BusinessObjects.Models
                   .HasForeignKey(d => d.BookingId)
                   .HasConstraintName("FK__TransactionsHistory__BookingId__3E99F888");
             });
+
         }
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);

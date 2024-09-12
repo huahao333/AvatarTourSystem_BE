@@ -15,7 +15,6 @@ namespace BusinessObjects.Models
         }
         public string? DailyTourId { get; set; }
         public string? PackageTourId { get; set; }
-        public string? DailyTicketId { get; set; }
         public string? DailyTourName { get; set; }
         public string? Description { get; set; }
         public float? DailyTourPrice { get; set; }
