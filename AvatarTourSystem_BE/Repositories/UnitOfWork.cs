@@ -25,7 +25,7 @@ namespace Repositories
         private GenericRepository<Notification> _notificationRepository;
         private GenericRepository<PackageTour> _packageTourRepository;
         private GenericRepository<PaymentMethod> _paymentMethodRepository;
-        private GenericRepository<PointOfInterest> _pointOfInteresetdRepository;
+        private GenericRepository<PointOfInterest> _pointOfInterestRepository;
         private GenericRepository<POIType> _poiTypeRepository;
         private GenericRepository<Rate> _rateRepository;
         private GenericRepository<RequestType> _requestTypeRepository;
