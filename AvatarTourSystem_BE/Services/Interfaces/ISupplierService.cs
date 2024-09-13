@@ -11,6 +11,7 @@ namespace Services.Interfaces
     public interface ISupplierService
     {
         Task<APIResponseModel> GetSuppliersAsync();
+        Task<APIResponseModel> GetActiveSuppliersAsync();
         Task<SupplierModel> GetSupplierByIdAsync(string SupplierId);
         Task<APIResponseModel> CreateSupplierAsync(SupplierCreateModel createModel);
         Task<APIResponseModel> UpdateSupplierAsync(SupplierUpdateModel updateModel);

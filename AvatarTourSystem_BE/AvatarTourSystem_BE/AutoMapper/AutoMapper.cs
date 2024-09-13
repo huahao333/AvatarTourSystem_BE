@@ -1,13 +1,8 @@
 ﻿using AutoMapper;
 using BusinessObjects.Models;
 using BusinessObjects.ViewModels.Supplier;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Services.Common
+namespace AvatarTourSystem_BE.AutoMapper
 {
     public class AutoMapper : Profile
     {

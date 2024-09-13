@@ -14,6 +14,13 @@ namespace AvatarTourSystem_BE.Controllers
         {
             _supplierlService = supplierService;
         }
+
+        [HttpGet("active")]
+        public async Task<IActionResult> GetListActiveSuppliersAsync()
+        {
+            var result = await _supplierlService.GetActiveSuppliersAsync();
+            return Ok(result);
+        }
         [HttpGet]
         public async Task<IActionResult> GetListSuppliersAsync()
         {

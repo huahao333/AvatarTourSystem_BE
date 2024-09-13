@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BusinessObjects.Enums;
 using BusinessObjects.Models;
 using BusinessObjects.ViewModels.Supplier;
 using Org.BouncyCastle.Tls;
@@ -29,6 +30,17 @@ namespace Services.Services
                 Data = list,
             };
         }
+        public async Task<APIResponseModel> GetActiveSuppliersAsync()
+        {
+            var list = await _unitOfWork.SupplierRepository.GetByConditionAsync(s => s.Status != -1);
+            var count = list.Count();
+            return new APIResponseModel
+            {
+                Message = $" Found {count} suppliers ",
+                IsSuccess = true,
+                Data = list,
+            };
+        }
         public async Task<SupplierModel> GetSupplierByIdAsync(string SupplierId)
         {
             var supplier = await _unitOfWork.SupplierRepository.GetByIdStringAsync(SupplierId);
@@ -38,6 +50,8 @@ namespace Services.Services
         public async Task<APIResponseModel> CreateSupplierAsync(SupplierCreateModel createModel)
         {
             var supplier = _mapper.Map<Supplier>(createModel);
+            supplier.SupplierId = Guid.NewGuid().ToString();
+            supplier.CreateDate = DateTime.Now;
             var result = await _unitOfWork.SupplierRepository.AddAsync(supplier);
             _unitOfWork.Save();
             return new APIResponseModel
@@ -50,11 +64,12 @@ namespace Services.Services
         public async Task<APIResponseModel> UpdateSupplierAsync(SupplierUpdateModel updateModel)
         {
             var supplier = _mapper.Map<Supplier>(updateModel);
+            supplier.UpdateDate = DateTime.Now;
             var result = await _unitOfWork.SupplierRepository.UpdateAsync(supplier);
             _unitOfWork.Save();
             return new  APIResponseModel
             {
-                Message = " Ssupplier Updated Successfully",
+                Message = " Supplier Updated Successfully",
                 IsSuccess = true,
                 Data = supplier,
             };
@@ -62,11 +77,12 @@ namespace Services.Services
         public async Task<APIResponseModel> DeleteSupplier(string SupplierId)
         {
             var supplier = await _unitOfWork.SupplierRepository.GetByIdStringAsync(SupplierId);
-            var result = await _unitOfWork.SupplierRepository.DeleteAsync(supplier);
+            supplier.Status = (int?)EStatus.IsDeleted;
+            var result = await _unitOfWork.SupplierRepository.UpdateAsync(supplier);
             _unitOfWork.Save();
             return new APIResponseModel
             {
-                Message = " Ssupplier Updated Successfully",
+                Message = " Supplier Deleted Successfully",
                 IsSuccess = true,
                 Data = supplier,
             };

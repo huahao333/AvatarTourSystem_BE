@@ -8,7 +8,7 @@ namespace BusinessObjects.ViewModels.Supplier
 {
     public class SupplierModel
     {
-        public string? SupplierId { get; set; }
+        public Guid? SupplierId { get; set; }
         public string? SupplierName { get; set; }
         public DateTime? CreateDate { get; set; }
         public DateTime? UpdateDate { get; set; }
