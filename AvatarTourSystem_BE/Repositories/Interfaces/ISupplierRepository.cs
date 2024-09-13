@@ -7,10 +7,7 @@ using System.Threading.Tasks;
 
 namespace Repositories.Interfaces
 {
-    public interface IUnitOfWork : IDisposable
+    public interface ISupplierRepository : IGenericRepository<Supplier>
     {
-        GenericRepository<Supplier> SupplierRepository { get; }
-        //làm table nào thêm repo của table đó 
-        int Save();
     }
 }

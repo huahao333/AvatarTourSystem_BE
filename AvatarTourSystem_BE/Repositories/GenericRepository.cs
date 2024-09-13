@@ -89,6 +89,11 @@ namespace Repositories
             return await _dbSet.FindAsync(id);
         }
 
+        public async Task<T> GetByIdStringAsync(String id)
+        {
+            return await _dbSet.FindAsync(id);
+        }
+
         public async Task<T> UpdateAsync(T entity)
         {
             _dbSet.Attach(entity);
