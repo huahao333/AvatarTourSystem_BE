@@ -2,6 +2,7 @@
 using BusinessObjects.Models;
 using BusinessObjects.ViewModels.DailyTicket;
 using BusinessObjects.ViewModels.PackageTour;
+using BusinessObjects.ViewModels.PaymentMethod;
 using BusinessObjects.ViewModels.Supplier;
 using BusinessObjects.ViewModels.Ticket;
 using BusinessObjects.ViewModels.TicketType;
@@ -38,6 +39,12 @@ namespace AvatarTourSystem_BE.AutoMapper
             CreateMap<DailyTicket, DailyTicketModel>().ReverseMap();
             CreateMap<DailyTicket, DailyTicketCreateModel>().ReverseMap();
             CreateMap<DailyTicket, DailyTicketUpdateModel>().ReverseMap();
+
+            //PaymentMethod
+            CreateMap<PaymentMethod, PaymentMethodModel>().ReverseMap();
+            CreateMap<PaymentMethod, PaymentMethodCreateModel>().ReverseMap();
+            CreateMap<PaymentMethod, PaymentMethodUpdateModel>().ReverseMap();
+
 
             //Ticket
             CreateMap<Ticket, TicketModel>().ReverseMap();
