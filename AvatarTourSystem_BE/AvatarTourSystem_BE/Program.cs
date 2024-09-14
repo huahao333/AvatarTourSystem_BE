@@ -43,6 +43,9 @@ builder.Services.AddScoped<ITicketTypeRepository, TicketTypeRepository>();
 
 builder.Services.AddScoped<IDailyTicketService, DailyTicketService>();
 builder.Services.AddScoped<IDailyTicketRepository, DailyTicketRepository>();
+
+builder.Services.AddScoped<ITicketService, TicketService>();
+builder.Services.AddScoped<ITicketRepository, TicketRepositor>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
