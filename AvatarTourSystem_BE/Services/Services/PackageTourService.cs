@@ -68,13 +68,28 @@ namespace Services.Services
         }
         public async Task<APIResponseModel> UpdatePackageTourAsync(PackageTourUpdateModel updateModel)
         {
-            var packageTour = _mapper.Map<PackageTour>(updateModel);
+            var existingPackageTour = await _unitOfWork.PackageTourRepository.GetByIdGuidAsync(updateModel.PackageTourId);
+
+            if (existingPackageTour == null)
+            {
+                return new APIResponseModel
+                {
+                    Message = "PackageTour not found",
+                    IsSuccess = false
+                };
+            }
+            var createDate = existingPackageTour.CreateDate;
+
+            var packageTour = _mapper.Map(updateModel, existingPackageTour);
+            packageTour.CreateDate = createDate;
             packageTour.UpdateDate = DateTime.Now;
+
             var result = await _unitOfWork.PackageTourRepository.UpdateAsync(packageTour);
             _unitOfWork.Save();
+
             return new APIResponseModel
             {
-                Message = " PackageTour Updated Successfully",
+                Message = "PackageTour Updated Successfully",
                 IsSuccess = true,
                 Data = packageTour,
             };

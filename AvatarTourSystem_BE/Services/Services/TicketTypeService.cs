@@ -78,7 +78,6 @@ namespace Services.Services
                     IsSuccess = false
                 };
             }
-
             var createDate = existingTicketType.CreateDate;
 
             var ticketType = _mapper.Map(updateModel, existingTicketType);

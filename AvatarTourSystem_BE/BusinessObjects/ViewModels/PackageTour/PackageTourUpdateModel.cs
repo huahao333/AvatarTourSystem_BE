@@ -11,7 +11,7 @@ namespace BusinessObjects.ViewModels.PackageTour
     public class PackageTourUpdateModel
     {
         [Required]
-        public Guid? PackageTourId { get; set; }
+        public Guid PackageTourId { get; set; }
         public string? CityId { get; set; }
         public string? PackageTourName { get; set; }
         public float? PackageTourPrice { get; set; }
