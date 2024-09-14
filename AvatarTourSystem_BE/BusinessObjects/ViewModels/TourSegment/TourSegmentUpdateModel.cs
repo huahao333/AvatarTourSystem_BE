@@ -11,7 +11,7 @@ namespace BusinessObjects.ViewModels.TourSegment
     public class TourSegmentUpdateModel
     {
         [Required]
-        public Guid? TourSegmentId { get; set; }
+        public Guid TourSegmentId { get; set; }
         public string? DestinationId { get; set; }
         public string? PackageTourId { get; set; }
         public EStatus? Status { get; set; }
