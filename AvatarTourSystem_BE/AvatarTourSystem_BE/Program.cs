@@ -49,6 +49,9 @@ builder.Services.AddScoped<IPaymentMethodRepository, PaymentMethodRepository>();
 
 builder.Services.AddScoped<ITicketService, TicketService>();
 builder.Services.AddScoped<ITicketRepository, TicketRepositor>();
+
+builder.Services.AddScoped<ITransactionsHistoryService, TransactionHistoryService>();
+builder.Services.AddScoped<ITransactionHistoryRepository, TransactionHistoryRepository>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
