@@ -71,13 +71,28 @@ namespace Services.Services
 
         public async Task<APIResponseModel> UpdateTourSegmentAsync(TourSegmentUpdateModel updateModel)
         {
-            var tourSegment = _mapper.Map<TourSegment>(updateModel);
+            var existingTourSegment = await _unitOfWork.TourSegmentRepository.GetByIdGuidAsync(updateModel.TourSegmentId);
+
+            if (existingTourSegment == null)
+            {
+                return new APIResponseModel
+                {
+                    Message = "TourSegment not found",
+                    IsSuccess = false
+                };
+            }
+            var createDate = existingTourSegment.CreateDate;
+
+            var tourSegment = _mapper.Map(updateModel, existingTourSegment);
+            tourSegment.CreateDate = createDate;
             tourSegment.UpdateDate = DateTime.Now;
+
             var result = await _unitOfWork.TourSegmentRepository.UpdateAsync(tourSegment);
             _unitOfWork.Save();
+
             return new APIResponseModel
             {
-                Message = " TourSegment Updated Successfully",
+                Message = "TourSegment Updated Successfully",
                 IsSuccess = true,
                 Data = tourSegment,
             };
