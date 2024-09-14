@@ -10,6 +10,7 @@ namespace Repositories.Interfaces
     public interface IUnitOfWork : IDisposable
     {
         GenericRepository<Supplier> SupplierRepository { get; }
+        GenericRepository<TourSegment> TourSegmentRepository { get; }
         //làm table nào thêm repo của table đó 
         int Save();
     }
