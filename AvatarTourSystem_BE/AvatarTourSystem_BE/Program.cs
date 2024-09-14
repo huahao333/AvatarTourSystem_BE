@@ -34,6 +34,9 @@ builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
 
 builder.Services.AddScoped<ITourSegmentService, TourSegmentService>();
 builder.Services.AddScoped<ITourSegmentRepository, TourSegmentRepository>();
+
+builder.Services.AddScoped<IPackageTourService, PackageTourService>();
+builder.Services.AddScoped<IPackageTourRepository, PackageTourRepository>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

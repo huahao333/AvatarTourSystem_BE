@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BusinessObjects.Models;
+using BusinessObjects.ViewModels.PackageTour;
 using BusinessObjects.ViewModels.Supplier;
 using BusinessObjects.ViewModels.TourSegment;
 
@@ -18,6 +19,11 @@ namespace AvatarTourSystem_BE.AutoMapper
             CreateMap<TourSegment, TourSegmentModel>().ReverseMap();
             CreateMap<TourSegment, TourSegmentCreateModel>().ReverseMap();
             CreateMap<TourSegment, TourSegmentUpdateModel>().ReverseMap();
+
+            //PackageTour
+            CreateMap<PackageTour, PackageTourModel>().ReverseMap();
+            CreateMap<PackageTour, PackageTourCreateModel>().ReverseMap();
+            CreateMap<PackageTour, PackageTourUpdateModel>().ReverseMap();
         }
     }
 }

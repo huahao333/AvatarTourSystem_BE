@@ -11,6 +11,7 @@ namespace Repositories.Interfaces
     {
         GenericRepository<Supplier> SupplierRepository { get; }
         GenericRepository<TourSegment> TourSegmentRepository { get; }
+        GenericRepository<PackageTour> PackageTourRepository { get; }
         //làm table nào thêm repo của table đó 
         int Save();
     }
