@@ -7,6 +7,7 @@ using BusinessObjects.ViewModels.Supplier;
 using BusinessObjects.ViewModels.Ticket;
 using BusinessObjects.ViewModels.TicketType;
 using BusinessObjects.ViewModels.TourSegment;
+using BusinessObjects.ViewModels.TransactionHistory;
 using Microsoft.OpenApi.Writers;
 
 namespace AvatarTourSystem_BE.AutoMapper
@@ -50,6 +51,12 @@ namespace AvatarTourSystem_BE.AutoMapper
             CreateMap<Ticket, TicketModel>().ReverseMap();
             CreateMap<Ticket, TicketCreateModel>().ReverseMap();
             CreateMap<Ticket, TicketUpdateModel>().ReverseMap();
+
+            //TransactionHistory
+            CreateMap<TransactionsHistory, TransactionHistoryModel>().ReverseMap();
+            CreateMap<TransactionsHistory, TransactionHistoryCreateModel>().ReverseMap();
+            CreateMap<TransactionsHistory, TransactionHistoryUpdateModel>().ReverseMap();
+
         }
     }
 }
