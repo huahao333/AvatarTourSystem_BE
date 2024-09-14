@@ -52,6 +52,10 @@ builder.Services.AddScoped<ITicketRepository, TicketRepositor>();
 
 builder.Services.AddScoped<ITransactionsHistoryService, TransactionHistoryService>();
 builder.Services.AddScoped<ITransactionHistoryRepository, TransactionHistoryRepository>();
+
+builder.Services.AddScoped<ICityRepository, CityRepository>();
+builder.Services.AddScoped<ICityService, CityService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
