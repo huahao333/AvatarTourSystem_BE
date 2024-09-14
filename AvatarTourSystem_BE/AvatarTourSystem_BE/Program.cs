@@ -37,6 +37,9 @@ builder.Services.AddScoped<ITourSegmentRepository, TourSegmentRepository>();
 
 builder.Services.AddScoped<IPackageTourService, PackageTourService>();
 builder.Services.AddScoped<IPackageTourRepository, PackageTourRepository>();
+
+builder.Services.AddScoped<ITicketTypeService, TicketTypeService>();
+builder.Services.AddScoped<ITicketTypeRepository, TicketTypeRepository>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

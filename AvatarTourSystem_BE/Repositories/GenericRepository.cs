@@ -86,7 +86,7 @@ namespace Repositories
 
         public async Task<T> GetByIdGuidAsync(Guid id)
         {
-            return await _dbSet.FindAsync(id);
+            return await _dbSet.FindAsync(id.ToString());
         }
 
         public async Task<T> GetByIdStringAsync(String id)
