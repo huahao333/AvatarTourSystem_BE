@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BusinessObjects.Models;
+using BusinessObjects.ViewModels.City;
 using BusinessObjects.ViewModels.DailyTicket;
 using BusinessObjects.ViewModels.PackageTour;
 using BusinessObjects.ViewModels.PaymentMethod;
@@ -57,6 +58,10 @@ namespace AvatarTourSystem_BE.AutoMapper
             CreateMap<TransactionsHistory, TransactionHistoryCreateModel>().ReverseMap();
             CreateMap<TransactionsHistory, TransactionHistoryUpdateModel>().ReverseMap();
 
+            //City
+            CreateMap<City, CityModel>().ReverseMap();
+            CreateMap<City, CityCreateModel>().ReverseMap();
+            CreateMap<City, CityUpdateModel>().ReverseMap();
         }
     }
 }

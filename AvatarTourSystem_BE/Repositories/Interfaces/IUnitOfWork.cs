@@ -17,6 +17,7 @@ namespace Repositories.Interfaces
         GenericRepository<Ticket> TicketRepository { get; }
         GenericRepository<PaymentMethod> PaymentMethodRepository { get; }
         GenericRepository<TransactionsHistory> TransactionsHistoryRepository { get; }
+        GenericRepository<City> CityRepository { get; }
         //làm table nào thêm repo của table đó 
         int Save();
     }
