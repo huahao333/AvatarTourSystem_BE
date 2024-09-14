@@ -11,7 +11,7 @@ namespace AvatarTourSystem_BE.Controllers
     [ApiController]
     public class TourSegmentController : Controller
     {
-        public readonly ITourSegmentService _ourSegmentService;
+        private readonly ITourSegmentService _ourSegmentService;
 
         public TourSegmentController(ITourSegmentService ourSegmentService)
         {

@@ -13,6 +13,7 @@ namespace Repositories.Interfaces
         GenericRepository<TourSegment> TourSegmentRepository { get; }
         GenericRepository<PackageTour> PackageTourRepository { get; }
         GenericRepository<TicketType> TicketTypeRepository { get; }
+        GenericRepository<DailyTicket> DailyTicketRepository { get; }
         //làm table nào thêm repo của table đó 
         int Save();
     }

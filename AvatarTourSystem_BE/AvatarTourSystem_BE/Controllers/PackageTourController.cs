@@ -11,7 +11,7 @@ namespace AvatarTourSystem_BE.Controllers
     [ApiController]
     public class PackageTourController : Controller
     {
-        public readonly IPackageTourService _packageTourService;
+        private readonly IPackageTourService _packageTourService;
 
         public PackageTourController(IPackageTourService packageTourService)
         {

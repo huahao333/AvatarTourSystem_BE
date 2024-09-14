@@ -11,7 +11,7 @@ namespace AvatarTourSystem_BE.Controllers
     [ApiController]
     public class TicketTypeController : Controller
     {
-        public readonly ITicketTypeService _ticketTypeService;
+        private readonly ITicketTypeService _ticketTypeService;
 
         public TicketTypeController(ITicketTypeService ticketTypeService)
         {
