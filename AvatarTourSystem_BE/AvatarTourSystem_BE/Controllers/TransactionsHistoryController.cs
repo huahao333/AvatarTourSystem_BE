@@ -63,8 +63,8 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateTransactionsHistory(string id, [FromForm] TransactionHistoryUpdateModel updateModel)
+        [HttpPut]
+        public async Task<IActionResult> UpdateTransactionsHistory([FromForm] TransactionHistoryUpdateModel updateModel)
         {
             if (!ModelState.IsValid)
             {
@@ -73,7 +73,7 @@ namespace AvatarTourSystem_BE.Controllers
 
             try
             {
-                var result = await _transactionsHistoryService.UpdateTransactionsHistory(id, updateModel);
+                var result = await _transactionsHistoryService.UpdateTransactionsHistory(updateModel);
                 return Ok(result);
             }
             catch (Exception ex)

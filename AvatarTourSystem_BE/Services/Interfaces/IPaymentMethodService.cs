@@ -13,9 +13,9 @@ namespace Services.Interfaces
     {
         Task<APIResponseModel> GetAllPaymentMethods();
         Task<APIResponseModel> GetPaymentMethodsByStatus();
-        Task<PaymentMethodModel> GetPaymentMethodById(string id);
+        Task<APIResponseModel> GetPaymentMethodById(string id);
         Task<APIResponseModel> CreatePaymentMethod(PaymentMethodCreateModel paymentMethodCreateModel);
-        Task<APIResponseModel> UpdatePaymentMethod(string id, PaymentMethodUpdateModel paymentMethodUpdateModel);
+        Task<APIResponseModel> UpdatePaymentMethod( PaymentMethodUpdateModel paymentMethodUpdateModel);
         Task<APIResponseModel> DeletePaymentMethod(string id);
     }
 }

@@ -62,7 +62,8 @@ namespace Services.Services
                     Data = null
                 };
             }
-
+            var createDate = paymentMethod.CreateDate;
+            paymentMethod.CreateDate = createDate;
             paymentMethod.Status = (int?)EStatus.IsDeleted;
             paymentMethod.UpdateDate = DateTime.Now;
 
@@ -90,10 +91,15 @@ namespace Services.Services
             };
         }
 
-        public async Task<PaymentMethodModel> GetPaymentMethodById(string id)
+        public async Task<APIResponseModel> GetPaymentMethodById(string id)
         {
             var paymentMethod = await _unitOfWork.PaymentMethodRepository.GetByIdStringAsync(id);
-            return _mapper.Map<PaymentMethodModel>(paymentMethod);
+            return new APIResponseModel
+            {
+                Message = "Get PaymentMethod Successfully",
+                IsSuccess = true,
+                Data = paymentMethod,
+            };
 
         }
 
@@ -109,9 +115,9 @@ namespace Services.Services
             };
         }
 
-        public async Task<APIResponseModel> UpdatePaymentMethod(string id, PaymentMethodUpdateModel paymentMethodUpdateModel)
+        public async Task<APIResponseModel> UpdatePaymentMethod(PaymentMethodUpdateModel paymentMethodUpdateModel)
         {
-            var existingPaymentMethod =  await _unitOfWork.PaymentMethodRepository.GetByIdStringAsync(id);
+            var existingPaymentMethod =  await _unitOfWork.PaymentMethodRepository.GetByIdGuidAsync(paymentMethodUpdateModel.PaymentMethodId);
 
             if (existingPaymentMethod == null)
             {
@@ -135,5 +141,7 @@ namespace Services.Services
             };
 
         }
+
+     
     }
 }

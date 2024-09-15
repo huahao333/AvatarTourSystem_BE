@@ -23,6 +23,7 @@ namespace Repositories.Interfaces
         GenericRepository<Booking> BookingRepository { get; }
         GenericRepository<Revenue> RevenueRepository { get; }
         GenericRepository<BookingByRevenue> BookingByRevenueRepository { get; }
+        GenericRepository<Feedback> FeedbackRepository { get; }
         //làm table nào thêm repo của table đó 
         int Save();
     }

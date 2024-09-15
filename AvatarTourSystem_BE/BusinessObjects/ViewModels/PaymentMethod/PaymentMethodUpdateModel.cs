@@ -1,4 +1,5 @@
 ﻿using BusinessObjects.Enums;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -12,7 +13,11 @@ namespace BusinessObjects.ViewModels.PaymentMethod
     {
        
         [Required]
+        [FromForm(Name = "payment-method-id")]
+        public Guid PaymentMethodId { get; set; }
+        [FromForm(Name = "payment-type")]
         public string PaymentType { get; set; }
+        [FromForm(Name = "status")]
         public EStatus? Status { get; set; }
         
     }

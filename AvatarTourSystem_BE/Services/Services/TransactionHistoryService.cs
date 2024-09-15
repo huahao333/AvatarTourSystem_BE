@@ -149,9 +149,9 @@ namespace Services.Services
         }
 
 
-        public async Task<APIResponseModel> UpdateTransactionsHistory(string id, TransactionHistoryUpdateModel transactionsHistoryUpdateModel)
+        public async Task<APIResponseModel> UpdateTransactionsHistory(TransactionHistoryUpdateModel transactionsHistoryUpdateModel)
         {
-            var existingTransactionsHistory = await _unitOfWork.TransactionsHistoryRepository.GetByIdStringAsync(id);
+            var existingTransactionsHistory = await _unitOfWork.TransactionsHistoryRepository.GetByIdGuidAsync(transactionsHistoryUpdateModel.TransactionHistoryId);
             if (existingTransactionsHistory == null)
             {
                 return new APIResponseModel
