@@ -13,7 +13,7 @@ namespace Services.Interfaces
     {
         Task<APIResponseModel> GetBookingsAsync();
         Task<APIResponseModel> GetActiveBookingsAsync();
-        Task<BookingModel> GetBookingByIdAsync(string bookingId);
+        Task<APIResponseModel> GetBookingByIdAsync(string bookingId);
         Task<APIResponseModel> CreateBookingAsync(BookingCreateModel createModel);
         Task<APIResponseModel> UpdateBookingAsync(BookingUpdateModel updateModel);
         Task<APIResponseModel> DeleteBooking(string bookingId);

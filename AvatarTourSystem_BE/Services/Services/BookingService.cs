@@ -46,10 +46,24 @@ namespace Services.Services
                 Data = list,
             };
         }
-        public async Task<BookingModel> GetBookingByIdAsync(string bookingId)
+        public async Task<APIResponseModel> GetBookingByIdAsync(string bookingId)
         {
             var booking = await _unitOfWork.BookingRepository.GetByIdStringAsync(bookingId);
-            return _mapper.Map<BookingModel>(booking);
+            if (booking == null)
+            {
+                return new APIResponseModel
+                {
+                    Message = "Booking not found",
+                    IsSuccess = false
+                };
+            }
+            return new APIResponseModel
+            {
+                Message = "Booking found",
+                IsSuccess = true,
+                Data = booking,
+            };
+            // return _mapper.Map<BookingModel>(booking);
         }
 
         public async Task<APIResponseModel> CreateBookingAsync(BookingCreateModel createModel)
