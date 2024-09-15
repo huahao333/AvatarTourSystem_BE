@@ -82,6 +82,9 @@ builder.Services.AddScoped<IBookingByRevenueService, BookingByRevenueService>();
 builder.Services.AddScoped<IFeedbackService, FeedbackService>();
 builder.Services.AddScoped<IFeedbackRepository, FeedbackRepository>();
 
+builder.Services.AddScoped<IRateService, RateService>();
+builder.Services.AddScoped<IRateRepository, RateRepository>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

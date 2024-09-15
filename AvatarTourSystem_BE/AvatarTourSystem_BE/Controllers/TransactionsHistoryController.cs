@@ -22,6 +22,13 @@ namespace AvatarTourSystem_BE.Controllers
             var result = await _transactionsHistoryService.GetAllTransactionsHistory();
             return Ok(result);
         }
+        [HttpGet("GetByStatus")]
+        public async Task<IActionResult> GetTransactionsHistoryByStatus()
+        {
+            var result = await _transactionsHistoryService.GetTransactionsHistoryByStatus();
+            return Ok(result);
+        }
+
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetTransactionsHistoryById(string id)

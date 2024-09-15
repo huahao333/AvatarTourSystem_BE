@@ -124,6 +124,26 @@ namespace Services.Services
             };
         }
 
+        public async Task<APIResponseModel> GetFeedbackByStatus()
+        {
+            var feedbacks = await _unitOfWork.FeedbackRepository.GetByConditionAsync(s => s.Status != -1);
+            if (feedbacks == null || !feedbacks.Any())
+            {
+                return new APIResponseModel
+                {
+                    Message = "Feedback not found.",
+                    IsSuccess = false,
+                    Data = null
+                };
+            }
+            return new APIResponseModel
+            {
+                Message = "Get Feedbacks by Status Successfully",
+                IsSuccess = true,
+                Data = feedbacks,
+            };
+        }
+
         public async Task<APIResponseModel> GetFeedbackByUserId(string userId)
         {
             var feedbacks = await _unitOfWork.FeedbackRepository.GetByConditionAsync(x => x.UserId == userId);
