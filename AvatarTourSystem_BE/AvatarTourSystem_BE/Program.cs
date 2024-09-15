@@ -85,6 +85,9 @@ builder.Services.AddScoped<IFeedbackRepository, FeedbackRepository>();
 builder.Services.AddScoped<IRateService, RateService>();
 builder.Services.AddScoped<IRateRepository, RateRepository>();
 
+builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
