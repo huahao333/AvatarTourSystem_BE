@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessObjects.ViewModels.TourSegment
+namespace BusinessObjects.ViewModels.ServiceUsedByTicket
 {
-    public class TourSegmentModel
+    public class ServiceUsedByTicketModel
     {
-        public string? TourSegmentId { get; set; }
-        public string? DestinationId { get; set; }
-        public string? PackageTourId { get; set; }
+        public string? SUBTId { get; set; }
+        public string? TicketId { get; set; }
+        public string? ServiceId { get; set; }
         public DateTime? CreateDate { get; set; }
         public DateTime? UpdateDate { get; set; }
         public int? Status { get; set; }

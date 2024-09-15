@@ -9,6 +9,7 @@ using Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -97,7 +98,26 @@ namespace Services.Services
         public async Task<APIResponseModel> DeleteDailyTicket(string DailyTicketId)
         {
             var dailyTicket = await _unitOfWork.DailyTicketRepository.GetByIdStringAsync(DailyTicketId);
+            if (dailyTicket == null)
+            {
+                return new APIResponseModel
+                {
+                    Message = "DailyTicket not found",
+                    IsSuccess = false
+                };
+            }
+            if (dailyTicket.Status == -1)
+            {
+                return new APIResponseModel
+                {
+                    Message = "DailyTicket has been removed",
+                    IsSuccess = false
+                };
+            }
+            var createDate = dailyTicket.CreateDate;
             dailyTicket.Status = (int?)EStatus.IsDeleted;
+            dailyTicket.CreateDate = createDate;
+            dailyTicket.UpdateDate = DateTime.Now;
             var result = await _unitOfWork.DailyTicketRepository.UpdateAsync(dailyTicket);
             _unitOfWork.Save();
             return new APIResponseModel

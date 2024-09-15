@@ -59,6 +59,9 @@ builder.Services.AddScoped<ICityService, CityService>();
 builder.Services.AddScoped<IDestinationRepository, DestinationRepository>();
 builder.Services.AddScoped<IDestinationService, DestinationService>();
 
+builder.Services.AddScoped<IServiceUsedByTicketRepository, ServiceUsedByTicketRepository>();
+builder.Services.AddScoped<IServiceUsedByTicketService, ServiceUsedByTicketService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

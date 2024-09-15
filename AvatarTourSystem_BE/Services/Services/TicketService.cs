@@ -97,7 +97,26 @@ namespace Services.Services
         public async Task<APIResponseModel> DeleteTicket(string TicketId)
         {
             var ticket = await _unitOfWork.TicketRepository.GetByIdStringAsync(TicketId);
+            if (ticket == null)
+            {
+                return new APIResponseModel
+                {
+                    Message = "Ticket not found",
+                    IsSuccess = false
+                };
+            }
+            if (ticket.Status == -1)
+            {
+                return new APIResponseModel
+                {
+                    Message = "Ticket has been removed",
+                    IsSuccess = false
+                };
+            }
+            var createDate = ticket.CreateDate;
             ticket.Status = (int?)EStatus.IsDeleted;
+            ticket.CreateDate = createDate;
+            ticket.UpdateDate = DateTime.Now;
             var result = await _unitOfWork.TicketRepository.UpdateAsync(ticket);
             _unitOfWork.Save();
             return new APIResponseModel

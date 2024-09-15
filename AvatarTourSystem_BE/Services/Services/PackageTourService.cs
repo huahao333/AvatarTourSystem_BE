@@ -97,7 +97,26 @@ namespace Services.Services
         public async Task<APIResponseModel> DeletePackageTour(string PackageTourId)
         {
             var packageTour = await _unitOfWork.PackageTourRepository.GetByIdStringAsync(PackageTourId);
+            if (packageTour == null)
+            {
+                return new APIResponseModel
+                {
+                    Message = "PackageTour not found",
+                    IsSuccess = false
+                };
+            }
+            if (packageTour.Status == -1)
+            {
+                return new APIResponseModel
+                {
+                    Message = "PackageTour has been removed",
+                    IsSuccess = false
+                };
+            }
+            var createDate = packageTour.CreateDate;
             packageTour.Status = (int?)EStatus.IsDeleted;
+            packageTour.CreateDate = createDate;
+            packageTour.UpdateDate = DateTime.Now;
             var result = await _unitOfWork.PackageTourRepository.UpdateAsync(packageTour);
             _unitOfWork.Save();
             return new APIResponseModel

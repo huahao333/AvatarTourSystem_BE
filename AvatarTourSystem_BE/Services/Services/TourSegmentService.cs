@@ -100,7 +100,26 @@ namespace Services.Services
         public async Task<APIResponseModel> DeleteTourSegment(string TourSegmentId)
         {
             var tourSegment = await _unitOfWork.TourSegmentRepository.GetByIdStringAsync(TourSegmentId);
+            if (tourSegment == null)
+            {
+                return new APIResponseModel
+                {
+                    Message = "TourSegment not found",
+                    IsSuccess = false
+                };
+            }
+            if (tourSegment.Status == -1)
+            {
+                return new APIResponseModel
+                {
+                    Message = "TourSegment has been removed",
+                    IsSuccess = false
+                };
+            }
+            var createDate = tourSegment.CreateDate;
             tourSegment.Status = (int?)EStatus.IsDeleted;
+            tourSegment.CreateDate = createDate;
+            tourSegment.UpdateDate = DateTime.Now;
             var result = await _unitOfWork.TourSegmentRepository.UpdateAsync(tourSegment);
             _unitOfWork.Save();
             return new APIResponseModel
