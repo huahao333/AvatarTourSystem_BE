@@ -49,8 +49,8 @@ namespace AvatarTourSystem_BE.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdatePaymentMethod(string id, [FromForm] PaymentMethodUpdateModel updateModel)
+        [HttpPut]
+        public async Task<IActionResult> UpdatePaymentMethod([FromForm] PaymentMethodUpdateModel updateModel)
         {
             if (!ModelState.IsValid)
             {
@@ -58,7 +58,7 @@ namespace AvatarTourSystem_BE.Controllers
             }
             try
             {
-                var result = await _paymentMethodService.UpdatePaymentMethod(id, updateModel);
+                var result = await _paymentMethodService.UpdatePaymentMethod(updateModel);
                 return Ok(result);
             }
             catch (Exception ex)
