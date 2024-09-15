@@ -126,6 +126,25 @@ namespace Services.Services
 
         }
 
+        public async Task<APIResponseModel> GetTransactionsHistoryByStatus()
+        {
+            var transactions = await _unitOfWork.TransactionsHistoryRepository.GetByConditionAsync(s => s.Status != -1);
+            if (transactions == null || !transactions.Any())
+            {
+                return new APIResponseModel
+                {
+                    Message = "Transaction history not found.",
+                    IsSuccess = false,
+                    Data = null
+                };
+            }
+            return new APIResponseModel
+            {
+                 Message = "Transaction history not found.",
+                 IsSuccess = false,
+                 Data = null
+            };      
+        }
 
         public async Task<APIResponseModel> GetTransactionsHistoryByUserId(string userId)
         {

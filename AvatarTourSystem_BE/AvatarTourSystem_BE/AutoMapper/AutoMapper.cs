@@ -8,6 +8,7 @@ using BusinessObjects.ViewModels.Destination;
 using BusinessObjects.ViewModels.Feedback;
 using BusinessObjects.ViewModels.PackageTour;
 using BusinessObjects.ViewModels.PaymentMethod;
+using BusinessObjects.ViewModels.Rate;
 using BusinessObjects.ViewModels.Revenue;
 using BusinessObjects.ViewModels.ServiceUsedByTicket;
 using BusinessObjects.ViewModels.Supplier;
@@ -98,6 +99,12 @@ namespace AvatarTourSystem_BE.AutoMapper
             CreateMap<Feedback, FeedbackModel>().ReverseMap();
             CreateMap<Feedback, FeedbackCreateModel>().ReverseMap();
             CreateMap<Feedback, FeedbackUpdateModel>().ReverseMap();
+
+            //Rate
+            CreateMap<Rate, RateModel>().ReverseMap();
+            CreateMap<Rate, RateCreateModel>().ReverseMap();
+            CreateMap<Rate, RateUpdateModel>().ReverseMap();
+
 
         }
     }
