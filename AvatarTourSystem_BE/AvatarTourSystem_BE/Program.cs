@@ -1,4 +1,5 @@
 using AutoMapper;
+using AvatarTourSystem_BE.JsonPolicies;
 using BusinessObjects.Models;
 using Microsoft.EntityFrameworkCore;
 using Repositories;
@@ -19,6 +20,13 @@ builder.Services.AddControllers()
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNamingPolicy = new KebabCaseNamingPolicy();
+        options.JsonSerializerOptions.DictionaryKeyPolicy = new KebabCaseNamingPolicy();
+    });
 
 builder.Services.AddDbContext<AvatarTourDBContext>(options =>
 {
