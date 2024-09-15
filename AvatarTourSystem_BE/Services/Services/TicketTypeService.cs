@@ -46,10 +46,24 @@ namespace Services.Services
                 Data = list,
             };
         }
-        public async Task<TicketTypeModel> GetTicketTypeByIdAsync(string TicketTypeId)
+        public async Task<APIResponseModel> GetTicketTypeByIdAsync(string TicketTypeId)
         {
             var ticketType = await _unitOfWork.TicketTypeRepository.GetByIdStringAsync(TicketTypeId);
-            return _mapper.Map<TicketTypeModel>(ticketType);
+            if (ticketType == null)
+            {
+                return new APIResponseModel
+                {
+                    Message = "TicketType not found",
+                    IsSuccess = false
+                };
+            }
+            return new APIResponseModel
+            {
+                Message = " TicketType found",
+                IsSuccess = true,
+                Data = ticketType,
+            };
+            //return _mapper.Map<TicketTypeModel>(ticketType);
         }
 
         public async Task<APIResponseModel> CreateTicketTypeAsync(TicketTypeCreateModel createModel)

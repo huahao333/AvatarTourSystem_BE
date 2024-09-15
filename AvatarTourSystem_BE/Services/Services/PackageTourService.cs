@@ -46,10 +46,24 @@ namespace Services.Services
                 Data = list,
             };
         }
-        public async Task<PackageTourModel> GetPackageTourByIdAsync(string PackageTourId)
+        public async Task<APIResponseModel> GetPackageTourByIdAsync(string PackageTourId)
         {
             var packageTour = await _unitOfWork.PackageTourRepository.GetByIdStringAsync(PackageTourId);
-            return _mapper.Map<PackageTourModel>(packageTour);
+            if (packageTour == null)
+            {
+                return new APIResponseModel
+                {
+                    Message = "PackageTour not found",
+                    IsSuccess = false
+                };
+            }
+            return new APIResponseModel
+            {
+                Message = " PackageTour found",
+                IsSuccess = true,
+                Data = packageTour,
+            };
+           // return _mapper.Map<PackageTourModel>(packageTour);
         }
 
         public async Task<APIResponseModel> CreatePackageTourAsync(PackageTourCreateModel createModel)

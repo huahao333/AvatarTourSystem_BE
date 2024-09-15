@@ -13,7 +13,7 @@ namespace Services.Interfaces
     {
         Task<APIResponseModel> GetTicketTypesAsync();
         Task<APIResponseModel> GetActiveTicketTypesAsync();
-        Task<TicketTypeModel> GetTicketTypeByIdAsync(string TicketTypeId);
+        Task<APIResponseModel> GetTicketTypeByIdAsync(string TicketTypeId);
         Task<APIResponseModel> CreateTicketTypeAsync(TicketTypeCreateModel createModel);
         Task<APIResponseModel> UpdateTicketTypeAsync(TicketTypeUpdateModel updateModel);
         Task<APIResponseModel> DeleteTicketType(string TicketTypeId);

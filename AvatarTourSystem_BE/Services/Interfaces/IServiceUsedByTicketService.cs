@@ -14,7 +14,7 @@ namespace Services.Interfaces
     {
         Task<APIResponseModel> GetServiceUsedByTicketsAsync();
         Task<APIResponseModel> GetActiveServiceUsedByTicketsAsync();
-        Task<ServiceUsedByTicketModel> GetServiceUsedByTicketByIdAsync(string SUBTId);
+        Task<APIResponseModel> GetServiceUsedByTicketByIdAsync(string SUBTId);
         Task<APIResponseModel> CreateServiceUsedByTicketAsync(ServiceUsedByTicketCreateModel createModel);
         Task<APIResponseModel> UpdateServiceUsedByTicketAsync(ServiceUsedByTicketUpdateModel updateModel);
         Task<APIResponseModel> DeleteServiceUsedByTicket(string SUBTId);

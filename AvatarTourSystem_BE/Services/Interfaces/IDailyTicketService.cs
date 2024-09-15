@@ -13,7 +13,7 @@ namespace Services.Interfaces
     {
         Task<APIResponseModel> GetDailyTicketsAsync();
         Task<APIResponseModel> GetActiveDailyTicketsAsync();
-        Task<DailyTicketModel> GetDailyTicketByIdAsync(string DailyTicketId);
+        Task<APIResponseModel> GetDailyTicketByIdAsync(string DailyTicketId);
         Task<APIResponseModel> CreateDailyTicketAsync(DailyTicketCreateModel createModel);
         Task<APIResponseModel> UpdateDailyTicketAsync(DailyTicketUpdateModel updateModel);
         Task<APIResponseModel> DeleteDailyTicket(string DailyTicketId);

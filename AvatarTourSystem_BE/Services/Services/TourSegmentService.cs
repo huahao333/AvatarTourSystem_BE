@@ -48,10 +48,24 @@ namespace Services.Services
                 Data = list,
             };
         }
-        public async Task<TourSegmentModel> GetTourSegmentByIdAsync(string TourSegmentId)
+        public async Task<APIResponseModel> GetTourSegmentByIdAsync(string TourSegmentId)
         {
             var tourSegments = await _unitOfWork.TourSegmentRepository.GetByIdStringAsync(TourSegmentId);
-            return _mapper.Map<TourSegmentModel>(tourSegments);
+            if(tourSegments == null)
+            {
+                return new APIResponseModel
+                {
+                    Message = "TourSegment not found",
+                    IsSuccess = false
+                };
+            }
+            return new APIResponseModel
+            {
+                Message = " TourSegment found",
+                IsSuccess = true,
+                Data = tourSegments,
+            };
+            // return _mapper.Map<TourSegmentModel>(tourSegments);
         }
 
         public async Task<APIResponseModel> CreateTourSegmentAsync(TourSegmentCreateModel createModel)

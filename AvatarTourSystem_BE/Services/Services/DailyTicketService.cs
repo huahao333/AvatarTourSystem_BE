@@ -47,10 +47,24 @@ namespace Services.Services
                 Data = list,
             };
         }
-        public async Task<DailyTicketModel> GetDailyTicketByIdAsync(string DailyTicketId)
+        public async Task<APIResponseModel> GetDailyTicketByIdAsync(string DailyTicketId)
         {
             var dailyTicket = await _unitOfWork.DailyTicketRepository.GetByIdStringAsync(DailyTicketId);
-            return _mapper.Map<DailyTicketModel>(dailyTicket);
+            if (dailyTicket == null)
+            {
+                return new APIResponseModel
+                {
+                    Message = "DailyTicket not found",
+                    IsSuccess = false
+                };
+            }
+            return new APIResponseModel
+            {
+                Message = " DailyTicket found",
+                IsSuccess = true,
+                Data = dailyTicket,
+            };
+           // return _mapper.Map<DailyTicketModel>(dailyTicket);
         }
 
         public async Task<APIResponseModel> CreateDailyTicketAsync(DailyTicketCreateModel createModel)

@@ -46,10 +46,24 @@ namespace Services.Services
                 Data = list,
             };
         }
-        public async Task<ServiceUsedByTicketModel> GetServiceUsedByTicketByIdAsync(string SUBTId)
+        public async Task<APIResponseModel> GetServiceUsedByTicketByIdAsync(string SUBTId)
         {
             var serviceUsedByTicket = await _unitOfWork.ServiceUsedByTicketRepository.GetByIdStringAsync(SUBTId);
-            return _mapper.Map<ServiceUsedByTicketModel>(serviceUsedByTicket);
+            if (serviceUsedByTicket == null)
+            {
+                return new APIResponseModel
+                {
+                    Message = "ServiceUsedByTicket not found",
+                    IsSuccess = false
+                };
+            }
+            return new APIResponseModel
+            {
+                Message = " ServiceUsedByTicket found",
+                IsSuccess = true,
+                Data = serviceUsedByTicket,
+            };
+          //  return _mapper.Map<ServiceUsedByTicketModel>(serviceUsedByTicket);
         }
 
         public async Task<APIResponseModel> CreateServiceUsedByTicketAsync(ServiceUsedByTicketCreateModel createModel)

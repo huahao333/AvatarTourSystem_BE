@@ -13,7 +13,7 @@ namespace Services.Interfaces
     {
         Task<APIResponseModel> GetTicketsAsync();
         Task<APIResponseModel> GetActiveTicketsAsync();
-        Task<TicketModel> GetTicketByIdAsync(string TicketId);
+        Task<APIResponseModel> GetTicketByIdAsync(string TicketId);
         Task<APIResponseModel> CreateTicketAsync(TicketCreateModel createModel);
         Task<APIResponseModel> UpdateTicketAsync(TicketUpdateModel updateModel);
         Task<APIResponseModel> DeleteTicket(string TicketId);

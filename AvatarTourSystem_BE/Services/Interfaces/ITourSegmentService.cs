@@ -13,7 +13,7 @@ namespace Services.Interfaces
     {
         Task<APIResponseModel> GetTourSegmentsAsync();
         Task<APIResponseModel> GetActiveTourSegmentsAsync();
-        Task<TourSegmentModel> GetTourSegmentByIdAsync(string TourSegmentId);
+        Task<APIResponseModel> GetTourSegmentByIdAsync(string TourSegmentId);
         Task<APIResponseModel> CreateTourSegmentAsync(TourSegmentCreateModel createModel);
         Task<APIResponseModel> UpdateTourSegmentAsync(TourSegmentUpdateModel updateModel);
         Task<APIResponseModel> DeleteTourSegment(string TourSegmentId);
