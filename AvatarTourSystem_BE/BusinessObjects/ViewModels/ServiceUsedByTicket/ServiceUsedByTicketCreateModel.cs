@@ -1,4 +1,5 @@
 ﻿using BusinessObjects.Enums;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,8 +10,13 @@ namespace BusinessObjects.ViewModels.ServiceUsedByTicket
 {
     public class ServiceUsedByTicketCreateModel
     {
+        [FromForm(Name = "ticket-id")]
         public string? TicketId { get; set; }
+
+        [FromForm(Name = "service-id")]
         public string? ServiceId { get; set; }
+
+        [FromForm(Name = "status")]
         public EStatus? Status { get; set; }
     }
 }

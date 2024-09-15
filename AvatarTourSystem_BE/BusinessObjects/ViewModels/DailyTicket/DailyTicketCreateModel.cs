@@ -1,4 +1,5 @@
 ﻿using BusinessObjects.Enums;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,9 +10,16 @@ namespace BusinessObjects.ViewModels.DailyTicket
 {
     public class DailyTicketCreateModel
     {
+        [FromForm(Name = "ticket-type-id")]
         public string? TicketTypeId { get; set; }
+
+        [FromForm(Name = "daily-tour-id")]
         public string? DailyTourId { get; set; }
+
+        [FromForm(Name = "capacity")]
         public int? Capacity { get; set; }
+
+        [FromForm(Name = "status")]
         public EStatus? Status { get; set; }
     }
 }
