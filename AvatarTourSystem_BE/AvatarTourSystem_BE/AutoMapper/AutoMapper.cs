@@ -11,6 +11,8 @@ using BusinessObjects.ViewModels.Feedback;
 using BusinessObjects.ViewModels.Location;
 using BusinessObjects.ViewModels.PackageTour;
 using BusinessObjects.ViewModels.PaymentMethod;
+using BusinessObjects.ViewModels.POI;
+using BusinessObjects.ViewModels.POIType;
 using BusinessObjects.ViewModels.Rate;
 using BusinessObjects.ViewModels.ResquestType;
 using BusinessObjects.ViewModels.Revenue;
@@ -80,7 +82,7 @@ namespace AvatarTourSystem_BE.AutoMapper
             CreateMap<Destination, DestinationUpdateModel>().ReverseMap();
             
             //Location
-            CreateMap<Location, LocationModel>().ReverseMap();
+            CreateMap<Location, POIModel>().ReverseMap();
             CreateMap<Location, LocationCreateModel>().ReverseMap();
             CreateMap<Location, LocationUpdateModel>().ReverseMap();
 
@@ -130,9 +132,13 @@ namespace AvatarTourSystem_BE.AutoMapper
             CreateMap<RequestType, RequestTypeCreateModel>().ReverseMap();
             CreateMap<RequestType, RequestTypeUpdateModel>().ReverseMap();
 
+            CreateMap<PointOfInterest, POIModel>().ReverseMap();
+            CreateMap<PointOfInterest, POICreateModel>().ReverseMap();
+            CreateMap<PointOfInterest, POIUpdateModel>().ReverseMap();
 
-
-
+            CreateMap<POIType, POITypeModel>().ReverseMap();
+            CreateMap<POIType, POITypeCreateModel>().ReverseMap();
+            CreateMap<POIType, POITypeUpdateModel>().ReverseMap();
         }
     }
 }

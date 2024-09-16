@@ -70,6 +70,12 @@ builder.Services.AddScoped<IDestinationService, DestinationService>();
 builder.Services.AddScoped<ILocationRepository, LocationRepository>();
 builder.Services.AddScoped<ILocationService, LocationService>();
 
+builder.Services.AddScoped<IPOITypeRepository, POITypeRepository>();
+builder.Services.AddScoped<IPOITypeService, POITypeService>();
+
+builder.Services.AddScoped<IPointOfInterestRepository, PointOfInterestRepository>();
+builder.Services.AddScoped<IPointOfInterestService, PointOfInterestService>();
+
 builder.Services.AddScoped<IServiceUsedByTicketRepository, ServiceUsedByTicketRepository>();
 builder.Services.AddScoped<IServiceUsedByTicketService, ServiceUsedByTicketService>();
 
