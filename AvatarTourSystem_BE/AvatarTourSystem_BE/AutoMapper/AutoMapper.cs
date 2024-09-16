@@ -11,6 +11,7 @@ using BusinessObjects.ViewModels.Feedback;
 using BusinessObjects.ViewModels.PackageTour;
 using BusinessObjects.ViewModels.PaymentMethod;
 using BusinessObjects.ViewModels.Rate;
+using BusinessObjects.ViewModels.ResquestType;
 using BusinessObjects.ViewModels.Revenue;
 using BusinessObjects.ViewModels.ServiceUsedByTicket;
 using BusinessObjects.ViewModels.Supplier;
@@ -117,6 +118,11 @@ namespace AvatarTourSystem_BE.AutoMapper
             CreateMap<CustomerSupport, CustomerSupportModel>().ReverseMap();
             CreateMap<CustomerSupport, CustomerSupportCreateModel>().ReverseMap();
             CreateMap<CustomerSupport, CustomerSupportUpdateModel>().ReverseMap();
+
+            //RequestType
+            CreateMap<RequestType, RequestTypeModel>().ReverseMap();
+            CreateMap<RequestType, RequestTypeCreateModel>().ReverseMap();
+            CreateMap<RequestType, RequestTypeUpdateModel>().ReverseMap();
 
 
 
