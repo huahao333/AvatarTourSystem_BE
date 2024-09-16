@@ -12,7 +12,7 @@ namespace Services.Interfaces
     {
         Task<APIResponseModel> GetDestinationsAsync();
         Task<APIResponseModel> GetActiveDestinationsAsync();
-        Task<DestinationModel> GetDestinationByIdAsync(string DestinationId);
+        Task<APIResponseModel> GetDestinationByIdAsync(string DestinationId);
         Task<APIResponseModel> CreateDestinationAsync(DestinationCreateModel createModel);
         Task<APIResponseModel> UpdateDestinationAsync(DestinationUpdateModel updateModel);
         Task<APIResponseModel> DeleteDestination(string DestinationId);

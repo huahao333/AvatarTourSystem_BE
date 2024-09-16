@@ -33,6 +33,7 @@ namespace Services.Services
                 Data = list,
             };
         }
+
         public async Task<APIResponseModel> GetDestinationsAsync()
         {
             var list = await _unitOfWork.DestinationRepository.GetAllAsync();
@@ -44,10 +45,24 @@ namespace Services.Services
                 Data = list,
             };
         }
-        public async Task<DestinationModel> GetDestinationByIdAsync(string destinationId)
+        public async Task<APIResponseModel> GetDestinationByIdAsync(string destinationId)
         {
-            var destination = await _unitOfWork.DestinationRepository.GetByIdStringAsync(destinationId);
-            return _mapper.Map<DestinationModel>(destination);
+            var destinations = await _unitOfWork.DestinationRepository.GetByConditionAsync(x => x.DestinationId == destinationId);
+            if (destinations == null || !destinations.Any())
+            {
+                return new APIResponseModel
+                {
+                    Message = "Destination not found.",
+                    IsSuccess = false,
+                    Data = null
+                };
+            }
+            return new APIResponseModel
+            {
+                Message = "Get Destination by Destination Id Successfully",
+                IsSuccess = true,
+                Data = destinations,
+            };
         }
         public async Task<APIResponseModel> CreateDestinationAsync(DestinationCreateModel createModel)
         {

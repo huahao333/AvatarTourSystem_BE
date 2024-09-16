@@ -5,26 +5,26 @@ using Services.Interfaces;
 
 namespace AvatarTourSystem_BE.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class FeebackController : ControllerBase
-    {
-        private readonly IFeedbackService _feedbakService;
+        [Route("api/[controller]")]
+        [ApiController]
+        public class FeebackController : ControllerBase
+        {
+            private readonly IFeedbackService _feedbakService;
 
-        public FeebackController(IFeedbackService feedbakService)
-        {
-            _feedbakService = feedbakService;
-        }
+            public FeebackController(IFeedbackService feedbakService)
+            {
+                _feedbakService = feedbakService;
+            }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAllFeedbacks()
-        {
-            var response = await _feedbakService.GetAllFeedbacks();
-            return Ok(response);
-        }
-        [HttpGet("GetByStatus")]
-        public async Task<IActionResult> GetFeedbackByStatus()
-        {
+            [HttpGet]
+            public async Task<IActionResult> GetAllFeedbacks()
+            {
+                var response = await _feedbakService.GetAllFeedbacks();
+                return Ok(response);
+            }
+            [HttpGet("GetByStatus")]
+            public async Task<IActionResult> GetFeedbackByStatus()
+            {
             var response = await _feedbakService.GetFeedbackByStatus();
             return Ok(response);
         }

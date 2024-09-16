@@ -12,7 +12,7 @@ namespace Services.Interfaces
     {
         Task<APIResponseModel> GetCitiesAsync();
         Task<APIResponseModel> GetActiveCitiesAsync();
-        Task<CityModel> GetCityByIdAsync(string CityId);
+        Task<APIResponseModel> GetCityByIdAsync(string CityId);
         Task<APIResponseModel> CreateCityAsync(CityCreateModel createModel);
         Task<APIResponseModel> UpdateCityAsync(CityUpdateModel updateModel);
         Task<APIResponseModel> DeleteCity(string CityId);
