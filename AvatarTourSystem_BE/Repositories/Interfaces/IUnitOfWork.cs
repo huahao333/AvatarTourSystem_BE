@@ -26,6 +26,7 @@ namespace Repositories.Interfaces
         GenericRepository<Feedback> FeedbackRepository { get; }
         GenericRepository<Rate> RateRepository { get; }
         GenericRepository<Account> AccountRepository { get; }
+        GenericRepository<CustomerSupport> CustomerSupportRepository { get; }
         //làm table nào thêm repo của table đó 
         int Save();
     }

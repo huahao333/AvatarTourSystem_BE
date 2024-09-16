@@ -4,6 +4,7 @@ using BusinessObjects.ViewModels.Account;
 using BusinessObjects.ViewModels.Booking;
 using BusinessObjects.ViewModels.BookingByRevenue;
 using BusinessObjects.ViewModels.City;
+using BusinessObjects.ViewModels.CustomerSupport;
 using BusinessObjects.ViewModels.DailyTicket;
 using BusinessObjects.ViewModels.Destination;
 using BusinessObjects.ViewModels.Feedback;
@@ -110,8 +111,14 @@ namespace AvatarTourSystem_BE.AutoMapper
             CreateMap<Account, AccountModel>().ReverseMap();
             CreateMap<Account, AccountCreateModel>() .ReverseMap();
             CreateMap<Account, AccountUpdateModel>() .ReverseMap();
-            CreateMap<Account, AccountViewModel>().ReverseMap(); 
-            
+            CreateMap<Account, AccountViewModel>().ReverseMap();
+
+            //CustomerSupport
+            CreateMap<CustomerSupport, CustomerSupportModel>().ReverseMap();
+            CreateMap<CustomerSupport, CustomerSupportCreateModel>().ReverseMap();
+            CreateMap<CustomerSupport, CustomerSupportUpdateModel>().ReverseMap();
+
+
 
 
         }
