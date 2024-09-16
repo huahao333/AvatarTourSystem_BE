@@ -76,6 +76,9 @@ builder.Services.AddScoped<IPOITypeService, POITypeService>();
 builder.Services.AddScoped<IPointOfInterestRepository, PointOfInterestRepository>();
 builder.Services.AddScoped<IPointOfInterestService, PointOfInterestService>();
 
+builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
+builder.Services.AddScoped<IServiceService, ServiceService>();
+
 builder.Services.AddScoped<IServiceUsedByTicketRepository, ServiceUsedByTicketRepository>();
 builder.Services.AddScoped<IServiceUsedByTicketService, ServiceUsedByTicketService>();
 
