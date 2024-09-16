@@ -20,6 +20,7 @@ namespace Repositories.Interfaces
         GenericRepository<City> CityRepository { get; }
         GenericRepository<Destination> DestinationRepository { get; }
         GenericRepository<Location> LocationRepository { get; }
+        GenericRepository<Service> ServiceRepository { get; }
         GenericRepository<ServiceUsedByTicket> ServiceUsedByTicketRepository { get; }
         GenericRepository<Booking> BookingRepository { get; }
         GenericRepository<Revenue> RevenueRepository { get; }
