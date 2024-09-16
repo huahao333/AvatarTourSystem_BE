@@ -44,10 +44,24 @@ namespace Services.Services
                 Data = list,
             };
         }
-        public async Task<CityModel> GetCityByIdAsync(string CityId)
+        public async Task<APIResponseModel> GetCityByIdAsync(string cityId)
         {
-            var city = await _unitOfWork.CityRepository.GetByIdStringAsync(CityId);
-            return _mapper.Map<CityModel>(city);
+            var cities = await _unitOfWork.CityRepository.GetByConditionAsync(x => x.CityId == cityId);
+            if (cities == null || !cities.Any())
+            {
+                return new APIResponseModel
+                {
+                    Message = "City not found.",
+                    IsSuccess = false,
+                    Data = null
+                };
+            }
+            return new APIResponseModel
+            {
+                Message = "Get city by City Id Successfully",
+                IsSuccess = true,
+                Data = cities,
+            };
         }
         public async Task<APIResponseModel> CreateCityAsync(CityCreateModel createModel)
         {
