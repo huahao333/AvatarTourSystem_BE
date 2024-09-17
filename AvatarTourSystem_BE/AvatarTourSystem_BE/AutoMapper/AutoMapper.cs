@@ -17,6 +17,7 @@ using BusinessObjects.ViewModels.Rate;
 using BusinessObjects.ViewModels.ResquestType;
 using BusinessObjects.ViewModels.Revenue;
 using BusinessObjects.ViewModels.Service;
+using BusinessObjects.ViewModels.ServiceByTourSegment;
 using BusinessObjects.ViewModels.ServiceType;
 using BusinessObjects.ViewModels.ServiceUsedByTicket;
 using BusinessObjects.ViewModels.Supplier;
@@ -97,6 +98,11 @@ namespace AvatarTourSystem_BE.AutoMapper
             CreateMap<ServiceType, ServiceTypeModel>().ReverseMap();
             CreateMap<ServiceType, ServiceTypeCreateModel>().ReverseMap();
             CreateMap<ServiceType, ServiceTypeUpdateModel>().ReverseMap();
+            
+            //ServiceByTourSegment
+            CreateMap<ServiceByTourSegment, ServiceByTourSegmentModel>().ReverseMap();
+            CreateMap<ServiceByTourSegment, ServiceByTourSegmentCreateModel>().ReverseMap();
+            CreateMap<ServiceByTourSegment, ServiceByTourSegmentUpdateModel>().ReverseMap();
             
             //ServiceUsedByTicket
             CreateMap<ServiceUsedByTicket, ServiceUsedByTicketModel>().ReverseMap();

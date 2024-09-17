@@ -85,6 +85,9 @@ builder.Services.AddScoped<IServiceTypeService, ServiceTypeService>();
 builder.Services.AddScoped<IServiceUsedByTicketRepository, ServiceUsedByTicketRepository>();
 builder.Services.AddScoped<IServiceUsedByTicketService, ServiceUsedByTicketService>();
 
+builder.Services.AddScoped<IServiceByTourSegmentRepository, ServiceByTourSegmentRepository>();
+builder.Services.AddScoped<IServiceByTourSegmentService, ServiceByTourSegmentService>();
+
 builder.Services.AddScoped<IBookingRepository, BookingRepository>();
 builder.Services.AddScoped<IBookingService, BookingService>();
 
