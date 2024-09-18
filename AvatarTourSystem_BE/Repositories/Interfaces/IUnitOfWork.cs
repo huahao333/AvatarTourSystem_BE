@@ -35,6 +35,7 @@ namespace Repositories.Interfaces
         GenericRepository<PointOfInterest> PointOfInterestRepository { get; }
         GenericRepository<POIType> POITypeRepository { get; }
         GenericRepository<Notification> NotificationRepository { get; }
+        GenericRepository<DailyTour> DailyTourRepository { get; }
         //làm table nào thêm repo của table đó 
         int Save();
     }

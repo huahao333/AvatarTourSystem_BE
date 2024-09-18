@@ -6,6 +6,7 @@ using BusinessObjects.ViewModels.BookingByRevenue;
 using BusinessObjects.ViewModels.City;
 using BusinessObjects.ViewModels.CustomerSupport;
 using BusinessObjects.ViewModels.DailyTicket;
+using BusinessObjects.ViewModels.DailyTour;
 using BusinessObjects.ViewModels.Destination;
 using BusinessObjects.ViewModels.Feedback;
 using BusinessObjects.ViewModels.Location;
@@ -165,6 +166,11 @@ namespace AvatarTourSystem_BE.AutoMapper
             CreateMap<Notification, NotificationModel>().ReverseMap();
             CreateMap<Notification, NotificationCreateModel>().ReverseMap();
             CreateMap<Notification, NotificationUpdateModel>().ReverseMap();
+
+            //DailyTour
+            CreateMap<DailyTour, DailyTourModel>().ReverseMap();
+            CreateMap<DailyTour, DailyTourCreateModel>().ReverseMap();
+            CreateMap<DailyTour, DailyTourUpdateModel>().ReverseMap();
         }
     }
 }
