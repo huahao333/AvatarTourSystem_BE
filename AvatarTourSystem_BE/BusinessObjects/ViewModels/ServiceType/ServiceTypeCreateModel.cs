@@ -6,14 +6,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessObjects.ViewModels.City
+namespace BusinessObjects.ViewModels.ServiceType
 {
-    public class CityUpdateModel
+    public class ServiceTypeCreateModel
     {
-        [FromForm(Name = "city-id")]
-        public Guid CityId { get; set; }
-        [FromForm(Name = "city-name")]
-        public string? CityName { get; set; }
+        [FromForm(Name = "service-name")]
+        public string? ServiceTypeName { get; set; }
         [FromForm(Name = "status")]
         public EStatus? Status { get; set; }
     }

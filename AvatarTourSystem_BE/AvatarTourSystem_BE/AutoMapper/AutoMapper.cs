@@ -8,11 +8,17 @@ using BusinessObjects.ViewModels.CustomerSupport;
 using BusinessObjects.ViewModels.DailyTicket;
 using BusinessObjects.ViewModels.Destination;
 using BusinessObjects.ViewModels.Feedback;
+using BusinessObjects.ViewModels.Location;
 using BusinessObjects.ViewModels.PackageTour;
 using BusinessObjects.ViewModels.PaymentMethod;
+using BusinessObjects.ViewModels.POI;
+using BusinessObjects.ViewModels.POIType;
 using BusinessObjects.ViewModels.Rate;
 using BusinessObjects.ViewModels.ResquestType;
 using BusinessObjects.ViewModels.Revenue;
+using BusinessObjects.ViewModels.Service;
+using BusinessObjects.ViewModels.ServiceByTourSegment;
+using BusinessObjects.ViewModels.ServiceType;
 using BusinessObjects.ViewModels.ServiceUsedByTicket;
 using BusinessObjects.ViewModels.Supplier;
 using BusinessObjects.ViewModels.Ticket;
@@ -77,7 +83,27 @@ namespace AvatarTourSystem_BE.AutoMapper
             CreateMap<Destination, DestinationModel>().ReverseMap();
             CreateMap<Destination, DestinationCreateModel>().ReverseMap();
             CreateMap<Destination, DestinationUpdateModel>().ReverseMap();
+            
+            //Location
+            CreateMap<Location, POIModel>().ReverseMap();
+            CreateMap<Location, LocationCreateModel>().ReverseMap();
+            CreateMap<Location, LocationUpdateModel>().ReverseMap();
 
+            //Service
+            CreateMap<Service, ServiceModel>().ReverseMap();
+            CreateMap<Service, ServiceCreateModel>().ReverseMap();
+            CreateMap<Service, ServiceUpdateModel>().ReverseMap();
+            
+            //ServiceType
+            CreateMap<ServiceType, ServiceTypeModel>().ReverseMap();
+            CreateMap<ServiceType, ServiceTypeCreateModel>().ReverseMap();
+            CreateMap<ServiceType, ServiceTypeUpdateModel>().ReverseMap();
+            
+            //ServiceByTourSegment
+            CreateMap<ServiceByTourSegment, ServiceByTourSegmentModel>().ReverseMap();
+            CreateMap<ServiceByTourSegment, ServiceByTourSegmentCreateModel>().ReverseMap();
+            CreateMap<ServiceByTourSegment, ServiceByTourSegmentUpdateModel>().ReverseMap();
+            
             //ServiceUsedByTicket
             CreateMap<ServiceUsedByTicket, ServiceUsedByTicketModel>().ReverseMap();
             CreateMap<ServiceUsedByTicket, ServiceUsedByTicketCreateModel>().ReverseMap();
@@ -124,9 +150,15 @@ namespace AvatarTourSystem_BE.AutoMapper
             CreateMap<RequestType, RequestTypeCreateModel>().ReverseMap();
             CreateMap<RequestType, RequestTypeUpdateModel>().ReverseMap();
 
+            //PointOfInterest
+            CreateMap<PointOfInterest, POIModel>().ReverseMap();
+            CreateMap<PointOfInterest, POICreateModel>().ReverseMap();
+            CreateMap<PointOfInterest, POIUpdateModel>().ReverseMap();
 
-
-
+            //PointOfInterestTypes
+            CreateMap<POIType, POITypeModel>().ReverseMap();
+            CreateMap<POIType, POITypeCreateModel>().ReverseMap();
+            CreateMap<POIType, POITypeUpdateModel>().ReverseMap();
         }
     }
 }

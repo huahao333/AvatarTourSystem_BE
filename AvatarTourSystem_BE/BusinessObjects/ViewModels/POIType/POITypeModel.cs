@@ -5,14 +5,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessObjects.ViewModels.City
+namespace BusinessObjects.ViewModels.POIType
 {
-    public class CityModel
+    public class POITypeModel
     {
-        [FromForm(Name = "city-id")]
-        public string? CityId { get; set; }
-        [FromForm(Name = "city-name")]
-        public string? CityName { get; set; }
+        [FromForm(Name = "poi-type-id")]
+        public string? POITypeId { get; set; }
+        [FromForm(Name = "poi-type-name")]
+        public string? POITypeName { get; set; }
         [FromForm(Name = "create-date")]
         public DateTime? CreateDate { get; set; }
         [FromForm(Name = "update-date")]

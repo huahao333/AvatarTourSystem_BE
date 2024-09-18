@@ -67,8 +67,26 @@ builder.Services.AddScoped<ICityService, CityService>();
 builder.Services.AddScoped<IDestinationRepository, DestinationRepository>();
 builder.Services.AddScoped<IDestinationService, DestinationService>();
 
+builder.Services.AddScoped<ILocationRepository, LocationRepository>();
+builder.Services.AddScoped<ILocationService, LocationService>();
+
+builder.Services.AddScoped<IPOITypeRepository, POITypeRepository>();
+builder.Services.AddScoped<IPOITypeService, POITypeService>();
+
+builder.Services.AddScoped<IPointOfInterestRepository, PointOfInterestRepository>();
+builder.Services.AddScoped<IPointOfInterestService, PointOfInterestService>();
+
+builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
+builder.Services.AddScoped<IServiceService, ServiceService>();
+
+builder.Services.AddScoped<IServiceTypeRepository, ServiceTypeRepository>();
+builder.Services.AddScoped<IServiceTypeService, ServiceTypeService>();
+
 builder.Services.AddScoped<IServiceUsedByTicketRepository, ServiceUsedByTicketRepository>();
 builder.Services.AddScoped<IServiceUsedByTicketService, ServiceUsedByTicketService>();
+
+builder.Services.AddScoped<IServiceByTourSegmentRepository, ServiceByTourSegmentRepository>();
+builder.Services.AddScoped<IServiceByTourSegmentService, ServiceByTourSegmentService>();
 
 builder.Services.AddScoped<IBookingRepository, BookingRepository>();
 builder.Services.AddScoped<IBookingService, BookingService>();

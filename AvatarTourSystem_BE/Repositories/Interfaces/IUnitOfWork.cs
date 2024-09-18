@@ -19,6 +19,10 @@ namespace Repositories.Interfaces
         GenericRepository<TransactionsHistory> TransactionsHistoryRepository { get; }
         GenericRepository<City> CityRepository { get; }
         GenericRepository<Destination> DestinationRepository { get; }
+        GenericRepository<Location> LocationRepository { get; }
+        GenericRepository<Service> ServiceRepository { get; }
+        GenericRepository<ServiceType> ServiceTypeRepository { get; }
+        GenericRepository<ServiceByTourSegment> ServiceByTourSegmentRepository { get; }
         GenericRepository<ServiceUsedByTicket> ServiceUsedByTicketRepository { get; }
         GenericRepository<Booking> BookingRepository { get; }
         GenericRepository<Revenue> RevenueRepository { get; }
@@ -28,6 +32,8 @@ namespace Repositories.Interfaces
         GenericRepository<Account> AccountRepository { get; }
         GenericRepository<CustomerSupport> CustomerSupportRepository { get; }
         GenericRepository<RequestType> RequestTypeRepository { get; }
+        GenericRepository<PointOfInterest> PointOfInterestRepository { get; }
+        GenericRepository<POIType> POITypeRepository { get; }
         //làm table nào thêm repo của table đó 
         int Save();
     }
