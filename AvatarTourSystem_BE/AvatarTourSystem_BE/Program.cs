@@ -111,6 +111,10 @@ builder.Services.AddScoped<ICustomerSupportRepository, CustomerSupportRepository
 
 builder.Services.AddScoped<IRequestTypeService, RequestTypeService>();
 builder.Services.AddScoped<IRequestTypeRepository, RequestTypeRepository>();
+
+builder.Services.AddScoped<INotificatonService, NotificationService>();
+builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
