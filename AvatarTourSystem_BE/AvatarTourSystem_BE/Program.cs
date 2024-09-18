@@ -115,6 +115,9 @@ builder.Services.AddScoped<IRequestTypeRepository, RequestTypeRepository>();
 builder.Services.AddScoped<INotificatonService, NotificationService>();
 builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
 
+builder.Services.AddScoped<IDailyTourService, DailyTourSerivce>();
+builder.Services.AddScoped<IDailyTourRepository, DailyTourRepository>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
