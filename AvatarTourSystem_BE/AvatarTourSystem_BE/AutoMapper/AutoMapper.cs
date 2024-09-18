@@ -9,6 +9,7 @@ using BusinessObjects.ViewModels.DailyTicket;
 using BusinessObjects.ViewModels.Destination;
 using BusinessObjects.ViewModels.Feedback;
 using BusinessObjects.ViewModels.Location;
+using BusinessObjects.ViewModels.Notification;
 using BusinessObjects.ViewModels.PackageTour;
 using BusinessObjects.ViewModels.PaymentMethod;
 using BusinessObjects.ViewModels.POI;
@@ -159,6 +160,11 @@ namespace AvatarTourSystem_BE.AutoMapper
             CreateMap<POIType, POITypeModel>().ReverseMap();
             CreateMap<POIType, POITypeCreateModel>().ReverseMap();
             CreateMap<POIType, POITypeUpdateModel>().ReverseMap();
+
+            //Notification
+            CreateMap<Notification, NotificationModel>().ReverseMap();
+            CreateMap<Notification, NotificationCreateModel>().ReverseMap();
+            CreateMap<Notification, NotificationUpdateModel>().ReverseMap();
         }
     }
 }
