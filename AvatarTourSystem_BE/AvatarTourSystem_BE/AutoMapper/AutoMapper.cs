@@ -140,6 +140,7 @@ namespace AvatarTourSystem_BE.AutoMapper
             CreateMap<Account, AccountModel>().ReverseMap();
             CreateMap<Account, AccountCreateModel>() .ReverseMap();
             CreateMap<Account, AccountUpdateModel>() .ReverseMap();
+            CreateMap<Account,AccountSignUpModel>() .ReverseMap();
             CreateMap<Account, AccountViewModel>().ReverseMap();
 
             //CustomerSupport

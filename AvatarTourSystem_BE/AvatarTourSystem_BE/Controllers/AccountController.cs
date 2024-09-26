@@ -1,6 +1,7 @@
 ﻿using BusinessObjects.ViewModels.Account;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Identity.Client;
 using Services.Interfaces;
 
 namespace AvatarTourSystem_BE.Controllers
@@ -78,6 +79,13 @@ namespace AvatarTourSystem_BE.Controllers
         public async Task<IActionResult> DeleteAccount(string accountId)
         {
             var response = await _accountService.DeleteAccount(accountId);
+            return Ok(response);
+        }
+
+        [HttpPost("SignUpAccount")]
+        public async Task<IActionResult> SignUp(AccountSignUpModel signUpModel)
+        {
+            var response = await _accountService.SignUpAccountAsync(signUpModel);
             return Ok(response);
         }
     }

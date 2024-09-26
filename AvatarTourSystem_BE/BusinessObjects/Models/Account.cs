@@ -19,7 +19,7 @@ namespace BusinessObjects.Models
             Rates = new HashSet<Rate>();
             Bookings = new HashSet<Booking>();
         }
-        public string? UserName { get; set; }
+       // public string? UserName { get; set; }
         public bool? Gender { get; set; }
         public DateTime? Dob { get; set; }
         public string? Address { get; set; }

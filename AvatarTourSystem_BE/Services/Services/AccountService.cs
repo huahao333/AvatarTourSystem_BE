@@ -3,6 +3,9 @@ using BusinessObjects.Enums;
 using BusinessObjects.Models;
 using BusinessObjects.ViewModels.Account;
 using BusinessObjects.ViewModels.Feedback;
+using BusinessObjects.ViewModels.Rate;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Repositories.Interfaces;
 using Services.Common;
@@ -19,10 +22,17 @@ namespace Services.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        public AccountService(IUnitOfWork unitOfWork, IMapper mapper)
+        private readonly UserManager<Account> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
+        public AccountService(IUnitOfWork unitOfWork, 
+                              IMapper mapper,
+                              UserManager<Account> userManager,
+                              RoleManager<IdentityRole> roleManager)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _userManager = userManager;
+            _roleManager = roleManager;
         }
 
         public async Task<APIResponseModel> CreateAccount(AccountCreateModel createModel)
@@ -200,6 +210,63 @@ namespace Services.Services
                 Data = accountModel
             };
 
+        }
+
+        public async Task<APIResponseModel> SignUpAccountAsync(AccountSignUpModel signUpModel)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(signUpModel.AccountEmail) || string.IsNullOrWhiteSpace(signUpModel.AccountEmail))
+                {
+                    return new APIResponseModel { IsSuccess = false, Message = "Email cannot be empty or whitespace." };
+                }
+
+                var exsistAccount = await _userManager.FindByNameAsync(signUpModel.AccountEmail);
+                if (exsistAccount == null)
+                {
+                    var user = new Account
+                    {
+                        FullName = signUpModel.FullName,
+                        Dob = signUpModel.BirthDate,
+                        Gender = signUpModel.Gender,
+                        Address = signUpModel.Address,
+                        UserName = signUpModel.AccountEmail, 
+                        Email = signUpModel.AccountEmail,
+                        PhoneNumber = signUpModel.AccountPhone,
+                        CreateDate = DateTime.Now,
+                        Status = 1,
+                    };
+
+                    var result = await _userManager.CreateAsync(user, signUpModel.AccountPassword);
+
+                    string errorMessage = "Failed to register. Please check your input and try again.";
+
+                    if (result.Succeeded)
+                    {
+                        if (!await _roleManager.RoleExistsAsync(ERole.Admin.ToString()))
+                        {
+                            await _roleManager.CreateAsync(new IdentityRole(ERole.Admin.ToString()));
+                        }
+                        if (await _roleManager.RoleExistsAsync(ERole.Admin.ToString()))
+                        {
+                            await _userManager.AddToRoleAsync(user, ERole.Admin.ToString());
+                        }
+
+                        return new APIResponseModel { IsSuccess = true, Message = "Registration successful." };
+                    }
+                    foreach (var ex in result.Errors)
+                    {
+                        errorMessage = ex.Description;
+                    }
+                    return new APIResponseModel { IsSuccess = false, Message = errorMessage };
+                }
+                return new APIResponseModel { IsSuccess = false, Message = "Account already exists" };
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception: {ex.Message}");
+                return new APIResponseModel { IsSuccess = false, Message = "An error occurred while checking if the account exists." };
+            }
         }
     }
 }

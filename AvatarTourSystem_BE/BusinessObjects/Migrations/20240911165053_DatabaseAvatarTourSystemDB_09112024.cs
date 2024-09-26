@@ -16,7 +16,6 @@ namespace BusinessObjects.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Gender = table.Column<bool>(type: "bit", nullable: true),
                     Dob = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Address = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: true),

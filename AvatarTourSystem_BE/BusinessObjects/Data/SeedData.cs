@@ -23,7 +23,6 @@ namespace BusinessObjects.Data
             var adminAccount = new Account
             {
                 // Generate a new UserId
-                UserName = "admin",
                 Gender = true,
                 Dob = new DateTime(1990, 5, 15),
                 Address = "Quận 10, Hồ chí minh",
