@@ -6,8 +6,10 @@ using BusinessObjects.ViewModels.Feedback;
 using BusinessObjects.ViewModels.Rate;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Mvc;
 using Repositories.Interfaces;
+using System.IdentityModel.Tokens.Jwt;
 using Services.Common;
 using Services.Interfaces;
 using System;
@@ -15,6 +17,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Security.Claims;
+using Microsoft.Extensions.Configuration;
+using System.Security.Cryptography;
 
 namespace Services.Services
 {
@@ -24,15 +29,21 @@ namespace Services.Services
         private readonly IMapper _mapper;
         private readonly UserManager<Account> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly SignInManager<Account> _signInManager;
+        private readonly IConfiguration _configuration;
         public AccountService(IUnitOfWork unitOfWork, 
                               IMapper mapper,
                               UserManager<Account> userManager,
-                              RoleManager<IdentityRole> roleManager)
+                              RoleManager<IdentityRole> roleManager,
+                              SignInManager<Account> signInManager,
+                              IConfiguration configuration)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _userManager = userManager;
             _roleManager = roleManager;
+            _signInManager = signInManager;
+            _configuration = configuration;
         }
 
         public async Task<APIResponseModel> CreateAccount(AccountCreateModel createModel)
@@ -266,6 +277,89 @@ namespace Services.Services
             {
                 Console.WriteLine($"Exception: {ex.Message}");
                 return new APIResponseModel { IsSuccess = false, Message = "An error occurred while checking if the account exists." };
+            }
+        }
+
+        private string GenerateRefreshToken()
+        {
+            var randomNumber = new byte[64];
+            using var rng = RandomNumberGenerator.Create();
+            rng.GetBytes(randomNumber);
+            return Convert.ToBase64String(randomNumber);
+        }
+
+
+        public async Task<APIAuthenticationResponseModel> SignInAccountAsync(AccountSignInModel signInModel)
+        {
+            var account = await _userManager.FindByNameAsync(signInModel.AccountEmail);
+
+            if (account == null)
+            {
+                return new APIAuthenticationResponseModel
+                {
+                    Status = false,
+                    Message = "Invalid login attempt. Please check your email and password."
+                };
+            }
+            var result = await _signInManager.PasswordSignInAsync(signInModel.AccountEmail, signInModel.AccountPassword, false, false);
+
+            if (result.Succeeded)
+            {
+                var user = await _userManager.FindByNameAsync(signInModel.AccountEmail);
+                if (user != null)
+                {
+                    var authClaims = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.Name, signInModel.AccountEmail),
+                        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                    };
+
+                    var userRole = await _userManager.GetRolesAsync(user);
+                    foreach (var role in userRole)
+                    {
+                        authClaims.Add(new Claim(ClaimTypes.Role, role.ToString()));
+                    }
+
+                    var authenKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:SecretKey"]));
+
+                    var token = new JwtSecurityToken(
+                        issuer: _configuration["JWT:ValidIssuer"],
+                        audience: _configuration["JWT:ValidAudience"],
+                        expires: DateTime.Now.AddHours(2),
+                        claims: authClaims,
+                        signingCredentials: new SigningCredentials(authenKey, SecurityAlgorithms.HmacSha256)
+                    );
+
+                    var refreshToken = GenerateRefreshToken();
+
+                    _ = int.TryParse(_configuration["JWT:RefreshTokenValidityInDays"], out int refreshTokenValidityInDays);
+
+                    account.RefreshToken = refreshToken;
+                    account.RefreshTokenExpiryTime = DateTime.Now.AddDays(refreshTokenValidityInDays);
+
+                    await _userManager.UpdateAsync(account);
+
+                    return new APIAuthenticationResponseModel
+                    {
+                        Status = true,
+                        Message = "Login successfully!",
+                        JwtToken = new JwtSecurityTokenHandler().WriteToken(token),
+                      //  Expired = token.ValidTo,
+                      //  JwtRefreshToken = refreshToken,
+                    };
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            else
+            {
+                return new APIAuthenticationResponseModel
+                {
+                    Status = false,
+                    Message = "Invalid login attempt. Please check your email and password."
+                };
             }
         }
     }

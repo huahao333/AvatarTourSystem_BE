@@ -2,6 +2,7 @@ using AutoMapper;
 using AvatarTourSystem_BE;
 using AvatarTourSystem_BE.JsonPolicies;
 using BusinessObjects.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Repositories;
 using Repositories.Interfaces;
@@ -24,6 +25,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddApiWebService(builder);
 //config cors
+
 
 builder.Services.AddCors(options =>
 {

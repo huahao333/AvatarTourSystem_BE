@@ -1,4 +1,5 @@
 ﻿using BusinessObjects.ViewModels.Account;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Client;
@@ -16,6 +17,8 @@ namespace AvatarTourSystem_BE.Controllers
             _accountService = accountService;
         }
 
+
+       // [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> GetAllAccount()
         {
@@ -86,6 +89,13 @@ namespace AvatarTourSystem_BE.Controllers
         public async Task<IActionResult> SignUp(AccountSignUpModel signUpModel)
         {
             var response = await _accountService.SignUpAccountAsync(signUpModel);
+            return Ok(response);
+        }
+
+        [HttpPost("SignInAccount")]
+        public async Task<IActionResult> SignIn(AccountSignInModel signInModel)
+        {
+            var response = await _accountService.SignInAccountAsync(signInModel);
             return Ok(response);
         }
     }

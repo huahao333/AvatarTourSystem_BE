@@ -143,6 +143,10 @@ namespace AvatarTourSystem_BE
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 
+            //services.AddIdentity<Account, IdentityRole>()
+            //    .AddEntityFrameworkStores<AvatarTourDBContext>()
+            //    .AddDefaultTokenProviders();
+
             // kebab
             services.AddControllers().AddJsonOptions(options =>
             {
