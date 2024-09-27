@@ -363,7 +363,7 @@ namespace Services.Services
             }
         }
 
-       public async Task<APIResponseModel> SignUpAccountZaloAsync(string zaloId, string userName)
+       public async Task<APIResponseModel> SignUpAccountZaloAsync(string zaloId )
         {
             try
             {
@@ -388,7 +388,7 @@ namespace Services.Services
                         Dob = null,
                         Gender = true,
                         Address = "",
-                        UserName = userName,
+                        UserName = "UserName",
                         Email = "",
                         PhoneNumber = "",
                         CreateDate = DateTime.Now,
