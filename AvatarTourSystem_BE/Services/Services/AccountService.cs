@@ -362,5 +362,127 @@ namespace Services.Services
                 };
             }
         }
+
+       public async Task<APIResponseModel> SignUpAccountZaloAsync(string zaloId, string userName)
+        {
+            try
+            {
+                var accountZaloExisting = (await _unitOfWork.AccountRepository.GetByConditionAsync(s => s.ZaloUser.ToString() == zaloId.ToString()))
+                                          .FirstOrDefault();
+                if (accountZaloExisting != null)
+                {
+                    var accessToken = await GenerateAccessTokenForAccount(accountZaloExisting);
+
+                    return new APIResponseModel
+                    {
+                        IsSuccess = true,
+                        Message = "Zalo account already exists. Returning access token.",
+                        Data = new { AccessToken = accessToken }
+                    };
+                }
+                else
+                {
+                    var user = new Account
+                    {
+                        FullName = "",
+                        Dob = null,
+                        Gender = true,
+                        Address = "",
+                        UserName = userName,
+                        Email = "",
+                        PhoneNumber = "",
+                        CreateDate = DateTime.Now,
+                        Status = 1,
+                        ZaloUser = zaloId 
+                    };
+
+                    var result = await _userManager.CreateAsync(user);
+
+                    string errorMessage = "Failed to register with Zalo. Please check your input and try again.";
+
+                    if (result.Succeeded)
+                    {
+                        
+                        if (!await _roleManager.RoleExistsAsync(ERole.Customer.ToString()))
+                        {
+                            await _roleManager.CreateAsync(new IdentityRole(ERole.Customer.ToString()));
+                        }
+                        if (await _roleManager.RoleExistsAsync(ERole.Customer.ToString()))
+                        {
+                            await _userManager.AddToRoleAsync(user, ERole.Customer.ToString());
+                        }
+
+                      
+                        var accessToken = await GenerateAccessTokenForAccount(user);
+
+                        return new APIResponseModel
+                        {
+                            IsSuccess = true,
+                            Message = "Registration successful with Zalo.",
+                            Data = new { AccessToken = accessToken }
+                        };
+                    }
+
+                    foreach (var ex in result.Errors)
+                    {
+                        errorMessage = ex.Description;
+                    }
+                    return new APIResponseModel { IsSuccess = false, Message = errorMessage };
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception: {ex.Message}");
+                return new APIResponseModel { IsSuccess = false, Message = "An error occurred while checking if the account exists." };
+            }
+        }
+
+        private async Task<string> GenerateAccessTokenForAccount(Account account)
+        {
+            
+            var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_configuration["JWT:SecretKey"]));
+
+            
+            var claims = new List<Claim>();
+
+            
+            if (!string.IsNullOrEmpty(account.UserName))
+            {
+                claims.Add(new Claim(JwtRegisteredClaimNames.Sub, account.UserName));
+            }
+
+            if (!string.IsNullOrEmpty(account.Email))
+            {
+                claims.Add(new Claim(JwtRegisteredClaimNames.Email, account.Email));
+            }
+
+            
+            claims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
+
+            if (!string.IsNullOrEmpty(account.Id))
+            {
+                claims.Add(new Claim(ClaimTypes.NameIdentifier, account.Id));
+            }
+
+           
+            var roles = await _userManager.GetRolesAsync(account);
+            foreach (var role in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(claims),
+                Expires = DateTime.UtcNow.AddHours(1), 
+                SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature)
+            };
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+
+           
+            return tokenHandler.WriteToken(token);
+        }
     }
 }
