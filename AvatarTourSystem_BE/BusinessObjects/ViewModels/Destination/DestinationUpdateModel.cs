@@ -1,0 +1,24 @@
+﻿using BusinessObjects.Enums;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BusinessObjects.ViewModels.Destination
+{
+    public class DestinationUpdateModel
+    {
+        [Required]
+        [FromForm(Name = "destination-id")]
+        public Guid DestinationId { get; set; }
+        [FromForm(Name = "destination-name")]
+        public string? DestinationName { get; set; }
+        [FromForm(Name = "price-destination")]
+        public float? PriceDestination { get; set; }
+        [FromForm(Name = "staus")]
+        public EStatus? Status { get; set; }
+    }
+}

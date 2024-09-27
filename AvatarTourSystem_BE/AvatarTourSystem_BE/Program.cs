@@ -1,19 +1,44 @@
+using AutoMapper;
+using AvatarTourSystem_BE;
+using AvatarTourSystem_BE.JsonPolicies;
 using BusinessObjects.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Repositories;
+using Repositories.Interfaces;
+using Repositories.Repositories;
+using Services.Common;
+using Services.Interfaces;
+using Services.Services;
+using System.Security.AccessControl;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 //WORKFLOW test 4
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options => { options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()); });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<AvatarTourDBContext>(options =>
+builder.Services.AddApiWebService(builder);
+//config cors
+
+
+builder.Services.AddCors(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("AvatarTourSystem"));
+    options.AddPolicy("app-cors",
+        builder =>
+        {
+            builder.AllowAnyOrigin()
+            .AllowAnyHeader()
+            .WithExposedHeaders("X-Pagination")
+            .AllowAnyMethod();
+        });
 });
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -23,8 +48,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+//use cors
+app.UseCors("app-cors");
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

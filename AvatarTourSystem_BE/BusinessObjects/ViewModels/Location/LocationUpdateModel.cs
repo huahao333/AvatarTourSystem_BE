@@ -1,0 +1,24 @@
+﻿using BusinessObjects.Enums;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BusinessObjects.ViewModels.Location
+{
+    public class LocationUpdateModel
+    {
+        [FromForm(Name = "location-id")]
+        public Guid LocationId { get; set; }
+        [FromForm(Name = "location-name")]
+        public string? LocationName { get; set; }
+        [FromForm(Name = "location-type")]
+        public int? LocationType { get; set; }
+        [FromForm(Name = "destination-id")]
+        public string? DestinationId { get; set; }
+        [FromForm(Name = "status")]
+        public EStatus? Status { get; set; }
+    }
+}
