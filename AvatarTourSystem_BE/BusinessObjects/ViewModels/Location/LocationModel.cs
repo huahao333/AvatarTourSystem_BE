@@ -15,6 +15,8 @@ namespace BusinessObjects.ViewModels.Location
         public string? LocationName { get; set; }
         [FromForm(Name = "location-type")]
         public int? LocationType { get; set; }
+        [FromForm(Name = "location-img-url")]
+        public string? LocationImgUrl { get; set; }
         [FromForm(Name = "destination-id")]
         public string? DestinationId { get; set; }
         [FromForm(Name = "create-date")]

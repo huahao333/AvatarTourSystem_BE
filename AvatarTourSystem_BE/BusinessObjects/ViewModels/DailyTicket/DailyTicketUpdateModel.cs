@@ -23,7 +23,8 @@ namespace BusinessObjects.ViewModels.DailyTicket
 
         [FromForm(Name = "capacity")]
         public int? Capacity { get; set; }
-
+        [FromForm(Name = "daily-ticket-price")]
+        public float? DailyTicketPrice { get; set; }
         [FromForm(Name = "status")]
         public EStatus? Status { get; set; }
     }

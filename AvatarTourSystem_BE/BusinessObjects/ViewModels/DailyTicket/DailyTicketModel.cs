@@ -12,6 +12,7 @@ namespace BusinessObjects.ViewModels.DailyTicket
         public string? TicketTypeId { get; set; }
         public string? DailyTourId { get; set; }
         public int? Capacity { get; set; }
+        public float? DailyTicketPrice { get; set; }
         public DateTime? CreateDate { get; set; }
         public DateTime? UpdateDate { get; set; }
         public int? Status { get; set; }

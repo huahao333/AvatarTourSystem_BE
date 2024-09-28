@@ -16,6 +16,7 @@ namespace BusinessObjects.Models
         public string? LocationId { get; set; }
         public string? LocationName { get; set; }
         public int? LocationType { get; set; }
+        public string? LocationImgUrl { get; set; }
         public string? DestinationId { get; set; }
         public DateTime? CreateDate { get; set; }
         public DateTime? UpdateDate { get; set; }
