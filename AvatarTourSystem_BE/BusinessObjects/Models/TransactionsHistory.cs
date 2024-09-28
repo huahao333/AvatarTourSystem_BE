@@ -11,6 +11,7 @@ namespace BusinessObjects.Models
         public string? TransactionId { get; set; }
         public string? UserId { get; set; }
         public string? BookingId { get; set; }
+        public string? OrderId { get; set; }
         public DateTime? CreateDate { get; set; }
         public DateTime? UpdateDate { get; set; }
         public int? Status { get; set; }

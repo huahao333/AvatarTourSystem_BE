@@ -11,7 +11,7 @@ namespace BusinessObjects.ViewModels.Destination
         public Guid DestinationId { get; set; }
         public string? CityId { get; set; }
         public string? DestinationName { get; set; }
-        public float? PriceDestination { get; set; }
+        public string? DestinationImgUrl { get; set; }
         public DateTime? CreateDate { get; set; }
         public DateTime? UpdateDate { get; set; }
         public int? Status { get; set; }

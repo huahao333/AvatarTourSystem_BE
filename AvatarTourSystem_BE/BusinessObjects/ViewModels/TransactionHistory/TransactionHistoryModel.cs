@@ -15,6 +15,8 @@ namespace BusinessObjects.ViewModels.TransactionHistory
         public string? UserId { get; set; }
         [FromForm(Name = "booking-id")]
         public string? BookingId { get; set; }
+        [FromForm(Name = "order-id")]
+        public string? OrderId { get; set; }
         [FromForm(Name = "create-date")]
         public DateTime? CreateDate { get; set; }
         [FromForm(Name = "update-date")]

@@ -16,8 +16,8 @@ namespace BusinessObjects.ViewModels.Destination
         public Guid DestinationId { get; set; }
         [FromForm(Name = "destination-name")]
         public string? DestinationName { get; set; }
-        [FromForm(Name = "price-destination")]
-        public float? PriceDestination { get; set; }
+        [FromForm(Name = "destination-img-url")]
+        public string? DestinationImgUrl { get; set; }
         [FromForm(Name = "staus")]
         public EStatus? Status { get; set; }
     }

@@ -23,7 +23,8 @@ namespace BusinessObjects.ViewModels.PackageTour
 
         [FromForm(Name = "package-tour-price")]
         public float? PackageTourPrice { get; set; }
-
+        [FromForm(Name = "package-img-url")]
+        public string? PackageTourImgUrl { get; set; }
         [FromForm(Name = "Status")]
         public EStatus? Status { get; set; }
     }

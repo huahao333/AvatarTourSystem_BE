@@ -11,6 +11,7 @@ namespace BusinessObjects.ViewModels.Service
         public string? ServiceId { get; set; }
         public string? ServiceName { get; set; }
         public float? ServicePrice { get; set; }
+        public string? ServiceImgUrl{ get; set; }
         public string? ServiceTypeId { get; set; }
         public string? LocationId { get; set; }
         public string? SupplierId { get; set; }

@@ -56,8 +56,8 @@ namespace BusinessObjects.Data
                 new TourSegment { TourSegmentId = "2", DestinationId = "2", PackageTourId = "2", CreateDate = DateTime.Now, Status = 1 }
             );
             modelBuilder.Entity<Destination>().HasData(
-                new Destination { DestinationId = "1", DestinationName = "Quận 1", CityId = "1", PriceDestination = 390000, CreateDate = DateTime.Now, Status = 0 },
-                new Destination { DestinationId = "2", DestinationName = "Quận 2", CityId = "2", PriceDestination = 350000, CreateDate = DateTime.Now, Status = 1 }
+                new Destination { DestinationId = "1", DestinationName = "Quận 1", CityId = "1", CreateDate = DateTime.Now, Status = 0 },
+                new Destination { DestinationId = "2", DestinationName = "Quận 2", CityId = "2", CreateDate = DateTime.Now, Status = 1 }
             );
             modelBuilder.Entity<Location>().HasData(
                 new Location { LocationId = "1", LocationName = "Nhà hàng", LocationType = 1, DestinationId = "1", CreateDate = DateTime.Now, Status = 0 },

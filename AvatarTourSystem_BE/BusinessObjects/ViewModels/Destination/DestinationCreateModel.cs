@@ -9,8 +9,8 @@ namespace BusinessObjects.ViewModels.Destination
         public string? CityId { get; set; }
         [FromForm(Name = "destination-name")]
         public string? DestinationName { get; set; }
-        [FromForm(Name = "price-destination")]
-        public float? PriceDestination { get; set; }
+        [FromForm(Name = "destination-img-url")]
+        public string? DestinationImgUrl { get; set; }
         [FromForm(Name = "status")]
         public EStatus? Status { get; set; }
     }
