@@ -17,7 +17,7 @@ namespace Services.Interfaces
         Task<APIResponseModel> UpdateAccount(AccountUpdateModel updateModel);
         Task<APIResponseModel> DeleteAccount(string accountId);
         Task<APIResponseModel> SignUpAccountAsync(AccountSignUpModel signUpModel);
-        Task<APIResponseModel> SignUpAccountZaloAsync(string zaloId);
+        Task<APIResponseModel> SignUpAccountZaloAsync(AccountZaloIdModel accountZaloIdModel);
         Task<APIAuthenticationResponseModel> SignInAccountAsync(AccountSignInModel signInModel);
     }
 }
