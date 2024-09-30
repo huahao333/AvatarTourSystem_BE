@@ -26,8 +26,6 @@ namespace BusinessObjects.ViewModels.DailyTour
         public DateTime? EndDate { get; set; }
         [FromForm(Name = "discount")]
         public int? Discount { get; set; }
-        [FromForm(Name = "status")]
-        public EStatus? Status { get; set; }
 
         [FromForm(Name = "ticket-type-id-adult")]
         public string? TicketTypeIdAdult { get; set; }
