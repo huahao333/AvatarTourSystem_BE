@@ -11,5 +11,7 @@ namespace Services.Interfaces
     public interface IDailyTourFlowService
     {
         Task<APIResponseModel> CreateDailyTourFlow(DailyTourFlowModel dailyTourFlowModel);
+        Task<APIResponseModel> GetDailyTourDetails(string dailyTourId);
+        Task<APIResponseModel> GetAllDailyTours();
     }
 }

@@ -33,5 +33,19 @@ namespace AvatarTourSystem_BE.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, result);
             }
         }
+
+        [HttpGet("GetDailyTourFlowByIdAsync/{dailyTourId}")]
+        public async Task<IActionResult> GetDailyTourFlowByIdAsync(string dailyTourId)
+        {
+            var response = await _dailyTourFlowService.GetDailyTourDetails(dailyTourId);
+            return Ok(response);
+        }
+
+        [HttpGet("GetAllDailyToursAsync")]
+        public async Task<IActionResult> GetAllDailyToursAsync()
+        {
+            var response = await _dailyTourFlowService.GetAllDailyTours();
+            return Ok(response);
+        }
     }
 }
