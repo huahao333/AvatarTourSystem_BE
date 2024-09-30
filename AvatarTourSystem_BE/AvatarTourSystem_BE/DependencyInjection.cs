@@ -139,6 +139,9 @@ namespace AvatarTourSystem_BE
             services.AddScoped<IDailyTourService, DailyTourSerivce>();
             services.AddScoped<IDailyTourRepository, DailyTourRepository>();
 
+            services.AddScoped<IDailyTourFlowService, DailyTourFlowService>();
+            services.AddScoped<IDailyTourFlowRepository, DailyTourFlowRepository>();
+
             //auto mapper
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
