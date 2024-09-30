@@ -17,28 +17,29 @@ namespace AvatarTourSystem_BE.Controllers
             _ticketService = ticketService;
         }
 
-        [HttpGet("active")]
+
+        [HttpGet("GetActiveTicketsAsync")]
         public async Task<IActionResult> GetListActiveTicketsAsync()
         {
             var result = await _ticketService.GetActiveTicketsAsync();
             return Ok(result);
         }
 
-        [HttpGet]
+        [HttpGet("GetAllTicketsAsync")]
         public async Task<IActionResult> GetListTicketsAsync()
         {
             var result = await _ticketService.GetTicketsAsync();
             return Ok(result);
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetTicketById(string id)
+        [HttpGet("GetTicketByIdAsync/{id}")]
+        public async Task<IActionResult> GetTicketByIdAsync(string id)
         {
             var result = await _ticketService.GetTicketByIdAsync(id);
             return Ok(result);
         }
 
-        [HttpPost]
+        [HttpPost("CreateTicketAsync")]
         public async Task<IActionResult> CreateTicketAsync([FromForm] TicketCreateModel createModel)
         {
             if (!ModelState.IsValid)
@@ -56,7 +57,7 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpPut]
+        [HttpPut("UpdateTicketAsync")]
         public async Task<IActionResult> UpdateTicketAsync([FromForm] TicketUpdateModel updateModel)
         {
             if (!ModelState.IsValid)
@@ -65,7 +66,6 @@ namespace AvatarTourSystem_BE.Controllers
             }
             try
             {
-
                 var result = await _ticketService.UpdateTicketAsync(updateModel);
                 return Ok(result);
             }
@@ -74,8 +74,9 @@ namespace AvatarTourSystem_BE.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteTicket(string id)
+
+        [HttpDelete("DeleteTicketAsync/{id}")]
+        public async Task<IActionResult> DeleteTicketAsync(string id)
         {
             var result = await _ticketService.DeleteTicket(id);
             return Ok(result);

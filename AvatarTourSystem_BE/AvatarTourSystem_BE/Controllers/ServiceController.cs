@@ -14,29 +14,28 @@ namespace AvatarTourSystem_BE.Controllers
         {
             _serviceService = serviceService;
         }
-
-        [HttpGet("active")]
+        [HttpGet("GetActiveServicesAsync")]
         public async Task<IActionResult> GetListActiveServicesAsync()
         {
             var result = await _serviceService.GetActiveServicesAsync();
             return Ok(result);
         }
 
-        [HttpGet]
+        [HttpGet("GetAllServicesAsync")]
         public async Task<IActionResult> GetListServicesAsync()
         {
             var result = await _serviceService.GetServicesAsync();
             return Ok(result);
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetServiceById(string id)
+        [HttpGet("GetServiceByIdAsync/{id}")]
+        public async Task<IActionResult> GetServiceByIdAsync(string id)
         {
             var result = await _serviceService.GetServiceByIdAsync(id);
             return Ok(result);
         }
 
-        [HttpPost]
+        [HttpPost("CreateServiceAsync")]
         public async Task<IActionResult> CreateServiceAsync([FromForm] ServiceCreateModel createModel)
         {
             if (!ModelState.IsValid)
@@ -54,7 +53,7 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpPut]
+        [HttpPut("UpdateServiceAsync")]
         public async Task<IActionResult> UpdateServiceAsync([FromForm] ServiceUpdateModel updateModel)
         {
             if (!ModelState.IsValid)
@@ -63,7 +62,6 @@ namespace AvatarTourSystem_BE.Controllers
             }
             try
             {
-
                 var result = await _serviceService.UpdateServiceAsync(updateModel);
                 return Ok(result);
             }
@@ -72,8 +70,9 @@ namespace AvatarTourSystem_BE.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteService(string id)
+
+        [HttpDelete("DeleteServiceAsync/{id}")]
+        public async Task<IActionResult> DeleteServiceAsync(string id)
         {
             var result = await _serviceService.DeleteService(id);
             return Ok(result);

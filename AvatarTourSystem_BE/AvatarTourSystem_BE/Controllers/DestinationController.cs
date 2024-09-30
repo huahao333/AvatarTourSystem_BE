@@ -15,29 +15,28 @@ namespace AvatarTourSystem_BE.Controllers
         {
             _DestinationService = DestinationService;
         }
-
-        [HttpGet("active")]
-        public async Task<IActionResult> GetListActiveDestinationsAsync()
+        [HttpGet("GetActiveDestinationsAsync")]
+        public async Task<IActionResult> GetActiveDestinationsAsync()
         {
             var result = await _DestinationService.GetActiveDestinationsAsync();
             return Ok(result);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetListDestinationssAsync()
+        [HttpGet("GetAllDestinationsAsync")]
+        public async Task<IActionResult> GetAllDestinationsAsync()
         {
             var result = await _DestinationService.GetDestinationsAsync();
             return Ok(result);
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetDestinationById(string id)
+        [HttpGet("GetDestinationByIdAsync/{id}")]
+        public async Task<IActionResult> GetDestinationByIdAsync(string id)
         {
             var result = await _DestinationService.GetDestinationByIdAsync(id);
             return Ok(result);
         }
 
-        [HttpPost]
+        [HttpPost("CreateDestinationAsync")]
         public async Task<IActionResult> CreateDestinationAsync([FromForm] DestinationCreateModel createModel)
         {
             if (!ModelState.IsValid)
@@ -55,7 +54,7 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpPut]
+        [HttpPut("UpdateDestinationAsync")]
         public async Task<IActionResult> UpdateDestinationAsync([FromForm] DestinationUpdateModel updateModel)
         {
             if (!ModelState.IsValid)
@@ -64,7 +63,6 @@ namespace AvatarTourSystem_BE.Controllers
             }
             try
             {
-
                 var result = await _DestinationService.UpdateDestinationAsync(updateModel);
                 return Ok(result);
             }
@@ -73,8 +71,9 @@ namespace AvatarTourSystem_BE.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteDestination(string id)
+
+        [HttpDelete("DeleteDestinationAsync/{id}")]
+        public async Task<IActionResult> DeleteDestinationAsync(string id)
         {
             var result = await _DestinationService.DeleteDestination(id);
             return Ok(result);

@@ -16,28 +16,28 @@ namespace AvatarTourSystem_BE.Controllers
             _serviceTypeService = serviceTypeService;
         }
 
-        [HttpGet("active")]
+        [HttpGet("GetActiveServiceTypesAsync")]
         public async Task<IActionResult> GetListActiveServiceTypesAsync()
         {
             var result = await _serviceTypeService.GetActiveServiceTypesAsync();
             return Ok(result);
         }
 
-        [HttpGet]
+        [HttpGet("GetAllServiceTypesAsync")]
         public async Task<IActionResult> GetListServiceTypesAsync()
         {
             var result = await _serviceTypeService.GetServiceTypesAsync();
             return Ok(result);
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetServiceTypeById(string id)
+        [HttpGet("GetServiceTypeByIdAsync/{id}")]
+        public async Task<IActionResult> GetServiceTypeByIdAsync(string id)
         {
             var result = await _serviceTypeService.GetServiceTypeByIdAsync(id);
             return Ok(result);
         }
 
-        [HttpPost]
+        [HttpPost("CreateServiceTypeAsync")]
         public async Task<IActionResult> CreateServiceTypeAsync([FromForm] ServiceTypeCreateModel createModel)
         {
             if (!ModelState.IsValid)
@@ -55,7 +55,7 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpPut]
+        [HttpPut("UpdateServiceTypeAsync")]
         public async Task<IActionResult> UpdateServiceTypeAsync([FromForm] ServiceTypeUpdateModel updateModel)
         {
             if (!ModelState.IsValid)
@@ -64,7 +64,6 @@ namespace AvatarTourSystem_BE.Controllers
             }
             try
             {
-
                 var result = await _serviceTypeService.UpdateServiceTypeAsync(updateModel);
                 return Ok(result);
             }
@@ -73,8 +72,9 @@ namespace AvatarTourSystem_BE.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteServiceType(string id)
+
+        [HttpDelete("DeleteServiceTypeAsync/{id}")]
+        public async Task<IActionResult> DeleteServiceTypeAsync(string id)
         {
             var result = await _serviceTypeService.DeleteServiceType(id);
             return Ok(result);

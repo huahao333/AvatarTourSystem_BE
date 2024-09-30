@@ -18,28 +18,28 @@ namespace AvatarTourSystem_BE.Controllers
             _revenueService = revenueService;
         }
 
-        [HttpGet("active")]
-        public async Task<IActionResult> GetListActiveRevenuesAsync()
-        {
-            var result = await _revenueService.GetActiveRevenuesAsync();
-            return Ok(result);
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> GetListRevenuesAsync()
+        [HttpGet("GetAllRevenuesAsync")]
+        public async Task<IActionResult> GetAllRevenuesAsync()
         {
             var result = await _revenueService.GetRevenuesAsync();
             return Ok(result);
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetRevenueById(string id)
+        [HttpGet("GetActiveRevenuesAsync")]
+        public async Task<IActionResult> GetActiveRevenuesAsync()
+        {
+            var result = await _revenueService.GetActiveRevenuesAsync();
+            return Ok(result);
+        }
+
+        [HttpGet("GetRevenueByIdAsync/{id}")]
+        public async Task<IActionResult> GetRevenueByIdAsync(string id)
         {
             var result = await _revenueService.GetRevenueByIdAsync(id);
             return Ok(result);
         }
 
-        [HttpPost]
+        [HttpPost("CreateRevenueAsync")]
         public async Task<IActionResult> CreateRevenueAsync([FromForm] RevenueCreateModel createModel)
         {
             if (!ModelState.IsValid)
@@ -57,7 +57,7 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpPut]
+        [HttpPut("UpdateRevenueAsync")]
         public async Task<IActionResult> UpdateRevenueAsync([FromForm] RevenueUpdateModel updateModel)
         {
             if (!ModelState.IsValid)
@@ -66,7 +66,6 @@ namespace AvatarTourSystem_BE.Controllers
             }
             try
             {
-
                 var result = await _revenueService.UpdateRevenueAsync(updateModel);
                 return Ok(result);
             }
@@ -75,8 +74,9 @@ namespace AvatarTourSystem_BE.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteRevenue(string id)
+
+        [HttpDelete("DeleteRevenueAsync/{id}")]
+        public async Task<IActionResult> DeleteRevenueAsync(string id)
         {
             var result = await _revenueService.DeleteRevenue(id);
             return Ok(result);

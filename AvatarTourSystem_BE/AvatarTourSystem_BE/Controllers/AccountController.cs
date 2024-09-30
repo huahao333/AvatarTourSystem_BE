@@ -19,28 +19,28 @@ namespace AvatarTourSystem_BE.Controllers
 
 
        // [Authorize(Roles = "Admin")]
-        [HttpGet]
+        [HttpGet("GetAllAccountAsync")]
         public async Task<IActionResult> GetAllAccount()
         {
             var response = await _accountService.GetAllAccount();
             return Ok(response);
         }
 
-        [HttpGet("GetAccountByStatus")]
+        [HttpGet("GetAccountByStatusAsync")]
         public async Task<IActionResult> GetAccountByStatus()
         {
             var response = await _accountService.GetAccountByStatus();
             return Ok(response);
         }
 
-        [HttpGet("{accountId}")]
+        [HttpGet("GetAccountById/{accountId}")]
         public async Task<IActionResult> GetAccountById(string accountId)
         {
             var response = await _accountService.GetAccountById(accountId);
             return Ok(response);
         }
 
-        [HttpPost]
+        [HttpPost("CreateAccountAsync")]
         public async Task<IActionResult> CreateAccount(AccountCreateModel createModel)
         {
             if (!ModelState.IsValid)
@@ -59,7 +59,7 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpPut]
+        [HttpPut("UpdateAccoutAsync")]
         public async Task<IActionResult> UpdateAccount(AccountUpdateModel updateModel)
         {
             if (!ModelState.IsValid)
@@ -78,28 +78,28 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpDelete("{accountId}")]
+        [HttpDelete("DeleteAccount/{accountId}")]
         public async Task<IActionResult> DeleteAccount(string accountId)
         {
             var response = await _accountService.DeleteAccount(accountId);
             return Ok(response);
         }
 
-        [HttpPost("SignUpAccount")]
+        [HttpPost("SignUpAccountAsync")]
         public async Task<IActionResult> SignUp(AccountSignUpModel signUpModel)
         {
             var response = await _accountService.SignUpAccountAsync(signUpModel);
             return Ok(response);
         }
 
-        [HttpPost("SignInAccount")]
+        [HttpPost("SignInAccountAsync")]
         public async Task<IActionResult> SignIn(AccountSignInModel signInModel)
         {
             var response = await _accountService.SignInAccountAsync(signInModel);
             return Ok(response);
         }
 
-        [HttpPost("SignUpAccountZalo")]
+        [HttpPost("SignUpAccountZaloAsync")]
         public async Task<IActionResult> SignUpZalo(string zaloId )
         {
             var response = await _accountService.SignUpAccountZaloAsync(zaloId);

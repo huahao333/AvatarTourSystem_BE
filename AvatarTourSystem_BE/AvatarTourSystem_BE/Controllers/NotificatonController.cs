@@ -14,32 +14,36 @@ namespace AvatarTourSystem_BE.Controllers
         {
             _notuService = notuService;
         }
-        [HttpGet]
-        public async Task<IActionResult> GetAllNotificaiton()
+        [HttpGet("GetAllNotificationsAsync")]
+        public async Task<IActionResult> GetAllNotifications()
         {
             var response = await _notuService.GetAllNotificaiton();
             return Ok(response);
         }
-        [HttpGet("GetNotificaitonByStatus")]
-        public async Task<IActionResult> GetNotificaitonByStatus()
+
+        [HttpGet("GetNotificationsByStatusAsync")]
+        public async Task<IActionResult> GetNotificationsByStatus()
         {
             var response = await _notuService.GetNotificaitonByStatus();
             return Ok(response);
         }
-        [HttpGet("{notificaitonId}")]
-        public async Task<IActionResult> GetNotificaitonById(string notificaitonId)
+
+        [HttpGet("GetNotificationByIdAsync/{notificationId}")]
+        public async Task<IActionResult> GetNotificationById(string notificationId)
         {
-            var response = await _notuService.GetNotificaitonById(notificaitonId);
+            var response = await _notuService.GetNotificaitonById(notificationId);
             return Ok(response);
         }
-        [HttpGet("GetNotificaitonByUserId")]
-        public async Task<IActionResult> GetNotificaitonByUserId(string userId)
+
+        [HttpGet("GetNotificationsByUserIdAsync/{userId}")]
+        public async Task<IActionResult> GetNotificationsByUserId(string userId)
         {
             var response = await _notuService.GetNotificaitonByUserId(userId);
             return Ok(response);
         }
-        [HttpPost]
-        public async Task<IActionResult> CreateNotificaiton(NotificationCreateModel createModel)
+
+        [HttpPost("CreateNotificationAsync")]
+        public async Task<IActionResult> CreateNotification(NotificationCreateModel createModel)
         {
             if (!ModelState.IsValid)
             {
@@ -55,8 +59,9 @@ namespace AvatarTourSystem_BE.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, result);
             }
         }
-        [HttpPut]
-        public async Task<IActionResult> UpdateNotificaiton(NotificationUpdateModel updateModel)
+
+        [HttpPut("UpdateNotificationAsync")]
+        public async Task<IActionResult> UpdateNotification(NotificationUpdateModel updateModel)
         {
             if (!ModelState.IsValid)
             {
@@ -72,10 +77,11 @@ namespace AvatarTourSystem_BE.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, result);
             }
         }
-        [HttpDelete]
-        public async Task<IActionResult> DeleteNotificaiton(string notificaitonId)
+
+        [HttpDelete("DeleteNotificationAsync/{notificationId}")]
+        public async Task<IActionResult> DeleteNotification(string notificationId)
         {
-            var response = await _notuService.DeleteNotificaiton(notificaitonId);
+            var response = await _notuService.DeleteNotificaiton(notificationId);
             return Ok(response);
         }
 

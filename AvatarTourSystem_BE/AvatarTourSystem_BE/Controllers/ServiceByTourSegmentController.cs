@@ -14,29 +14,28 @@ namespace AvatarTourSystem_BE.Controllers
         {
             _serviceByTourSegmentService = serviceByTourSegmentService;
         }
-
-        [HttpGet("active")]
+        [HttpGet("GetActiveServicesAsync")]
         public async Task<IActionResult> GetListActiveServiceByTourSegmentsAsync()
         {
             var result = await _serviceByTourSegmentService.GetActiveServiceByTourSegmentsAsync();
             return Ok(result);
         }
 
-        [HttpGet]
+        [HttpGet("GetAllServicesAsync")]
         public async Task<IActionResult> GetListServiceByTourSegmentsAsync()
         {
             var result = await _serviceByTourSegmentService.GetServiceByTourSegmentsAsync();
             return Ok(result);
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetServiceByTourSegmentById(string id)
+        [HttpGet("GetServiceByIdAsync/{id}")]
+        public async Task<IActionResult> GetServiceByTourSegmentByIdAsync(string id)
         {
             var result = await _serviceByTourSegmentService.GetServiceByTourSegmentByIdAsync(id);
             return Ok(result);
         }
 
-        [HttpPost]
+        [HttpPost("CreateServiceAsync")]
         public async Task<IActionResult> CreateServiceByTourSegmentAsync([FromForm] ServiceByTourSegmentCreateModel createModel)
         {
             if (!ModelState.IsValid)
@@ -54,7 +53,7 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpPut]
+        [HttpPut("UpdateServiceAsync")]
         public async Task<IActionResult> UpdateServiceByTourSegmentAsync([FromForm] ServiceByTourSegmentUpdateModel updateModel)
         {
             if (!ModelState.IsValid)
@@ -63,7 +62,6 @@ namespace AvatarTourSystem_BE.Controllers
             }
             try
             {
-
                 var result = await _serviceByTourSegmentService.UpdateServiceByTourSegmentAsync(updateModel);
                 return Ok(result);
             }
@@ -72,8 +70,9 @@ namespace AvatarTourSystem_BE.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteServiceByTourSegment(string id)
+
+        [HttpDelete("DeleteServiceAsync/{id}")]
+        public async Task<IActionResult> DeleteServiceByTourSegmentAsync(string id)
         {
             var result = await _serviceByTourSegmentService.DeleteServiceByTourSegment(id);
             return Ok(result);

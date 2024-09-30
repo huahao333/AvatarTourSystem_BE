@@ -13,25 +13,28 @@ namespace AvatarTourSystem_BE.Controllers
         {
             _poiTypeService = poiTypeService;
         }
-        [HttpGet]
-        public async Task<IActionResult> GetPOITypes()
+        [HttpGet("GetAllPOITypesAsync")]
+        public async Task<IActionResult> GetAllPOITypes()
         {
             var result = await _poiTypeService.GetAllPOITypes();
             return Ok(result);
         }
-        [HttpGet("active")]
+
+        [HttpGet("GetActivePOITypesAsync")]
         public async Task<IActionResult> GetActivePOITypes()
         {
             var result = await _poiTypeService.GetPOITypesByStatus();
             return Ok(result);
         }
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetPOITypeById(string id)
+
+        [HttpGet("GetPOITypeByIdAsync/{id}")]
+        public async Task<IActionResult> GetPOITypeByIdAsync(string id)
         {
             var result = await _poiTypeService.GetPOITypeById(id);
             return Ok(result);
         }
-        [HttpPost]
+
+        [HttpPost("CreatePOITypeAsync")]
         public async Task<IActionResult> CreatePOIType([FromForm] POITypeCreateModel createModel)
         {
             if (!ModelState.IsValid)
@@ -48,7 +51,8 @@ namespace AvatarTourSystem_BE.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpPut]
+
+        [HttpPut("UpdatePOITypeAsync")]
         public async Task<IActionResult> UpdatePOIType([FromForm] POITypeUpdateModel updateModel)
         {
             if (!ModelState.IsValid)
@@ -65,7 +69,8 @@ namespace AvatarTourSystem_BE.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpDelete("{id}")]
+
+        [HttpDelete("DeletePOITypeAsync/{id}")]
         public async Task<IActionResult> DeletePOIType(string id)
         {
             var result = await _poiTypeService.DeletePOIType(id);

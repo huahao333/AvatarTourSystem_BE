@@ -18,28 +18,28 @@ namespace AvatarTourSystem_BE.Controllers
             _packageTourService = packageTourService;
         }
 
-        [HttpGet("active")]
-        public async Task<IActionResult> GetListActivePackageToursAsync()
+        [HttpGet("GetActivePackageToursAsync")]
+        public async Task<IActionResult> GetActivePackageToursAsync()
         {
             var result = await _packageTourService.GetActivePackageToursAsync();
             return Ok(result);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetListPackageToursAsync()
+        [HttpGet("GetAllPackageToursAsync")]
+        public async Task<IActionResult> GetAllPackageToursAsync()
         {
             var result = await _packageTourService.GetPackageToursAsync();
             return Ok(result);
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetPackageTourById(string id)
+        [HttpGet("GetPackageTourByIdAsync/{id}")]
+        public async Task<IActionResult> GetPackageTourByIdAsync(string id)
         {
             var result = await _packageTourService.GetPackageTourByIdAsync(id);
             return Ok(result);
         }
 
-        [HttpPost]
+        [HttpPost("CreatePackageTourAsync")]
         public async Task<IActionResult> CreatePackageTourAsync([FromForm] PackageTourCreateModel createModel)
         {
             if (!ModelState.IsValid)
@@ -57,7 +57,7 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpPut]
+        [HttpPut("UpdatePackageTourAsync")]
         public async Task<IActionResult> UpdatePackageTourAsync([FromForm] PackageTourUpdateModel updateModel)
         {
             if (!ModelState.IsValid)
@@ -66,7 +66,6 @@ namespace AvatarTourSystem_BE.Controllers
             }
             try
             {
-
                 var result = await _packageTourService.UpdatePackageTourAsync(updateModel);
                 return Ok(result);
             }
@@ -75,7 +74,8 @@ namespace AvatarTourSystem_BE.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpDelete("{id}")]
+
+        [HttpDelete("DeletePackageTourAsync/{id}")]
         public async Task<IActionResult> DeletePackageTour(string id)
         {
             var result = await _packageTourService.DeletePackageTour(id);

@@ -13,25 +13,28 @@ namespace AvatarTourSystem_BE.Controllers
         {
             _pointOfInterestService = pointOfInterestService;
         }
-        [HttpGet]
-        public async Task<IActionResult> GetPointOfInterests()
+        [HttpGet("GetAllPointOfInterestsAsync")]
+        public async Task<IActionResult> GetAllPointOfInterests()
         {
             var result = await _pointOfInterestService.GetAllPointOfInterests();
             return Ok(result);
         }
-        [HttpGet("active")]
+
+        [HttpGet("GetActivePointOfInterestsAsync")]
         public async Task<IActionResult> GetActivePointOfInterests()
         {
             var result = await _pointOfInterestService.GetPointOfInterestsByStatus();
             return Ok(result);
         }
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetPointOfInterestById(string id)
+
+        [HttpGet("GetPointOfInterestByIdAsync/{id}")]
+        public async Task<IActionResult> GetPointOfInterestByIdAsync(string id)
         {
             var result = await _pointOfInterestService.GetPointOfInterestById(id);
             return Ok(result);
         }
-        [HttpPost]
+
+        [HttpPost("CreatePointOfInterestAsync")]
         public async Task<IActionResult> CreatePointOfInterest([FromForm] POICreateModel createModel)
         {
             if (!ModelState.IsValid)
@@ -48,7 +51,8 @@ namespace AvatarTourSystem_BE.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpPut]
+
+        [HttpPut("UpdatePointOfInterestAsync")]
         public async Task<IActionResult> UpdatePointOfInterest([FromForm] POIUpdateModel updateModel)
         {
             if (!ModelState.IsValid)
@@ -65,7 +69,8 @@ namespace AvatarTourSystem_BE.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpDelete("{id}")]
+
+        [HttpDelete("DeletePointOfInterestAsync/{id}")]
         public async Task<IActionResult> DeletePointOfInterest(string id)
         {
             var result = await _pointOfInterestService.DeletePointOfInterest(id);

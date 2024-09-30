@@ -17,29 +17,29 @@ namespace AvatarTourSystem_BE.Controllers
             _bookingService = bookingService;
         }
 
-        [HttpGet("active")]
+        [HttpGet("GetActiveBookingsAsync")]
         public async Task<IActionResult> GetListActiveBookingsAsync()
         {
             var result = await _bookingService.GetActiveBookingsAsync();
             return Ok(result);
         }
 
-        [HttpGet]
+        [HttpGet("GetAllBookingsAsync")]
         public async Task<IActionResult> GetListBookingsAsync()
         {
             var result = await _bookingService.GetBookingsAsync();
             return Ok(result);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("GetBookingByIdAsync/{id}")]
         public async Task<IActionResult> GetBookingById(string id)
         {
             var result = await _bookingService.GetBookingByIdAsync(id);
             return Ok(result);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreatebookingAsync([FromForm] BookingCreateModel createModel)
+        [HttpPost("CreateBookingAsync")]
+        public async Task<IActionResult> CreateBookingAsync([FromForm] BookingCreateModel createModel)
         {
             if (!ModelState.IsValid)
             {
@@ -56,7 +56,7 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpPut]
+        [HttpPut("UpdateBookingAsync")]
         public async Task<IActionResult> UpdateBookingAsync([FromForm] BookingUpdateModel updateModel)
         {
             if (!ModelState.IsValid)
@@ -65,7 +65,6 @@ namespace AvatarTourSystem_BE.Controllers
             }
             try
             {
-
                 var result = await _bookingService.UpdateBookingAsync(updateModel);
                 return Ok(result);
             }
@@ -74,8 +73,9 @@ namespace AvatarTourSystem_BE.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Deletebooking(string id)
+
+        [HttpDelete("DeleteBookingAsync/{id}")]
+        public async Task<IActionResult> DeleteBooking(string id)
         {
             var result = await _bookingService.DeleteBooking(id);
             return Ok(result);

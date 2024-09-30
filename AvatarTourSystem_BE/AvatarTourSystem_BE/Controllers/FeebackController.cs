@@ -16,49 +16,54 @@ namespace AvatarTourSystem_BE.Controllers
                 _feedbakService = feedbakService;
             }
 
-            [HttpGet]
-            public async Task<IActionResult> GetAllFeedbacks()
-            {
-                var response = await _feedbakService.GetAllFeedbacks();
-                return Ok(response);
-            }
-            [HttpGet("GetByStatus")]
-            public async Task<IActionResult> GetFeedbackByStatus()
-            {
+        [HttpGet("GetAllFeedbacksAsync")]
+        public async Task<IActionResult> GetAllFeedbacksAsync()
+        {
+            var response = await _feedbakService.GetAllFeedbacks();
+            return Ok(response);
+        }
+
+        [HttpGet("GetFeedbacksByStatusAsync")]
+        public async Task<IActionResult> GetFeedbacksByStatusAsync()
+        {
             var response = await _feedbakService.GetFeedbackByStatus();
             return Ok(response);
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetFeedbackById(string id)
+        [HttpGet("GetFeedbackByIdAsync/{id}")]
+        public async Task<IActionResult> GetFeedbackByIdAsync(string id)
         {
             var response = await _feedbakService.GetFeedbackById(id);
             return Ok(response);
         }
 
-        [HttpGet("user/{userId}")]
-        public async Task<IActionResult> GetFeedbackByUserId(string userId)
+        [HttpGet("GetFeedbackByUserIdAsync/{userId}")]
+        public async Task<IActionResult> GetFeedbackByUserIdAsync(string userId)
         {
             var response = await _feedbakService.GetFeedbackByUserId(userId);
             return Ok(response);
         }
 
-        [HttpGet("booking/{bookingId}")]
-        public async Task<IActionResult> GetFeedbackByBookingId(string bookingId)
+        [HttpGet("GetFeedbackByBookingIdAsync/{bookingId}")]
+        public async Task<IActionResult> GetFeedbackByBookingIdAsync(string bookingId)
         {
             var response = await _feedbakService.GetFeedbackByBookingId(bookingId);
             return Ok(response);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateFeedback(FeedbackCreateModel feedbackCreateModel)
+        [HttpPost("CreateFeedbackAsync")]
+        public async Task<IActionResult> CreateFeedbackAsync([FromBody] FeedbackCreateModel feedbackCreateModel)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var response = await _feedbakService.CreateFeedback(feedbackCreateModel);
             return Ok(response);
         }
 
-        [HttpPut]
-        public async Task<IActionResult> UpdateFeedback(FeedbackUpdateModel feedbackUpdateModel)
+        [HttpPut("UpdateFeedbackAsync")]
+        public async Task<IActionResult> UpdateFeedbackAsync([FromBody] FeedbackUpdateModel feedbackUpdateModel)
         {
             if (!ModelState.IsValid)
             {
@@ -73,11 +78,10 @@ namespace AvatarTourSystem_BE.Controllers
             {
                 return BadRequest(ex.Message);
             }
-
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteFeedback(string id)
+        [HttpDelete("DeleteFeedbackAsync/{id}")]
+        public async Task<IActionResult> DeleteFeedbackAsync(string id)
         {
             var response = await _feedbakService.DeleteFeedback(id);
             return Ok(response);

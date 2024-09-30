@@ -17,29 +17,28 @@ namespace AvatarTourSystem_BE.Controllers
         {
             _ticketTypeService = ticketTypeService;
         }
-
-        [HttpGet("active")]
+        [HttpGet("GetActiveTicketTypesAsync")]
         public async Task<IActionResult> GetListActiveTicketTypesAsync()
         {
             var result = await _ticketTypeService.GetActiveTicketTypesAsync();
             return Ok(result);
         }
 
-        [HttpGet]
+        [HttpGet("GetAllTicketTypesAsync")]
         public async Task<IActionResult> GetListTicketTypesAsync()
         {
             var result = await _ticketTypeService.GetTicketTypesAsync();
             return Ok(result);
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetTicketTypeById(string id)
+        [HttpGet("GetTicketTypeByIdAsync/{id}")]
+        public async Task<IActionResult> GetTicketTypeByIdAsync(string id)
         {
             var result = await _ticketTypeService.GetTicketTypeByIdAsync(id);
             return Ok(result);
         }
 
-        [HttpPost]
+        [HttpPost("CreateTicketTypeAsync")]
         public async Task<IActionResult> CreateTicketTypeAsync([FromForm] TicketTypeCreateModel createModel)
         {
             if (!ModelState.IsValid)
@@ -57,7 +56,7 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpPut]
+        [HttpPut("UpdateTicketTypeAsync")]
         public async Task<IActionResult> UpdateTicketTypeAsync([FromForm] TicketTypeUpdateModel updateModel)
         {
             if (!ModelState.IsValid)
@@ -66,7 +65,6 @@ namespace AvatarTourSystem_BE.Controllers
             }
             try
             {
-
                 var result = await _ticketTypeService.UpdateTicketTypeAsync(updateModel);
                 return Ok(result);
             }
@@ -75,8 +73,9 @@ namespace AvatarTourSystem_BE.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteTicketType(string id)
+
+        [HttpDelete("DeleteTicketTypeAsync/{id}")]
+        public async Task<IActionResult> DeleteTicketTypeAsync(string id)
         {
             var result = await _ticketTypeService.DeleteTicketType(id);
             return Ok(result);
