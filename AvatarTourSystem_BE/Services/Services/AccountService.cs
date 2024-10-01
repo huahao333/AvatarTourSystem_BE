@@ -363,11 +363,11 @@ namespace Services.Services
             }
         }
 
-       public async Task<APIResponseModel> SignUpAccountZaloAsync(string zaloId )
+       public async Task<APIResponseModel> SignUpAccountZaloAsync(AccountZaloIdModel accountZaloIdModel)
         {
             try
             {
-                var accountZaloExisting = (await _unitOfWork.AccountRepository.GetByConditionAsync(s => s.ZaloUser.ToString() == zaloId.ToString()))
+                var accountZaloExisting = (await _unitOfWork.AccountRepository.GetByConditionAsync(s => s.ZaloUser.ToString() == accountZaloIdModel.ZaloUser))
                                           .FirstOrDefault();
                 if (accountZaloExisting != null)
                 {
@@ -393,7 +393,7 @@ namespace Services.Services
                         PhoneNumber = "",
                         CreateDate = DateTime.Now,
                         Status = 1,
-                        ZaloUser = zaloId 
+                        ZaloUser = accountZaloIdModel.ZaloUser,
                     };
 
                     var result = await _userManager.CreateAsync(user);

@@ -100,9 +100,9 @@ namespace AvatarTourSystem_BE.Controllers
         }
 
         [HttpPost("SignUpAccountZaloAsync")]
-        public async Task<IActionResult> SignUpZalo(string zaloId )
+        public async Task<IActionResult> SignUpZalo(AccountZaloIdModel accountZaloIdModel )
         {
-            var response = await _accountService.SignUpAccountZaloAsync(zaloId);
+            var response = await _accountService.SignUpAccountZaloAsync(accountZaloIdModel);
             return Ok(response);
         }
     }
