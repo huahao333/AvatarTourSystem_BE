@@ -176,23 +176,34 @@ namespace AvatarTourSystem_BE.AutoMapper
 
             //Flow-Packagetour
             #region
+            //       CreateMap<FPackageTourCreateModel, PackageTour>()
+            //.ForMember(dest => dest.CreateDate, opt => opt.MapFrom(src => DateTime.Now))
+            //.ForMember(dest => dest.UpdateDate, opt => opt.MapFrom(src => DateTime.Now))
+            //.ForMember(dest => dest.TourSegments, opt => opt.MapFrom(src => src.Destinations.Select(d => new TourSegment
+            //{
+            //    DestinationId = d.DestinationId,
+            //    Status = 1, // Set default status
+            //    CreateDate = DateTime.Now,
+            //    UpdateDate = DateTime.Now,
+            //    ServiceByTourSegments = d.Locations.SelectMany(l => l.Services.Select(s => new ServiceByTourSegment
+            //    {
+            //        ServiceId = s.ServiceId,
+            //        Status = 1, // Set default status
+            //        CreateDate = DateTime.Now,
+            //        UpdateDate = DateTime.Now
+            //    })).ToList()
+            //})));
             CreateMap<FPackageTourCreateModel, PackageTour>()
-     .ForMember(dest => dest.CreateDate, opt => opt.MapFrom(src => DateTime.Now))
-     .ForMember(dest => dest.UpdateDate, opt => opt.MapFrom(src => DateTime.Now))
-     .ForMember(dest => dest.TourSegments, opt => opt.MapFrom(src => src.Destinations.Select(d => new TourSegment
-     {
-         DestinationId = d.DestinationId,
-         Status = 1, // Set default status
-         CreateDate = DateTime.Now,
-         UpdateDate = DateTime.Now,
-         ServiceByTourSegments = d.Locations.SelectMany(l => l.Services.Select(s => new ServiceByTourSegment
-         {
-             ServiceId = s.ServiceId,
-             Status = 1, // Set default status
-             CreateDate = DateTime.Now,
-             UpdateDate = DateTime.Now
-         })).ToList()
-     })));
+    .ForMember(dest => dest.CreateDate, opt => opt.MapFrom(src => DateTime.Now))
+    .ForMember(dest => dest.UpdateDate, opt => opt.MapFrom(src => DateTime.Now))
+    .ForMember(dest => dest.TicketTypes, opt => opt.MapFrom(src => src.TicketTypesCreate.Select(d => new TicketType
+    {
+        TicketTypeId = d.TicketTypeId,
+        Status = 1, // Set default status
+        CreateDate = DateTime.Now,
+        UpdateDate = DateTime.Now,
+       
+    })));
 
             // Map từ DestinationModel sang Destination Entity
             CreateMap<DestinationModel, Destination>()
