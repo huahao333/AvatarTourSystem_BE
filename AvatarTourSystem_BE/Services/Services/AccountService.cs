@@ -388,7 +388,7 @@ namespace Services.Services
                         Dob = null,
                         Gender = true,
                         Address = "",
-                        UserName = "UserName",
+                        UserName = accountZaloIdModel.ZaloUser,
                         Email = "",
                         PhoneNumber = "",
                         CreateDate = DateTime.Now,
