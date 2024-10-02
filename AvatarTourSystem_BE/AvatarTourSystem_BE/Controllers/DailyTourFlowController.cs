@@ -1,4 +1,5 @@
 ﻿using BusinessObjects.ViewModels.DailyTour;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Services.Interfaces;
@@ -16,6 +17,7 @@ namespace AvatarTourSystem_BE.Controllers
             _dailyTourFlowService = dailyTourFlowService;
         }
 
+        [Authorize]
         [HttpPost("daily-tours")]
         public async Task<IActionResult> CreateDailyTourFlowAsync( DailyTourFlowModel dailyTourFlowModel)
         {
@@ -34,10 +36,11 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
+        [Authorize]
         [HttpGet("daily-tours/{id}")]
-        public async Task<IActionResult> GetDailyTourFlowByIdAsync(string dailyTourId)
+        public async Task<IActionResult> GetDailyTourFlowByIdAsync(string id)
         {
-            var response = await _dailyTourFlowService.GetDailyTourDetails(dailyTourId);
+            var response = await _dailyTourFlowService.GetDailyTourDetails(id);
             return Ok(response);
         }
 
@@ -48,6 +51,7 @@ namespace AvatarTourSystem_BE.Controllers
         //    return Ok(response);
         //}
 
+        [Authorize]
         [HttpGet("daily-tours")]
         public async Task<IActionResult> GetAllDailysToursAsync()
         {
@@ -55,6 +59,7 @@ namespace AvatarTourSystem_BE.Controllers
             return Ok(response);
         }
 
+        [Authorize]
         [HttpGet("daily-tours-discount")]
         public async Task<IActionResult> GetDailyToursHaveDiscount()
         {
@@ -62,7 +67,7 @@ namespace AvatarTourSystem_BE.Controllers
             return Ok(response);
         }
 
-
+        [Authorize]
         [HttpGet("daily-tours-poi")]
         public async Task<IActionResult> GetDailyToursHavePOI()
         {

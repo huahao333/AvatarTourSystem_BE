@@ -439,32 +439,17 @@ namespace Services.Services
 
         private async Task<string> GenerateAccessTokenForAccount(Account account)
         {
-            
             var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_configuration["JWT:SecretKey"]));
 
-            
-            var claims = new List<Claim>();
+            var claims = new List<Claim>
+                   {
+                    new Claim(JwtRegisteredClaimNames.Sub, account.UserName),
+                    new Claim(JwtRegisteredClaimNames.Email, account.Email),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    new Claim(JwtRegisteredClaimNames.Aud, _configuration["JWT:ValidAudience"]), 
+                    new Claim(JwtRegisteredClaimNames.Iss, _configuration["JWT:ValidIssuer"])
+                  };
 
-            
-            if (!string.IsNullOrEmpty(account.UserName))
-            {
-                claims.Add(new Claim(JwtRegisteredClaimNames.Sub, account.UserName));
-            }
-
-            if (!string.IsNullOrEmpty(account.Email))
-            {
-                claims.Add(new Claim(JwtRegisteredClaimNames.Email, account.Email));
-            }
-
-            
-            claims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
-
-            if (!string.IsNullOrEmpty(account.Id))
-            {
-                claims.Add(new Claim(ClaimTypes.NameIdentifier, account.Id));
-            }
-
-           
             var roles = await _userManager.GetRolesAsync(account);
             foreach (var role in roles)
             {
@@ -475,13 +460,12 @@ namespace Services.Services
             {
                 Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.UtcNow.AddHours(1), 
-                SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature)
+                SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature) // Đặt khóa và thuật toán mã hóa
             };
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
-           
             return tokenHandler.WriteToken(token);
         }
     }
