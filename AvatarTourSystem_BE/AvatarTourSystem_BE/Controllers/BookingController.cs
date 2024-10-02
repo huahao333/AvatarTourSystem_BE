@@ -6,7 +6,7 @@ using Services.Interfaces;
 
 namespace AvatarTourSystem_BE.Controllers
 {
-    [Route("api/bookings")]
+    [Route("api/booking")]
     [ApiController]
     public class BookingController : Controller
     {

@@ -5,7 +5,7 @@ using Services.Interfaces;
 
 namespace AvatarTourSystem_BE.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/city")]
     [ApiController]
     public class CityController : Controller
     {

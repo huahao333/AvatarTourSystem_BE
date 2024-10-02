@@ -4,7 +4,7 @@ using Services.Interfaces;
 
 namespace AvatarTourSystem_BE.Controllers
 {
-    [Route("[controller]")]
+    [Route("api/revenue")]
     [ApiController]
     public class ServiceByTourSegmentController : ControllerBase
     {
