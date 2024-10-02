@@ -155,8 +155,8 @@ namespace AvatarTourSystem_BE
             // kebab
             services.AddControllers().AddJsonOptions(options =>
             {
-                options.JsonSerializerOptions.PropertyNamingPolicy = new KebabCaseNamingPolicy();
-                options.JsonSerializerOptions.DictionaryKeyPolicy = new KebabCaseNamingPolicy();
+               // options.JsonSerializerOptions.PropertyNamingPolicy = new KebabCaseNamingPolicy();
+               // options.JsonSerializerOptions.DictionaryKeyPolicy = new KebabCaseNamingPolicy();
             });
 
             //DBcontext

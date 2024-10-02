@@ -100,5 +100,17 @@ namespace Repositories
             _context.Entry(entity).State = EntityState.Modified;
             return entity;
         }
+
+        public async Task<IEnumerable<T>> GetAllAsyncs(Func<IQueryable<T>, IQueryable<T>> include = null)
+        {
+            IQueryable<T> query = _dbSet;
+
+            if (include != null)
+            {
+                query = include(query);
+            }
+
+            return await query.ToListAsync();
+        }
     }
 }

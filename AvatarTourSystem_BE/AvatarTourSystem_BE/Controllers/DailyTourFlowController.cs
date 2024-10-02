@@ -6,7 +6,7 @@ using Services.Services;
 
 namespace AvatarTourSystem_BE.Controllers
 {
-    [Route("api/daily-tour-flows")]
+    [Route("api/v1")]
     [ApiController]
     public class DailyTourFlowController : ControllerBase
     {
@@ -16,8 +16,8 @@ namespace AvatarTourSystem_BE.Controllers
             _dailyTourFlowService = dailyTourFlowService;
         }
 
-        [HttpPost("CreateDailyTourFlowAsync")]
-        public async Task<IActionResult> CreateDailyTourFlowAsync([FromForm] DailyTourFlowModel dailyTourFlowModel)
+        [HttpPost("daily-tours")]
+        public async Task<IActionResult> CreateDailyTourFlowAsync( DailyTourFlowModel dailyTourFlowModel)
         {
             if (!ModelState.IsValid)
             {
@@ -34,17 +34,39 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpGet("GetDailyTourFlowByIdAsync/{dailyTourId}")]
+        [HttpGet("daily-tours/{id}")]
         public async Task<IActionResult> GetDailyTourFlowByIdAsync(string dailyTourId)
         {
             var response = await _dailyTourFlowService.GetDailyTourDetails(dailyTourId);
             return Ok(response);
         }
 
-        [HttpGet("GetAllDailyToursAsync")]
-        public async Task<IActionResult> GetAllDailyToursAsync()
+        //[HttpGet("GetAllDailyToursAsync")]
+        //public async Task<IActionResult> GetAllDailyToursAsync()
+        //{
+        //    var response = await _dailyTourFlowService.GetAllDailyTours();
+        //    return Ok(response);
+        //}
+
+        [HttpGet("daily-tours")]
+        public async Task<IActionResult> GetAllDailysToursAsync()
         {
-            var response = await _dailyTourFlowService.GetAllDailyTours();
+            var response = await _dailyTourFlowService.GetAllDailysTours();
+            return Ok(response);
+        }
+
+        [HttpGet("daily-tours-discount")]
+        public async Task<IActionResult> GetDailyToursHaveDiscount()
+        {
+            var response = await _dailyTourFlowService.GetDailyToursHaveDiscount();
+            return Ok(response);
+        }
+
+
+        [HttpGet("daily-tours-poi")]
+        public async Task<IActionResult> GetDailyToursHavePOI()
+        {
+            var response = await _dailyTourFlowService.GetDailyToursHavePOI();
             return Ok(response);
         }
     }
