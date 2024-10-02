@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Services.Interfaces;
 namespace AvatarTourSystem_BE.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/location")]
     [ApiController]
     public class LocationController : ControllerBase
     {

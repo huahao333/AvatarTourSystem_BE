@@ -7,7 +7,7 @@ using Services.Services;
 
 namespace AvatarTourSystem_BE.Controllers
 {
-    [Route("api/toursegments")]
+    [Route("api/tour-segments")]
     [ApiController]
     public class TourSegmentController : Controller
     {

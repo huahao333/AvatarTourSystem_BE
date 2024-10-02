@@ -5,7 +5,7 @@ using Services.Interfaces;
 
 namespace AvatarTourSystem_BE.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/request-type")]
     [ApiController]
     public class RequestTypeController : ControllerBase
     {
