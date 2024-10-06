@@ -1,4 +1,5 @@
 ﻿using BusinessObjects.ViewModels.PackageTourFlow;
+using BusinessObjects.ViewModels.PackageTourFlow.PackageTourUpdate;
 using Services.Common;
 using System;
 using System.Collections.Generic;
@@ -13,5 +14,9 @@ namespace Services.Interfaces
         Task<APIResponseModel> GetPackageTourFlowAsync();
         Task<APIResponseModel> GetPackageTourFlowByIdAsync(string id);
         Task<APIResponseModel> CreatePackageTourFlowAsync(FPackageTourCreateModel createModel);
+        Task<APIResponseModel> CreatePartsPackageTourFlowAsync(FPackageTourUpdate updateModel);
+        Task<APIResponseModel> UpdatePackageTourFlowAsync(FPackageTourUpdateModel updateModel);
+        Task<APIResponseModel> AddPartToPackageTourFlow(FPackageTourUpdateModel createModel);
+
     }
 }
