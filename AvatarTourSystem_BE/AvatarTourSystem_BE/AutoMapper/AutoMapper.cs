@@ -219,6 +219,12 @@ namespace AvatarTourSystem_BE.AutoMapper
             CreateMap<ServiceModel, Service>()
                 .ForMember(dest => dest.CreateDate, opt => opt.MapFrom(src => DateTime.Now))
                 .ForMember(dest => dest.UpdateDate, opt => opt.MapFrom(src => DateTime.Now));
+            CreateMap<PackageTour, FPackageTourResponseModel>()
+            .ForMember(dest => dest.Destinations, opt => opt.MapFrom(src => src.TourSegments.Select(ts => ts.Destinations)));
+
+            CreateMap<Destination, FDestinationResponseModel>();
+            CreateMap<Location, FLocationResponseModel>();
+            CreateMap<Service, FServiceResponseModel>();
             #endregion
         }
     }

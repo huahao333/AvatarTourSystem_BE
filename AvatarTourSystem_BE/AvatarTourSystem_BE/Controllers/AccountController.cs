@@ -37,7 +37,29 @@ namespace AvatarTourSystem_BE.Controllers
         public async Task<IActionResult> GetAccountById(string accountId)
         {
             var response = await _accountService.GetAccountById(accountId);
-            return Ok(response);
+            if(response.IsSuccess)
+            {
+                return Ok(response);
+            }
+            else
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
+            }
+           
+        }
+        [HttpGet("GetAccountByZaloID/{zaloId}")]
+        public async Task<IActionResult> GetAccountByZaloID(string zaloId)
+        {
+            var response = await _accountService.GetAccountByZaloID(zaloId);
+            if (response.IsSuccess)
+            {
+                return Ok(response);
+            }
+            else
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
+            }
+
         }
 
         [HttpPost("CreateAccountAsync")]
@@ -105,5 +127,6 @@ namespace AvatarTourSystem_BE.Controllers
             var response = await _accountService.SignUpAccountZaloAsync(accountZaloIdModel);
             return Ok(response);
         }
+
     }
 }

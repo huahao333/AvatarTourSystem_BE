@@ -17,7 +17,5 @@ namespace BusinessObjects.ViewModels.PackageTourFlow
         public DateTime? updateDate { get; set; }
         public string? Status { get; set; }
         public List<FTicketType> TicketTypes { get; set; } = new List<FTicketType>();
-
-
     }
 }
