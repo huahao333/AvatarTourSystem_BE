@@ -14,7 +14,6 @@ namespace BusinessObjects.ViewModels.PackageTourFlow.PackageTourUpdate
       
 
         [Range(0, 10, ErrorMessage = "LocationType must be between 0 and 10")]
-        public int? LocationType { get; set; }
         public int? Status { get; set; }
         public List<FServiceUpdateModel> Services { get; set; } = new List<FServiceUpdateModel>();
         public List<FPOIUpdateModel> POI { get; set; } = new List<FPOIUpdateModel>();

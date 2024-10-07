@@ -13,6 +13,7 @@ namespace BusinessObjects.ViewModels.PackageTourFlow.PackageTourUpdate
         public string? DestinationId { get; set; } 
         [Required(ErrorMessage = "DestinationName is required")]        
         public string? CityId { get; set; } 
+        public int? Status { get; set; }
         public List<FLocationUpdateModel> Locations { get; set; } = new List<FLocationUpdateModel>();
     }
 }
