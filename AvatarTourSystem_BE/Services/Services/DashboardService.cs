@@ -99,7 +99,7 @@ namespace Services.Services
             var revenue = await _unitOfWork.RevenueRepository.GetByConditionAsync(s => s.Status != -1);
             var revenueLists = _mapper.Map<List<RevenueModel>>(revenue);
             var totalRevenue = revenueLists
-                .Where(r => r.RevenueDate.Month == month && r.RevenueDate.Year == year)
+                .Where(r => r.RevenueDate.Value.Month == month && r.RevenueDate.Value.Year == year)
                 .Sum(b => b.TotalRevenue);
             if (totalRevenue > 0)
             {
