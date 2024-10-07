@@ -116,6 +116,7 @@ namespace AvatarTourSystem_BE.AutoMapper
             CreateMap<Booking, BookingModel>().ReverseMap();
             CreateMap<Booking, BookingCreateModel>().ReverseMap();
             CreateMap<Booking, BookingUpdateModel>().ReverseMap();
+            CreateMap<Booking, BookingFlowModel>().ReverseMap();
 
             //Revenue
             CreateMap<Revenue, RevenueModel>().ReverseMap();
