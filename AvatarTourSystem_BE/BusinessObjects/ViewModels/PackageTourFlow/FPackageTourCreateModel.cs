@@ -14,7 +14,7 @@ namespace BusinessObjects.ViewModels.PackageTourFlow
         [Required(ErrorMessage = "PackageTourName is required")]
         [StringLength(100, ErrorMessage = "PackageTourName can't be longer than 100 characters")]
         public string? PackageTourName { get; set; }
-        public EStatus? Status { get; set; }
+        public int Status { get; set; }
         // Danh sách các điểm đến
         //public List<FDestinationModel> Destinations { get; set; } = new List<FDestinationModel>();
         [MinLength(1, ErrorMessage = "At least one ticket type must be provided")]

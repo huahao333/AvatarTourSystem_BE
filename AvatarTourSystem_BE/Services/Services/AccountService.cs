@@ -470,8 +470,8 @@ namespace Services.Services
 
         public async Task<APIResponseModel> GetAccountByZaloID(string zaloId)
         {
-            var account = await _unitOfWork.AccountRepository.GetByIdStringAsync(zaloId);
-            if (account == null)
+            var account = await _unitOfWork.AccountRepository.GetByConditionAsync(z => z.ZaloUser == zaloId);
+            if (account == null || !account.Any())
             {
                 return new APIResponseModel
                 {
