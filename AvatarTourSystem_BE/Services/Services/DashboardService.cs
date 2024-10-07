@@ -2,6 +2,7 @@
 using Azure;
 using BusinessObjects.Models;
 using BusinessObjects.ViewModels.Booking;
+using BusinessObjects.ViewModels.Revenue;
 using Repositories.Interfaces;
 using Services.Common;
 using Services.Interfaces;
@@ -48,20 +49,11 @@ namespace Services.Services
                 };
             }
         }
-        public async Task<decimal> GetMonthlytAdultTickets(int month, int year)
-        {
-            throw new NotImplementedException();
-        }
 
-        public async Task<decimal> GetMonthlytChildTickets(int month, int year)
+        public async Task<APIGenericResponseModel<int>> GetActiveZaloUserCount()
         {
-            throw new NotImplementedException();
-        }
-
-        public async Task<APIGenericResponseModel<int>> GetCountActiveZaloUser()
-        {
-            var users = await _unitOfWork.AccountRepository.GetAllAsync();
-            var activeZaloUsers = users.Where(u => u.Status == 1 && !string.IsNullOrEmpty(u.ZaloUser)).Count();
+            var users = await _unitOfWork.AccountRepository.GetByConditionAsync(u => u.Status == 1 && !string.IsNullOrEmpty(u.ZaloUser));
+            var activeZaloUsers = users.Count();
             if (activeZaloUsers > 0)
             {
                 return new APIGenericResponseModel<int>
@@ -82,8 +74,7 @@ namespace Services.Services
         }
         public async Task<APIResponseModel> GetActiveZaloUser()
         {
-            var users = await _unitOfWork.AccountRepository.GetAllAsync();
-            var activeZaloUsers = users.Where(u => (u.Status == 1));
+            var activeZaloUsers = await _unitOfWork.AccountRepository.GetByConditionAsync(u => u.Status == 1 && !string.IsNullOrEmpty(u.ZaloUser));
             if (activeZaloUsers != null)
             {
                 return new APIResponseModel
@@ -103,10 +94,13 @@ namespace Services.Services
             }
         }
 
-        public async Task<APIGenericResponseModel<decimal>> GetTotalRevenue()
+        public async Task<APIGenericResponseModel<decimal>> GetMonthlyRevenue(int month, int year)
         {
-            var revenue = await _unitOfWork.RevenueRepository.GetAllAsync();
-            var totalRevenue = revenue.Sum(b => b.TotalRevenue);
+            var revenue = await _unitOfWork.RevenueRepository.GetByConditionAsync(s => s.Status != -1);
+            var revenueLists = _mapper.Map<List<RevenueModel>>(revenue);
+            var totalRevenue = revenueLists
+                .Where(r => r.RevenueDate.Month == month && r.RevenueDate.Year == year)
+                .Sum(b => b.TotalRevenue);
             if (totalRevenue > 0)
             {
                 return new APIGenericResponseModel<decimal>
@@ -126,11 +120,60 @@ namespace Services.Services
             }
         }
 
-        public async Task<APIGenericResponseModel<int>> GetMonthlyTour(int month, int year)
+        public async Task<APIGenericResponseModel<int>> GetMonthlyTours(int month, int year)
         {
-            throw new NotImplementedException();
+            var tours = await _unitOfWork.DailyTourRepository.GetByConditionAsync(s => s.Status != -1);
+            var activeTours = tours.Where(t => t.StartDate.Value.Month == month && t.StartDate.Value.Year == year)
+                .Count();
+            if (activeTours > 0)
+            {
+                return new APIGenericResponseModel<int>
+                {
+                    Message = "Found active daily tours!",
+                    IsSuccess = true,
+                    Data = activeTours
+                };
+            }
+            else
+            {
+                return new APIGenericResponseModel<int>
+                {
+                    Message = "No active daily tours in month!",
+                    IsSuccess = false,
+                };
+            }
         }
 
-        
+        public async Task<APIGenericResponseModel<int>> GetMonthlyTicketsByType(string typeId, int month, int year)
+        {
+            var tickets = await _unitOfWork.TicketRepository.GetByConditionAsync(s => s.Status != -1);
+            var monthlyTickets = tickets.Where(t => t.TicketTypeId == typeId).Sum(t => t.Quantity);
+            if (monthlyTickets > 0 && typeId == "1")
+            {
+                return new APIGenericResponseModel<int>
+                {
+                    Message = "Found adults tickets!",
+                    IsSuccess = true,
+                    Data = (int)monthlyTickets
+                };
+            }
+            else if (monthlyTickets > 0 && typeId == "2")
+            {
+                return new APIGenericResponseModel<int>
+                {
+                    Message = "Found child tickets!",
+                    IsSuccess = true,
+                    Data = (int)monthlyTickets
+                };
+            }
+            else
+            {
+                return new APIGenericResponseModel<int>
+                {
+                    Message = "No active tickets in month!",
+                    IsSuccess = false,
+                };
+            }
+        }
     }
 }

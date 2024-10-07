@@ -10,12 +10,11 @@ namespace Services.Interfaces
 {
     public interface IDashboardService
     {
-        public Task<APIGenericResponseModel<int>> GetCountActiveZaloUser();
         public Task<APIResponseModel> GetActiveZaloUser();
-        public Task<APIGenericResponseModel<decimal>> GetTotalRevenue();
+        public Task<APIGenericResponseModel<int>> GetActiveZaloUserCount();
         public Task<APIGenericResponseModel<decimal>> GetMonthlyBookings(int month, int year);
-        public Task<APIGenericResponseModel<int>> GetMonthlyTour(int month, int year);
-        public Task<decimal> GetMonthlytAdultTickets(int month, int year);
-        public Task<decimal> GetMonthlytChildTickets(int month, int year);
+        public Task<APIGenericResponseModel<int>> GetMonthlyTours(int month, int year);
+        public Task<APIGenericResponseModel<decimal>> GetMonthlyRevenue(int month, int year);
+        public Task<APIGenericResponseModel<int>> GetMonthlyTicketsByType(string typeId, int month, int year);
     }
 }
