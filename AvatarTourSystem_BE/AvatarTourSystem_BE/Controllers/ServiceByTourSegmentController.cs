@@ -4,7 +4,7 @@ using Services.Interfaces;
 
 namespace AvatarTourSystem_BE.Controllers
 {
-    [Route("api/revenue")]
+    [Route("api/v1")]
     [ApiController]
     public class ServiceByTourSegmentController : ControllerBase
     {
@@ -14,28 +14,28 @@ namespace AvatarTourSystem_BE.Controllers
         {
             _serviceByTourSegmentService = serviceByTourSegmentService;
         }
-        [HttpGet("GetActiveServicesAsync")]
+        [HttpGet("service-toursegments-active")]
         public async Task<IActionResult> GetListActiveServiceByTourSegmentsAsync()
         {
             var result = await _serviceByTourSegmentService.GetActiveServiceByTourSegmentsAsync();
             return Ok(result);
         }
 
-        [HttpGet("GetAllServicesAsync")]
+        [HttpGet("service-toursegments")]
         public async Task<IActionResult> GetListServiceByTourSegmentsAsync()
         {
             var result = await _serviceByTourSegmentService.GetServiceByTourSegmentsAsync();
             return Ok(result);
         }
 
-        [HttpGet("GetServiceByIdAsync/{id}")]
+        [HttpGet("service-toursegment/{id}")]
         public async Task<IActionResult> GetServiceByTourSegmentByIdAsync(string id)
         {
             var result = await _serviceByTourSegmentService.GetServiceByTourSegmentByIdAsync(id);
             return Ok(result);
         }
 
-        [HttpPost("CreateServiceAsync")]
+        [HttpPost("service-toursegment")]
         public async Task<IActionResult> CreateServiceByTourSegmentAsync([FromForm] ServiceByTourSegmentCreateModel createModel)
         {
             if (!ModelState.IsValid)
@@ -53,7 +53,7 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpPut("UpdateServiceAsync")]
+        [HttpPut("service-toursegment")]
         public async Task<IActionResult> UpdateServiceByTourSegmentAsync([FromForm] ServiceByTourSegmentUpdateModel updateModel)
         {
             if (!ModelState.IsValid)
@@ -71,7 +71,7 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpDelete("DeleteServiceAsync/{id}")]
+        [HttpDelete("service-toursegment/{id}")]
         public async Task<IActionResult> DeleteServiceByTourSegmentAsync(string id)
         {
             var result = await _serviceByTourSegmentService.DeleteServiceByTourSegment(id);

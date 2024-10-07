@@ -6,7 +6,7 @@ using Services.Interfaces;
 
 namespace AvatarTourSystem_BE.Controllers
 {
-    [Route("api/booking-by-revenue")]
+    [Route("api/v1")]
     [ApiController]
     public class BookingByRevenueController : Controller
     {
@@ -16,28 +16,28 @@ namespace AvatarTourSystem_BE.Controllers
         {
             _bookingByRevenueService = bookingByRevenueService;
         }
-        [HttpGet("GetActiveBookingByRevenuesAsync")]
+        [HttpGet("booking-revenues-active")]
         public async Task<IActionResult> GetListActiveBookingByRevenuesAsync()
         {
             var result = await _bookingByRevenueService.GetActiveBookingByRevenuesAsync();
             return Ok(result);
         }
 
-        [HttpGet("GetAllBookingByRevenuesAsync")]
+        [HttpGet("booking-revenues")]
         public async Task<IActionResult> GetListBookingByRevenuesAsync()
         {
             var result = await _bookingByRevenueService.GetBookingByRevenuesAsync();
             return Ok(result);
         }
 
-        [HttpGet("GetBookingByRevenueByIdAsync/{id}")]
+        [HttpGet("booking-revenues/{id}")]
         public async Task<IActionResult> GetBookingByRevenueById(string id)
         {
             var result = await _bookingByRevenueService.GetBookingByRevenueByIdAsync(id);
             return Ok(result);
         }
 
-        [HttpPost("CreateBookingByRevenueAsync")]
+        [HttpPost("booking-revenue")]
         public async Task<IActionResult> CreateBookingByRevenueAsync([FromForm] BookingByRevenueCreateModel createModel)
         {
             if (!ModelState.IsValid)
@@ -55,7 +55,7 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpPut("UpdateBookingByRevenueAsync")]
+        [HttpPut("booking-revenue")]
         public async Task<IActionResult> UpdateBookingByRevenueAsync([FromForm] BookingByRevenueUpdateModel updateModel)
         {
             if (!ModelState.IsValid)
@@ -73,7 +73,7 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpDelete("DeleteBookingByRevenueAsync/{id}")]
+        [HttpDelete("booking-revenue/{id}")]
         public async Task<IActionResult> DeleteBookingByRevenue(string id)
         {
             var result = await _bookingByRevenueService.DeleteBookingByRevenue(id);

@@ -6,7 +6,7 @@ using Services.Interfaces;
 
 namespace AvatarTourSystem_BE.Controllers
 {
-    [Route("api/daily-tickets")]
+    [Route("api/v1")]
     [ApiController]
     public class DailyTicketController : Controller
     {
@@ -17,28 +17,28 @@ namespace AvatarTourSystem_BE.Controllers
             _dailyTicketService = dailyTicketService;
         }
 
-        [HttpGet("GetActiveDailyTicketsAsync")]
+        [HttpGet("daily-tickets-active")]
         public async Task<IActionResult> GetListActiveDailyTicketsAsync()
         {
             var result = await _dailyTicketService.GetActiveDailyTicketsAsync();
             return Ok(result);
         }
 
-        [HttpGet("GetAllDailyTicketsAsync")]
+        [HttpGet("daily-tickets")]
         public async Task<IActionResult> GetListDailyTicketsAsync()
         {
             var result = await _dailyTicketService.GetDailyTicketsAsync();
             return Ok(result);
         }
 
-        [HttpGet("GetDailyTicketByIdAsync/{id}")]
+        [HttpGet("daily-ticket/{id}")]
         public async Task<IActionResult> GetDailyTicketById(string id)
         {
             var result = await _dailyTicketService.GetDailyTicketByIdAsync(id);
             return Ok(result);
         }
 
-        [HttpPost("CreateDailyTicketAsync")]
+        [HttpPost("daily-ticket")]
         public async Task<IActionResult> CreateDailyTicketAsync([FromForm] DailyTicketCreateModel createModel)
         {
             if (!ModelState.IsValid)
@@ -56,7 +56,7 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpPut("UpdateDailyTicketAsync")]
+        [HttpPut("daily-ticket")]
         public async Task<IActionResult> UpdateDailyTicketAsync([FromForm] DailyTicketUpdateModel updateModel)
         {
             if (!ModelState.IsValid)
@@ -74,7 +74,7 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpDelete("DeleteDailyTicketAsync/{id}")]
+        [HttpDelete("daily-ticket/{id}")]
         public async Task<IActionResult> DeleteDailyTicket(string id)
         {
             var result = await _dailyTicketService.DeleteDailyTicket(id);

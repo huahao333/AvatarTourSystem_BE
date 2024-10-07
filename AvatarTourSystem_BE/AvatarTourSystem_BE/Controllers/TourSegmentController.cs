@@ -7,7 +7,7 @@ using Services.Services;
 
 namespace AvatarTourSystem_BE.Controllers
 {
-    [Route("api/tour-segments")]
+    [Route("api/v1")]
     [ApiController]
     public class TourSegmentController : Controller
     {
@@ -18,28 +18,28 @@ namespace AvatarTourSystem_BE.Controllers
             _ourSegmentService = ourSegmentService;
         }
 
-        [HttpGet("GetActiveTourSegmentsAsync")]
+        [HttpGet("tour-segments-active")]
         public async Task<IActionResult> GetListActiveTourSegmentsAsync()
         {
             var result = await _ourSegmentService.GetActiveTourSegmentsAsync();
             return Ok(result);
         }
 
-        [HttpGet("GetAllTourSegmentsAsync")]
+        [HttpGet("tour-segments")]
         public async Task<IActionResult> GetListTourSegmentsAsync()
         {
             var result = await _ourSegmentService.GetTourSegmentsAsync();
             return Ok(result);
         }
 
-        [HttpGet("GetTourSegmentByIdAsync/{id}")]
+        [HttpGet("tour-segment/{id}")]
         public async Task<IActionResult> GetTourSegmentByIdAsync(string id)
         {
             var result = await _ourSegmentService.GetTourSegmentByIdAsync(id);
             return Ok(result);
         }
 
-        [HttpPost("CreateTourSegmentAsync")]
+        [HttpPost("tour-segment")]
         public async Task<IActionResult> CreateTourSegmentAsync([FromForm] TourSegmentCreateModel createModel)
         {
             if (!ModelState.IsValid)
@@ -57,7 +57,7 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpPut("UpdateTourSegmentAsync")]
+        [HttpPut("tour-segment")]
         public async Task<IActionResult> UpdateTourSegmentAsync([FromForm] TourSegmentUpdateModel updateModel)
         {
             if (!ModelState.IsValid)
@@ -75,7 +75,7 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpDelete("DeleteTourSegmentAsync/{id}")]
+        [HttpDelete("tour-segment/{id}")]
         public async Task<IActionResult> DeleteTourSegmentAsync(string id)
         {
             var result = await _ourSegmentService.DeleteTourSegment(id);

@@ -4,7 +4,7 @@ using Services.Interfaces;
 
 namespace AvatarTourSystem_BE.Controllers
 {
-    [Route("api/service")]
+    [Route("api/v1")]
     [ApiController]
     public class ServiceController : ControllerBase
     {
@@ -14,28 +14,28 @@ namespace AvatarTourSystem_BE.Controllers
         {
             _serviceService = serviceService;
         }
-        [HttpGet("GetActiveServicesAsync")]
+        [HttpGet("services-active")]
         public async Task<IActionResult> GetListActiveServicesAsync()
         {
             var result = await _serviceService.GetActiveServicesAsync();
             return Ok(result);
         }
 
-        [HttpGet("GetAllServicesAsync")]
+        [HttpGet("services")]
         public async Task<IActionResult> GetListServicesAsync()
         {
             var result = await _serviceService.GetServicesAsync();
             return Ok(result);
         }
 
-        [HttpGet("GetServiceByIdAsync/{id}")]
+        [HttpGet("service/{id}")]
         public async Task<IActionResult> GetServiceByIdAsync(string id)
         {
             var result = await _serviceService.GetServiceByIdAsync(id);
             return Ok(result);
         }
 
-        [HttpPost("CreateServiceAsync")]
+        [HttpPost("service")]
         public async Task<IActionResult> CreateServiceAsync([FromForm] ServiceCreateModel createModel)
         {
             if (!ModelState.IsValid)
@@ -53,7 +53,7 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpPut("UpdateServiceAsync")]
+        [HttpPut("service")]
         public async Task<IActionResult> UpdateServiceAsync([FromForm] ServiceUpdateModel updateModel)
         {
             if (!ModelState.IsValid)
@@ -71,7 +71,7 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpDelete("DeleteServiceAsync/{id}")]
+        [HttpDelete("service/{id}")]
         public async Task<IActionResult> DeleteServiceAsync(string id)
         {
             var result = await _serviceService.DeleteService(id);

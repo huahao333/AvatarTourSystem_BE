@@ -6,7 +6,7 @@ using Services.Services;
 
 namespace AvatarTourSystem_BE.Controllers
 {
-    [Route("api/suppliers")]
+    [Route("api/v1")]
     [ApiController]
     public class SupplierController : Controller
     {
@@ -16,28 +16,28 @@ namespace AvatarTourSystem_BE.Controllers
             _supplierlService = supplierService;
         }
 
-        [HttpGet("GetActiveSuppliersAsync")]
+        [HttpGet("suppliers-active")]
         public async Task<IActionResult> GetListActiveSuppliersAsync()
         {
             var result = await _supplierlService.GetActiveSuppliersAsync();
             return Ok(result);
         }
 
-        [HttpGet("GetAllSuppliersAsync")]
+        [HttpGet("suppliers")]
         public async Task<IActionResult> GetListSuppliersAsync()
         {
             var result = await _supplierlService.GetSuppliersAsync();
             return Ok(result);
         }
 
-        [HttpGet("GetSupplierByIdAsync/{id}")]
+        [HttpGet("supplier/{id}")]
         public async Task<IActionResult> GetSupplierByIdAsync(string id)
         {
             var result = await _supplierlService.GetSupplierByIdAsync(id);
             return Ok(result);
         }
 
-        [HttpPost("CreateSupplierAsync")]
+        [HttpPost("supplier")]
         public async Task<IActionResult> CreateSupplierAsync([FromForm] SupplierCreateModel createModel)
         {
             if (!ModelState.IsValid)
@@ -55,7 +55,7 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpPut("UpdateSupplierAsync")]
+        [HttpPut("supplier")]
         public async Task<IActionResult> UpdateSupplierAsync([FromForm] SupplierUpdateModel updateModel)
         {
             if (!ModelState.IsValid)
@@ -73,7 +73,7 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpDelete("DeleteSupplierAsync/{id}")]
+        [HttpDelete("supplier/{id}")]
         public async Task<IActionResult> DeleteSupplierAsync(string id)
         {
             var result = await _supplierlService.DeleteSupplier(id);

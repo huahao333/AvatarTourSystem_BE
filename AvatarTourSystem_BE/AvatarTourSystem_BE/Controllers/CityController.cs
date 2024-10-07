@@ -5,7 +5,7 @@ using Services.Interfaces;
 
 namespace AvatarTourSystem_BE.Controllers
 {
-    [Route("api/city")]
+    [Route("api/v1")]
     [ApiController]
     public class CityController : Controller
     {
@@ -16,28 +16,28 @@ namespace AvatarTourSystem_BE.Controllers
             _CityService = CityService;
         }
 
-        [HttpGet("GetActiveCitiesAsync")]
+        [HttpGet("cities-active")]
         public async Task<IActionResult> GetListActiveCitiesAsync()
         {
             var result = await _CityService.GetActiveCitiesAsync();
             return Ok(result);
         }
 
-        [HttpGet("GetAllCitiesAsync")]
+        [HttpGet("cities")]
         public async Task<IActionResult> GetListCitiesAsync()
         {
             var result = await _CityService.GetCitiesAsync();
             return Ok(result);
         }
 
-        [HttpGet("GetCityByIdAsync/{id}")]
+        [HttpGet("city/{id}")]
         public async Task<IActionResult> GetCityById(string id)
         {
             var result = await _CityService.GetCityByIdAsync(id);
             return Ok(result);
         }
 
-        [HttpPost("CreateCityAsync")]
+        [HttpPost("city")]
         public async Task<IActionResult> CreateCityAsync([FromForm] CityCreateModel createModel)
         {
             if (!ModelState.IsValid)
@@ -55,7 +55,7 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpPut("UpdateCityAsync")]
+        [HttpPut("city")]
         public async Task<IActionResult> UpdateCityAsync([FromForm] CityUpdateModel updateModel)
         {
             if (!ModelState.IsValid)
@@ -73,7 +73,7 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpDelete("DeleteCityAsync/{id}")]
+        [HttpDelete("city/{id}")]
         public async Task<IActionResult> DeleteCity(string id)
         {
             var result = await _CityService.DeleteCity(id);

@@ -5,7 +5,7 @@ using Services.Interfaces;
 
 namespace AvatarTourSystem_BE.Controllers
 {
-    [Route("api/service-type")]
+    [Route("api/v1")]
     [ApiController]
     public class ServiceTypeController : ControllerBase
     {
@@ -16,28 +16,28 @@ namespace AvatarTourSystem_BE.Controllers
             _serviceTypeService = serviceTypeService;
         }
 
-        [HttpGet("GetActiveServiceTypesAsync")]
+        [HttpGet("services-type-active")]
         public async Task<IActionResult> GetListActiveServiceTypesAsync()
         {
             var result = await _serviceTypeService.GetActiveServiceTypesAsync();
             return Ok(result);
         }
 
-        [HttpGet("GetAllServiceTypesAsync")]
+        [HttpGet("services-type")]
         public async Task<IActionResult> GetListServiceTypesAsync()
         {
             var result = await _serviceTypeService.GetServiceTypesAsync();
             return Ok(result);
         }
 
-        [HttpGet("GetServiceTypeByIdAsync/{id}")]
+        [HttpGet("service-type/{id}")]
         public async Task<IActionResult> GetServiceTypeByIdAsync(string id)
         {
             var result = await _serviceTypeService.GetServiceTypeByIdAsync(id);
             return Ok(result);
         }
 
-        [HttpPost("CreateServiceTypeAsync")]
+        [HttpPost("service-type")]
         public async Task<IActionResult> CreateServiceTypeAsync([FromForm] ServiceTypeCreateModel createModel)
         {
             if (!ModelState.IsValid)
@@ -55,7 +55,7 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpPut("UpdateServiceTypeAsync")]
+        [HttpPut("service-type")]
         public async Task<IActionResult> UpdateServiceTypeAsync([FromForm] ServiceTypeUpdateModel updateModel)
         {
             if (!ModelState.IsValid)
@@ -73,7 +73,7 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpDelete("DeleteServiceTypeAsync/{id}")]
+        [HttpDelete("service-type/{id}")]
         public async Task<IActionResult> DeleteServiceTypeAsync(string id)
         {
             var result = await _serviceTypeService.DeleteServiceType(id);

@@ -5,55 +5,55 @@ using Services.Interfaces;
 
 namespace AvatarTourSystem_BE.Controllers
 {
-    [Route("api/customer-support")]
+    [Route("api/v1")]
     [ApiController]
     public class CustomerSupportController : ControllerBase
     {
         private readonly ICustomerSupportService _customerSupportService;
 
-        [HttpPost("CreateCustomerSupportAsync")]
+        [HttpPost("customer-support")]
         public async Task<IActionResult> CreateCustomerSupport([FromForm] CustomerSupportCreateModel createModel)
         {
             var response = await _customerSupportService.CreateCustomerSupport(createModel);
             return Ok(response);
         }
 
-        [HttpPut("UpdateCustomerSupportAsync")]
+        [HttpPut("customer-support")]
         public async Task<IActionResult> UpdateCustomerSupport([FromForm] CustomerSupportUpdateModel updateModel)
         {
             var response = await _customerSupportService.UpdateCustomerSupport(updateModel);
             return Ok(response);
         }
 
-        [HttpDelete("DeleteCustomerSupportAsync")]
-        public async Task<IActionResult> DeleteCustomerSupport([FromForm] string cusId)
+        [HttpDelete("customer-support/{id}")]
+        public async Task<IActionResult> DeleteCustomerSupport([FromForm] string id)
         {
-            var response = await _customerSupportService.DeleteCustomerSupport(cusId);
+            var response = await _customerSupportService.DeleteCustomerSupport(id);
             return Ok(response);
         }
 
-        [HttpGet("GetAllCustomerSupportAsync")]
+        [HttpGet("customer-supports")]
         public async Task<IActionResult> GetAllCustomerSupport()
         {
             var response = await _customerSupportService.GetAllCustomerSupport();
             return Ok(response);
         }
 
-        [HttpGet("GetCustomerSupportByIdAsync/{cusId}")]
+        [HttpGet("customer-supports-cus/{cusId}")]
         public async Task<IActionResult> GetCustomerSupportById(string cusId)
         {
             var response = await _customerSupportService.GetCustomerSupportById(cusId);
             return Ok(response);
         }
 
-        [HttpGet("GetCustomerSupportByUserIdAsync/{userId}")]
+        [HttpGet("customer-supports-user/{userId}")]
         public async Task<IActionResult> GetCustomerSupportByUserId(string userId)
         {
             var response = await _customerSupportService.GetCustomerSupportByUserId(userId);
             return Ok(response);
         }
 
-        [HttpGet("GetCustomerSupportByStatusAsync")]
+        [HttpGet("customer-support-active")]
         public async Task<IActionResult> GetCustomerSupportByStatus()
         {
             var response = await _customerSupportService.GetCustomerSupportByStatus();

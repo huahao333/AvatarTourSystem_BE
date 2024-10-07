@@ -7,7 +7,7 @@ using Services.Interfaces;
 
 namespace AvatarTourSystem_BE.Controllers
 {
-    [Route("api/account")]
+    [Route("api/v1")]
     [ApiController]
     public class AccountController : ControllerBase
     {
@@ -19,24 +19,24 @@ namespace AvatarTourSystem_BE.Controllers
 
 
        // [Authorize(Roles = "Admin")]
-        [HttpGet("GetAllAccountAsync")]
+        [HttpGet("acccounts")]
         public async Task<IActionResult> GetAllAccount()
         {
             var response = await _accountService.GetAllAccount();
             return Ok(response);
         }
 
-        [HttpGet("GetAccountByStatusAsync")]
+        [HttpGet("accounts-active")]
         public async Task<IActionResult> GetAccountByStatus()
         {
             var response = await _accountService.GetAccountByStatus();
             return Ok(response);
         }
 
-        [HttpGet("GetAccountById/{accountId}")]
-        public async Task<IActionResult> GetAccountById(string accountId)
+        [HttpGet("account/{id}")]
+        public async Task<IActionResult> GetAccountById(string id)
         {
-            var response = await _accountService.GetAccountById(accountId);
+            var response = await _accountService.GetAccountById(id);
             if(response.IsSuccess)
             {
                 return Ok(response);
@@ -47,7 +47,7 @@ namespace AvatarTourSystem_BE.Controllers
             }
            
         }
-        [HttpGet("GetAccountByZaloID/{zaloId}")]
+        [HttpGet("account-zalo/{zaloId}")]
         public async Task<IActionResult> GetAccountByZaloID(string zaloId)
         {
             var response = await _accountService.GetAccountByZaloID(zaloId);
@@ -62,7 +62,7 @@ namespace AvatarTourSystem_BE.Controllers
 
         }
 
-        [HttpPost("CreateAccountAsync")]
+        [HttpPost("account")]
         public async Task<IActionResult> CreateAccount(AccountCreateModel createModel)
         {
             if (!ModelState.IsValid)
@@ -81,7 +81,7 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpPut("UpdateAccoutAsync")]
+        [HttpPut("account")]
         public async Task<IActionResult> UpdateAccount(AccountUpdateModel updateModel)
         {
             if (!ModelState.IsValid)
@@ -100,28 +100,28 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpDelete("DeleteAccount/{accountId}")]
-        public async Task<IActionResult> DeleteAccount(string accountId)
+        [HttpDelete("account/{id}")]
+        public async Task<IActionResult> DeleteAccount(string id)
         {
-            var response = await _accountService.DeleteAccount(accountId);
+            var response = await _accountService.DeleteAccount(id);
             return Ok(response);
         }
 
-        [HttpPost("SignUpAccountAsync")]
+        [HttpPost("account-sign-up")]
         public async Task<IActionResult> SignUp(AccountSignUpModel signUpModel)
         {
             var response = await _accountService.SignUpAccountAsync(signUpModel);
             return Ok(response);
         }
 
-        [HttpPost("SignInAccountAsync")]
+        [HttpPost("account-sign-in")]
         public async Task<IActionResult> SignIn(AccountSignInModel signInModel)
         {
             var response = await _accountService.SignInAccountAsync(signInModel);
             return Ok(response);
         }
 
-        [HttpPost("SignUpAccountZaloAsync")]
+        [HttpPost("login-zalo")]
         public async Task<IActionResult> SignUpZalo(AccountZaloIdModel accountZaloIdModel )
         {
             var response = await _accountService.SignUpAccountZaloAsync(accountZaloIdModel);

@@ -5,7 +5,7 @@ using Services.Interfaces;
 
 namespace AvatarTourSystem_BE.Controllers
 {
-    [Route("api/notification")]
+    [Route("api/v1")]
     [ApiController]
     public class NotificatonController : ControllerBase
     {
@@ -14,35 +14,35 @@ namespace AvatarTourSystem_BE.Controllers
         {
             _notuService = notuService;
         }
-        [HttpGet("GetAllNotificationsAsync")]
+        [HttpGet("notifications")]
         public async Task<IActionResult> GetAllNotifications()
         {
             var response = await _notuService.GetAllNotificaiton();
             return Ok(response);
         }
 
-        [HttpGet("GetNotificationsByStatusAsync")]
+        [HttpGet("notifications-active")]
         public async Task<IActionResult> GetNotificationsByStatus()
         {
             var response = await _notuService.GetNotificaitonByStatus();
             return Ok(response);
         }
 
-        [HttpGet("GetNotificationByIdAsync/{notificationId}")]
+        [HttpGet("notification/{notificationId}")]
         public async Task<IActionResult> GetNotificationById(string notificationId)
         {
             var response = await _notuService.GetNotificaitonById(notificationId);
             return Ok(response);
         }
 
-        [HttpGet("GetNotificationsByUserIdAsync/{userId}")]
+        [HttpGet("notifications-user/{userId}")]
         public async Task<IActionResult> GetNotificationsByUserId(string userId)
         {
             var response = await _notuService.GetNotificaitonByUserId(userId);
             return Ok(response);
         }
 
-        [HttpPost("CreateNotificationAsync")]
+        [HttpPost("notification")]
         public async Task<IActionResult> CreateNotification(NotificationCreateModel createModel)
         {
             if (!ModelState.IsValid)
@@ -60,7 +60,7 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpPut("UpdateNotificationAsync")]
+        [HttpPut("notification")]
         public async Task<IActionResult> UpdateNotification(NotificationUpdateModel updateModel)
         {
             if (!ModelState.IsValid)
@@ -78,7 +78,7 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpDelete("DeleteNotificationAsync/{notificationId}")]
+        [HttpDelete("notification/{notificationId}")]
         public async Task<IActionResult> DeleteNotification(string notificationId)
         {
             var response = await _notuService.DeleteNotificaiton(notificationId);

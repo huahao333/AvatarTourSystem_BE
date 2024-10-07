@@ -5,7 +5,7 @@ using Services.Interfaces;
 
 namespace AvatarTourSystem_BE.Controllers
 {
-    [Route("api/request-type")]
+    [Route("api/v1")]
     [ApiController]
     public class RequestTypeController : ControllerBase
     {
@@ -15,7 +15,7 @@ namespace AvatarTourSystem_BE.Controllers
             _requestTypeService = requestTypeService;
         }
 
-        [HttpPost("CreateRequestTypeAsync")]
+        [HttpPost("request-type")]
         public async Task<IActionResult> CreateRequestType([FromBody] RequestTypeCreateModel requestTypeCreateModel)
         {
             if (!ModelState.IsValid)
@@ -27,35 +27,35 @@ namespace AvatarTourSystem_BE.Controllers
             return Ok(result);
         }
 
-        [HttpDelete("DeleteRequestTypeAsync/{id}")]
+        [HttpDelete("request-type/{id}")]
         public async Task<IActionResult> DeleteRequestTypeAsync(string id)
         {
             var result = await _requestTypeService.DeleteRequestType(id);
             return Ok(result);
         }
 
-        [HttpGet("GetAllRequestTypesAsync")]
+        [HttpGet("requests-type")]
         public async Task<IActionResult> GetAllRequestTypes()
         {
             var response = await _requestTypeService.GetAllRequestType();
             return Ok(response);
         }
 
-        [HttpGet("GetRequestTypeByIdAsync/{requestTypeId}")]
-        public async Task<IActionResult> GetRequestTypeById(string requestTypeId)
+        [HttpGet("request-type/{id}")]
+        public async Task<IActionResult> GetRequestTypeById(string id)
         {
-            var response = await _requestTypeService.GetRequestTypeById(requestTypeId);
+            var response = await _requestTypeService.GetRequestTypeById(id);
             return Ok(response);
         }
 
-        [HttpGet("GetRequestTypesByStatusAsync")]
+        [HttpGet("requests-type-active")]
         public async Task<IActionResult> GetRequestTypesByStatus()
         {
             var response = await _requestTypeService.GetRequestTypeByStatus();
             return Ok(response);
         }
 
-        [HttpPut("UpdateRequestTypeAsync")]
+        [HttpPut("request-type")]
         public async Task<IActionResult> UpdateRequestType([FromBody] RequestTypeUpdateModel updateModel)
         {
             if (!ModelState.IsValid)

@@ -7,7 +7,7 @@ using Services.Interfaces;
 
 namespace AvatarTourSystem_BE.Controllers
 {
-    [Route("api/revenues")]
+    [Route("api/v1")]
     [ApiController]
     public class RevenueController : Controller
     {
@@ -18,28 +18,28 @@ namespace AvatarTourSystem_BE.Controllers
             _revenueService = revenueService;
         }
 
-        [HttpGet("GetAllRevenuesAsync")]
+        [HttpGet("revenues")]
         public async Task<IActionResult> GetAllRevenuesAsync()
         {
             var result = await _revenueService.GetRevenuesAsync();
             return Ok(result);
         }
 
-        [HttpGet("GetActiveRevenuesAsync")]
+        [HttpGet("revenues-active")]
         public async Task<IActionResult> GetActiveRevenuesAsync()
         {
             var result = await _revenueService.GetActiveRevenuesAsync();
             return Ok(result);
         }
 
-        [HttpGet("GetRevenueByIdAsync/{id}")]
+        [HttpGet("revenue/{id}")]
         public async Task<IActionResult> GetRevenueByIdAsync(string id)
         {
             var result = await _revenueService.GetRevenueByIdAsync(id);
             return Ok(result);
         }
 
-        [HttpPost("CreateRevenueAsync")]
+        [HttpPost("revenue")]
         public async Task<IActionResult> CreateRevenueAsync([FromForm] RevenueCreateModel createModel)
         {
             if (!ModelState.IsValid)
@@ -57,7 +57,7 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpPut("UpdateRevenueAsync")]
+        [HttpPut("revenue")]
         public async Task<IActionResult> UpdateRevenueAsync([FromForm] RevenueUpdateModel updateModel)
         {
             if (!ModelState.IsValid)
@@ -75,7 +75,7 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpDelete("DeleteRevenueAsync/{id}")]
+        [HttpDelete("revenue/{id}")]
         public async Task<IActionResult> DeleteRevenueAsync(string id)
         {
             var result = await _revenueService.DeleteRevenue(id);

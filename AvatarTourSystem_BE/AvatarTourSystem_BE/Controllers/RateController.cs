@@ -5,7 +5,7 @@ using Services.Interfaces;
 
 namespace AvatarTourSystem_BE.Controllers
 {
-    [Route("api/rate")]
+    [Route("api/v1")]
     [ApiController]
     public class RateController : ControllerBase
     {
@@ -14,42 +14,42 @@ namespace AvatarTourSystem_BE.Controllers
         {
             _rateService = rateService;
         }
-        [HttpGet("GetAllRatesAsync")]
+        [HttpGet("rates")]
         public async Task<IActionResult> GetAllRates()
         {
             var result = await _rateService.GetAllRate();
             return Ok(result);
         }
 
-        [HttpGet("GetRateByIdAsync/{id}")]
+        [HttpGet("rate/{id}")]
         public async Task<IActionResult> GetRateByIdAsync(string id)
         {
             var result = await _rateService.GetRateById(id);
             return Ok(result);
         }
 
-        [HttpGet("GetRateByBookingIdAsync/{bookingId}")]
+        [HttpGet("rates-booking/{bookingId}")]
         public async Task<IActionResult> GetRateByBookingId(string bookingId)
         {
             var result = await _rateService.GetRateByBookingId(bookingId);
             return Ok(result);
         }
 
-        [HttpGet("GetRateByUserIdAsync/{userId}")]
+        [HttpGet("rates-user/{userId}")]
         public async Task<IActionResult> GetRateByUserId(string userId)
         {
             var result = await _rateService.GetRateByUserId(userId);
             return Ok(result);
         }
 
-        [HttpGet("GetRatesByStatusAsync")]
+        [HttpGet("rates-active")]
         public async Task<IActionResult> GetRatesByStatus()
         {
             var result = await _rateService.GetRateByStatus();
             return Ok(result);
         }
 
-        [HttpPost("CreateRateAsync")]
+        [HttpPost("rate")]
         public async Task<IActionResult> CreateRate([FromForm] RateCreateModel rate)
         {
             if (!ModelState.IsValid)
@@ -67,7 +67,7 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpPut("UpdateRateAsync")]
+        [HttpPut("rate")]
         public async Task<IActionResult> UpdateRate([FromForm] RateUpdateModel rate)
         {
             if (!ModelState.IsValid)
@@ -85,7 +85,7 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpDelete("DeleteRateAsync/{id}")]
+        [HttpDelete("rate/{id}")]
         public async Task<IActionResult> DeleteRate(string id)
         {
             var result = await _rateService.DeleteRate(id);

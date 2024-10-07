@@ -4,7 +4,7 @@ using Services.Interfaces;
 
 namespace AvatarTourSystem_BE.Controllers
 {
-    [Route("api/poi-type")]
+    [Route("api/v1")]
     [ApiController]
     public class POITypeController : ControllerBase
     {
@@ -13,28 +13,28 @@ namespace AvatarTourSystem_BE.Controllers
         {
             _poiTypeService = poiTypeService;
         }
-        [HttpGet("GetAllPOITypesAsync")]
+        [HttpGet("poi-types")]
         public async Task<IActionResult> GetAllPOITypes()
         {
             var result = await _poiTypeService.GetAllPOITypes();
             return Ok(result);
         }
 
-        [HttpGet("GetActivePOITypesAsync")]
+        [HttpGet("poi-types-active")]
         public async Task<IActionResult> GetActivePOITypes()
         {
             var result = await _poiTypeService.GetPOITypesByStatus();
             return Ok(result);
         }
 
-        [HttpGet("GetPOITypeByIdAsync/{id}")]
+        [HttpGet("poi-type/{id}")]
         public async Task<IActionResult> GetPOITypeByIdAsync(string id)
         {
             var result = await _poiTypeService.GetPOITypeById(id);
             return Ok(result);
         }
 
-        [HttpPost("CreatePOITypeAsync")]
+        [HttpPost("poi-type")]
         public async Task<IActionResult> CreatePOIType([FromForm] POITypeCreateModel createModel)
         {
             if (!ModelState.IsValid)
@@ -52,7 +52,7 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpPut("UpdatePOITypeAsync")]
+        [HttpPut("poi-type")]
         public async Task<IActionResult> UpdatePOIType([FromForm] POITypeUpdateModel updateModel)
         {
             if (!ModelState.IsValid)
@@ -70,7 +70,7 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpDelete("DeletePOITypeAsync/{id}")]
+        [HttpDelete("poi-type/{id}")]
         public async Task<IActionResult> DeletePOIType(string id)
         {
             var result = await _poiTypeService.DeletePOIType(id);

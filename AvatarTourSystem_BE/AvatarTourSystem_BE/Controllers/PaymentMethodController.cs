@@ -5,7 +5,7 @@ using Services.Interfaces;
 
 namespace AvatarTourSystem_BE.Controllers
 {
-    [Route("api/payment-method")]
+    [Route("api/v1")]
     [ApiController]
     public class PaymentMethodController : ControllerBase
     {
@@ -14,28 +14,28 @@ namespace AvatarTourSystem_BE.Controllers
         {
             _paymentMethodService = paymentMethodService;
         }
-        [HttpGet("GetAllPaymentMethodsAsync")]
+        [HttpGet("payment-methods")]
         public async Task<IActionResult> GetAllPaymentMethods()
         {
             var result = await _paymentMethodService.GetAllPaymentMethods();
             return Ok(result);
         }
 
-        [HttpGet("GetActivePaymentMethodsAsync")]
+        [HttpGet("payment-methods-active")]
         public async Task<IActionResult> GetActivePaymentMethods()
         {
             var result = await _paymentMethodService.GetPaymentMethodsByStatus();
             return Ok(result);
         }
 
-        [HttpGet("GetPaymentMethodByIdAsync/{id}")]
+        [HttpGet("payment-method/{id}")]
         public async Task<IActionResult> GetPaymentMethodByIdAsync(string id)
         {
             var result = await _paymentMethodService.GetPaymentMethodById(id);
             return Ok(result);
         }
 
-        [HttpPost("CreatePaymentMethodAsync")]
+        [HttpPost("payment-method")]
         public async Task<IActionResult> CreatePaymentMethod([FromForm] PaymentMethodCreateModel createModel)
         {
             if (!ModelState.IsValid)
@@ -53,7 +53,7 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpPut("UpdatePaymentMethodAsync")]
+        [HttpPut("payment-method")]
         public async Task<IActionResult> UpdatePaymentMethod([FromForm] PaymentMethodUpdateModel updateModel)
         {
             if (!ModelState.IsValid)
@@ -71,7 +71,7 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpDelete("DeletePaymentMethodAsync/{id}")]
+        [HttpDelete("payment-method/{id}")]
         public async Task<IActionResult> DeletePaymentMethod(string id)
         {
             var result = await _paymentMethodService.DeletePaymentMethod(id);

@@ -6,7 +6,7 @@ using Services.Interfaces;
 
 namespace AvatarTourSystem_BE.Controllers
 {
-    [Route("api/booking")]
+    [Route("api/v1")]
     [ApiController]
     public class BookingController : Controller
     {
@@ -17,28 +17,28 @@ namespace AvatarTourSystem_BE.Controllers
             _bookingService = bookingService;
         }
 
-        [HttpGet("GetActiveBookingsAsync")]
+        [HttpGet("bookings-active")]
         public async Task<IActionResult> GetListActiveBookingsAsync()
         {
             var result = await _bookingService.GetActiveBookingsAsync();
             return Ok(result);
         }
 
-        [HttpGet("GetAllBookingsAsync")]
+        [HttpGet("bookings")]
         public async Task<IActionResult> GetListBookingsAsync()
         {
             var result = await _bookingService.GetBookingsAsync();
             return Ok(result);
         }
 
-        [HttpGet("GetBookingByIdAsync/{id}")]
+        [HttpGet("bookings/{id}")]
         public async Task<IActionResult> GetBookingById(string id)
         {
             var result = await _bookingService.GetBookingByIdAsync(id);
             return Ok(result);
         }
 
-        [HttpPost("CreateBookingAsync")]
+        [HttpPost("booking")]
         public async Task<IActionResult> CreateBookingAsync([FromForm] BookingCreateModel createModel)
         {
             if (!ModelState.IsValid)
@@ -56,7 +56,7 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpPut("UpdateBookingAsync")]
+        [HttpPut("booking")]
         public async Task<IActionResult> UpdateBookingAsync([FromForm] BookingUpdateModel updateModel)
         {
             if (!ModelState.IsValid)
@@ -74,7 +74,7 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpDelete("DeleteBookingAsync/{id}")]
+        [HttpDelete("booking/{id}")]
         public async Task<IActionResult> DeleteBooking(string id)
         {
             var result = await _bookingService.DeleteBooking(id);

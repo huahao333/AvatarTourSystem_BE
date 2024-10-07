@@ -5,7 +5,7 @@ using Services.Interfaces;
 
 namespace AvatarTourSystem_BE.Controllers
 {
-    [Route("api/destination")]
+    [Route("api/v1")]
     [ApiController]
     public class DestinationController : Controller
     {
@@ -15,28 +15,28 @@ namespace AvatarTourSystem_BE.Controllers
         {
             _DestinationService = DestinationService;
         }
-        [HttpGet("GetActiveDestinationsAsync")]
+        [HttpGet("destinations-active")]
         public async Task<IActionResult> GetActiveDestinationsAsync()
         {
             var result = await _DestinationService.GetActiveDestinationsAsync();
             return Ok(result);
         }
 
-        [HttpGet("GetAllDestinationsAsync")]
+        [HttpGet("destinations")]
         public async Task<IActionResult> GetAllDestinationsAsync()
         {
             var result = await _DestinationService.GetDestinationsAsync();
             return Ok(result);
         }
 
-        [HttpGet("GetDestinationByIdAsync/{id}")]
+        [HttpGet("destination/{id}")]
         public async Task<IActionResult> GetDestinationByIdAsync(string id)
         {
             var result = await _DestinationService.GetDestinationByIdAsync(id);
             return Ok(result);
         }
 
-        [HttpPost("CreateDestinationAsync")]
+        [HttpPost("destination")]
         public async Task<IActionResult> CreateDestinationAsync([FromForm] DestinationCreateModel createModel)
         {
             if (!ModelState.IsValid)
@@ -54,7 +54,7 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpPut("UpdateDestinationAsync")]
+        [HttpPut("destination")]
         public async Task<IActionResult> UpdateDestinationAsync([FromForm] DestinationUpdateModel updateModel)
         {
             if (!ModelState.IsValid)
@@ -72,7 +72,7 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpDelete("DeleteDestinationAsync/{id}")]
+        [HttpDelete("destinations/{id}")]
         public async Task<IActionResult> DeleteDestinationAsync(string id)
         {
             var result = await _DestinationService.DeleteDestination(id);

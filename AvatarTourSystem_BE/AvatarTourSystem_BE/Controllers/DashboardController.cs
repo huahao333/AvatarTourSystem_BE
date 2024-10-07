@@ -4,7 +4,7 @@ using Services.Interfaces;
 
 namespace AvatarTourSystem_BE.Controllers
 {
-    [Route("api/dashboard")]
+    [Route("api/v1")]
     [ApiController]
     public class DashboardController : ControllerBase
     {

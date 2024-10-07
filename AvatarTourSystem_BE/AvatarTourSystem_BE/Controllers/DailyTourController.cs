@@ -5,7 +5,7 @@ using Services.Interfaces;
 
 namespace AvatarTourSystem_BE.Controllers
 {
-    [Route("api/daily-tour")]
+    [Route("api/v1")]
     [ApiController]
     public class DailyTourController : ControllerBase
     {
@@ -14,28 +14,28 @@ namespace AvatarTourSystem_BE.Controllers
         {
             _dailyTourService = dailyTourService;
         }
-        [HttpGet("GetAllDailyToursAsync")]
+        [HttpGet("dailies-tour")]
         public async Task<IActionResult> GetAllDailyToursAsync()
         {
             var response = await _dailyTourService.GetAllDailyTour();
             return Ok(response);
         }
 
-        [HttpGet("GetDailyToursByStatusAsync")]
+        [HttpGet("dailies-tour-active")]
         public async Task<IActionResult> GetDailyToursByStatusAsync()
         {
             var response = await _dailyTourService.GetDailyTourByStatus();
             return Ok(response);
         }
 
-        [HttpGet("GetDailyTourByIdAsync/{dailyTourId}")]
-        public async Task<IActionResult> GetDailyTourByIdAsync(string dailyTourId)
+        [HttpGet("dailies-tour/{id}")]
+        public async Task<IActionResult> GetDailyTourByIdAsync(string id)
         {
-            var response = await _dailyTourService.GetDailyTourById(dailyTourId);
+            var response = await _dailyTourService.GetDailyTourById(id);
             return Ok(response);
         }
 
-        [HttpPost("CreateDailyTourAsync")]
+        [HttpPost("dailies-tour")]
         public async Task<IActionResult> CreateDailyTourAsync([FromForm] DailyTourCreateModel createModel)
         {
             if (!ModelState.IsValid)
@@ -53,7 +53,7 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpPut("UpdateDailyTourAsync")]
+        [HttpPut("dailies-tour")]
         public async Task<IActionResult> UpdateDailyTourAsync([FromForm] DailyTourUpdateModel updateModel)
         {
             if (!ModelState.IsValid)
@@ -71,10 +71,10 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpDelete("DeleteDailyTourAsync/{dailyTourId}")]
-        public async Task<IActionResult> DeleteDailyTourAsync(string dailyTourId)
+        [HttpDelete("dailies-tour/{id}")]
+        public async Task<IActionResult> DeleteDailyTourAsync(string id)
         {
-            var result = await _dailyTourService.DeleteDailyTour(dailyTourId);
+            var result = await _dailyTourService.DeleteDailyTour(id);
             if (result.IsSuccess)
             {
                 return Ok(result);
@@ -85,7 +85,7 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpGet("GetDailyToursByPackageTourIdAsync/{packId}")]
+        [HttpGet("dailies-tour-package/{packId}")]
         public async Task<IActionResult> GetDailyToursByPackageTourIdAsync(string packId)
         {
             var response = await _dailyTourService.GetDailyTourByPackageTour(packId);

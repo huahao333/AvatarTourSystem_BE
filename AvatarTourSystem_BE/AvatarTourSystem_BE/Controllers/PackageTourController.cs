@@ -7,7 +7,7 @@ using Services.Services;
 
 namespace AvatarTourSystem_BE.Controllers
 {
-    [Route("api/package-tours")]
+    [Route("api/v1")]
     [ApiController]
     public class PackageTourController : Controller
     {
@@ -18,28 +18,28 @@ namespace AvatarTourSystem_BE.Controllers
             _packageTourService = packageTourService;
         }
 
-        [HttpGet("GetActivePackageToursAsync")]
+        [HttpGet("package-tours-active")]
         public async Task<IActionResult> GetActivePackageToursAsync()
         {
             var result = await _packageTourService.GetActivePackageToursAsync();
             return Ok(result);
         }
 
-        [HttpGet("GetAllPackageToursAsync")]
+        [HttpGet("package-tours")]
         public async Task<IActionResult> GetAllPackageToursAsync()
         {
             var result = await _packageTourService.GetPackageToursAsync();
             return Ok(result);
         }
 
-        [HttpGet("GetPackageTourByIdAsync/{id}")]
+        [HttpGet("package-tour/{id}")]
         public async Task<IActionResult> GetPackageTourByIdAsync(string id)
         {
             var result = await _packageTourService.GetPackageTourByIdAsync(id);
             return Ok(result);
         }
 
-        [HttpPost("CreatePackageTourAsync")]
+        [HttpPost("package-tour")]
         public async Task<IActionResult> CreatePackageTourAsync([FromForm] PackageTourCreateModel createModel)
         {
             if (!ModelState.IsValid)
@@ -57,7 +57,7 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpPut("UpdatePackageTourAsync")]
+        [HttpPut("package-tour")]
         public async Task<IActionResult> UpdatePackageTourAsync([FromForm] PackageTourUpdateModel updateModel)
         {
             if (!ModelState.IsValid)
@@ -75,7 +75,7 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpDelete("DeletePackageTourAsync/{id}")]
+        [HttpDelete("package-tour/{id}")]
         public async Task<IActionResult> DeletePackageTour(string id)
         {
             var result = await _packageTourService.DeletePackageTour(id);

@@ -5,7 +5,7 @@ using Services.Interfaces;
 
 namespace AvatarTourSystem_BE.Controllers
 {
-        [Route("api/feedback")]
+        [Route("api/v1")]
         [ApiController]
         public class FeebackController : ControllerBase
         {
@@ -16,42 +16,42 @@ namespace AvatarTourSystem_BE.Controllers
                 _feedbakService = feedbakService;
             }
 
-        [HttpGet("GetAllFeedbacksAsync")]
+        [HttpGet("feedbacks")]
         public async Task<IActionResult> GetAllFeedbacksAsync()
         {
             var response = await _feedbakService.GetAllFeedbacks();
             return Ok(response);
         }
 
-        [HttpGet("GetFeedbacksByStatusAsync")]
+        [HttpGet("feedback-active")]
         public async Task<IActionResult> GetFeedbacksByStatusAsync()
         {
             var response = await _feedbakService.GetFeedbackByStatus();
             return Ok(response);
         }
 
-        [HttpGet("GetFeedbackByIdAsync/{id}")]
+        [HttpGet("feedback/{id}")]
         public async Task<IActionResult> GetFeedbackByIdAsync(string id)
         {
             var response = await _feedbakService.GetFeedbackById(id);
             return Ok(response);
         }
 
-        [HttpGet("GetFeedbackByUserIdAsync/{userId}")]
+        [HttpGet("feedbacks-user/{userId}")]
         public async Task<IActionResult> GetFeedbackByUserIdAsync(string userId)
         {
             var response = await _feedbakService.GetFeedbackByUserId(userId);
             return Ok(response);
         }
 
-        [HttpGet("GetFeedbackByBookingIdAsync/{bookingId}")]
+        [HttpGet("feedbacks-booking/{bookingId}")]
         public async Task<IActionResult> GetFeedbackByBookingIdAsync(string bookingId)
         {
             var response = await _feedbakService.GetFeedbackByBookingId(bookingId);
             return Ok(response);
         }
 
-        [HttpPost("CreateFeedbackAsync")]
+        [HttpPost("feedback")]
         public async Task<IActionResult> CreateFeedbackAsync([FromBody] FeedbackCreateModel feedbackCreateModel)
         {
             if (!ModelState.IsValid)
@@ -62,7 +62,7 @@ namespace AvatarTourSystem_BE.Controllers
             return Ok(response);
         }
 
-        [HttpPut("UpdateFeedbackAsync")]
+        [HttpPut("feedback")]
         public async Task<IActionResult> UpdateFeedbackAsync([FromBody] FeedbackUpdateModel feedbackUpdateModel)
         {
             if (!ModelState.IsValid)
@@ -80,7 +80,7 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpDelete("DeleteFeedbackAsync/{id}")]
+        [HttpDelete("feedback/{id}")]
         public async Task<IActionResult> DeleteFeedbackAsync(string id)
         {
             var response = await _feedbakService.DeleteFeedback(id);

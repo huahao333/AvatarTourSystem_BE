@@ -7,7 +7,7 @@ using Services.Interfaces;
 
 namespace AvatarTourSystem_BE.Controllers
 {
-    [Route("api/package-tour-flow")]
+    [Route("api/v1")]
     [ApiController]
     public class PackageTourFlowController : ControllerBase
     {
@@ -16,7 +16,7 @@ namespace AvatarTourSystem_BE.Controllers
         {
             _packageTourFlow = packageTourFlow;
         }
-        [HttpPost("CreatePackageTourFlowAsync")]
+        [HttpPost("package-tour-flows")]
         public async Task<IActionResult> CreatePackageTourFlowAsync([FromBody] FPackageTourCreateModel packageTourFlowModel)
         {
             if (!ModelState.IsValid)
@@ -33,7 +33,7 @@ namespace AvatarTourSystem_BE.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, result);
             }
         }
-        [HttpPut("CreatePartsPackageTourFlowAsync")]
+        [HttpPut("parts-package-tour-flow")]
         public async Task<IActionResult> CreatePartsPackageTourFlowAsync([FromBody] FPackageTourUpdate packageTourFlowModel)
         {
             if (!ModelState.IsValid)
@@ -50,7 +50,7 @@ namespace AvatarTourSystem_BE.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, result);
             }
         }
-        [HttpGet("GetPackageTourByIdFlowAsync")]
+        [HttpGet("package-tour-flow/{id}")]
         public async Task<IActionResult> GetPackageTourByIdFlowAsync(string id)
         {
             var result = await _packageTourFlow.GetPackageTourFlowByIdAsync(id);
@@ -63,7 +63,7 @@ namespace AvatarTourSystem_BE.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, result);
             }
         }
-        [HttpPut("AddPartToPackageTour")]
+        [HttpPut("package-tours")]
         public async Task<IActionResult> AddPartToPackageTour([FromBody] FPackageTourUpdateModel packageTourFlowModel)
         {
             if (!ModelState.IsValid)
@@ -80,7 +80,7 @@ namespace AvatarTourSystem_BE.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, result);
             }
         }
-        [HttpPut("UpdateTour")]
+        [HttpPut("tour-flow")]
         public async Task<IActionResult> UpdateTour([FromBody] FPackageTourUpdateModel packageTourFlowModel)
         {
             if (!ModelState.IsValid)

@@ -4,7 +4,7 @@ using Services.Interfaces;
 
 namespace AvatarTourSystem_BE.Controllers
 {
-    [Route("api/point-of-interest")]
+    [Route("api/v1")]
     [ApiController]
     public class PointOfInterestController : ControllerBase 
     {
@@ -13,28 +13,28 @@ namespace AvatarTourSystem_BE.Controllers
         {
             _pointOfInterestService = pointOfInterestService;
         }
-        [HttpGet("GetAllPointOfInterestsAsync")]
+        [HttpGet("point-of-interests")]
         public async Task<IActionResult> GetAllPointOfInterests()
         {
             var result = await _pointOfInterestService.GetAllPointOfInterests();
             return Ok(result);
         }
 
-        [HttpGet("GetActivePointOfInterestsAsync")]
+        [HttpGet("point-of-interests-active")]
         public async Task<IActionResult> GetActivePointOfInterests()
         {
             var result = await _pointOfInterestService.GetPointOfInterestsByStatus();
             return Ok(result);
         }
 
-        [HttpGet("GetPointOfInterestByIdAsync/{id}")]
+        [HttpGet("point-of-interest/{id}")]
         public async Task<IActionResult> GetPointOfInterestByIdAsync(string id)
         {
             var result = await _pointOfInterestService.GetPointOfInterestById(id);
             return Ok(result);
         }
 
-        [HttpPost("CreatePointOfInterestAsync")]
+        [HttpPost("point-of-interest")]
         public async Task<IActionResult> CreatePointOfInterest([FromForm] POICreateModel createModel)
         {
             if (!ModelState.IsValid)
@@ -52,7 +52,7 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpPut("UpdatePointOfInterestAsync")]
+        [HttpPut("point-of-interest")]
         public async Task<IActionResult> UpdatePointOfInterest([FromForm] POIUpdateModel updateModel)
         {
             if (!ModelState.IsValid)
@@ -70,7 +70,7 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpDelete("DeletePointOfInterestAsync/{id}")]
+        [HttpDelete("point-of-interest/{id}")]
         public async Task<IActionResult> DeletePointOfInterest(string id)
         {
             var result = await _pointOfInterestService.DeletePointOfInterest(id);
