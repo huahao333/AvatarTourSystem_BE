@@ -11,15 +11,15 @@ namespace BusinessObjects.ViewModels.Location
     public class LocationCreateModel
     {
         
-        [FromForm(Name = "location-name")]
+     //   [FromForm(Name = "location-name")]
         public string? LocationName { get; set; }
-        [FromForm(Name = "location-type")]
+     //   [FromForm(Name = "location-type")]
         public int? LocationType { get; set; }
-        [FromForm(Name = "location-img-url")]
+     //   [FromForm(Name = "location-img-url")]
         public string? LocationImgUrl { get; set; }
-        [FromForm(Name = "destination-id")]
+     //   [FromForm(Name = "destination-id")]
         public string? DestinationId { get; set; }
-        [FromForm(Name = "status")]
+     //   [FromForm(Name = "status")]
         public EStatus? Status { get; set; }
     }
 }

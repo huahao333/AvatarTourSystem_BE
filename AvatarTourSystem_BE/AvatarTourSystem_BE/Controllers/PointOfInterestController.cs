@@ -35,7 +35,7 @@ namespace AvatarTourSystem_BE.Controllers
         }
 
         [HttpPost("point-of-interest")]
-        public async Task<IActionResult> CreatePointOfInterest([FromForm] POICreateModel createModel)
+        public async Task<IActionResult> CreatePointOfInterest(POICreateModel createModel)
         {
             if (!ModelState.IsValid)
             {
@@ -53,7 +53,7 @@ namespace AvatarTourSystem_BE.Controllers
         }
 
         [HttpPut("point-of-interest")]
-        public async Task<IActionResult> UpdatePointOfInterest([FromForm] POIUpdateModel updateModel)
+        public async Task<IActionResult> UpdatePointOfInterest(POIUpdateModel updateModel)
         {
             if (!ModelState.IsValid)
             {

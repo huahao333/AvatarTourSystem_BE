@@ -12,21 +12,21 @@ namespace AvatarTourSystem_BE.Controllers
         private readonly ICustomerSupportService _customerSupportService;
 
         [HttpPost("customer-support")]
-        public async Task<IActionResult> CreateCustomerSupport([FromForm] CustomerSupportCreateModel createModel)
+        public async Task<IActionResult> CreateCustomerSupport(CustomerSupportCreateModel createModel)
         {
             var response = await _customerSupportService.CreateCustomerSupport(createModel);
             return Ok(response);
         }
 
         [HttpPut("customer-support")]
-        public async Task<IActionResult> UpdateCustomerSupport([FromForm] CustomerSupportUpdateModel updateModel)
+        public async Task<IActionResult> UpdateCustomerSupport(CustomerSupportUpdateModel updateModel)
         {
             var response = await _customerSupportService.UpdateCustomerSupport(updateModel);
             return Ok(response);
         }
 
         [HttpDelete("customer-support/{id}")]
-        public async Task<IActionResult> DeleteCustomerSupport([FromForm] string id)
+        public async Task<IActionResult> DeleteCustomerSupport(string id)
         {
             var response = await _customerSupportService.DeleteCustomerSupport(id);
             return Ok(response);

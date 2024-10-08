@@ -38,7 +38,7 @@ namespace AvatarTourSystem_BE.Controllers
         }
 
         [HttpPost("service-type")]
-        public async Task<IActionResult> CreateServiceTypeAsync([FromForm] ServiceTypeCreateModel createModel)
+        public async Task<IActionResult> CreateServiceTypeAsync(ServiceTypeCreateModel createModel)
         {
             if (!ModelState.IsValid)
             {
@@ -56,7 +56,7 @@ namespace AvatarTourSystem_BE.Controllers
         }
 
         [HttpPut("service-type")]
-        public async Task<IActionResult> UpdateServiceTypeAsync([FromForm] ServiceTypeUpdateModel updateModel)
+        public async Task<IActionResult> UpdateServiceTypeAsync(ServiceTypeUpdateModel updateModel)
         {
             if (!ModelState.IsValid)
             {

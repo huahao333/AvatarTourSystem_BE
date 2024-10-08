@@ -12,15 +12,15 @@ namespace BusinessObjects.ViewModels.POI
     public class POIUpdateModel
     {
         [Required]
-        [FromForm(Name = "point-id")]
+     //   [FromForm(Name = "point-id")]
         public Guid PointId { get; set; }
-        [FromForm(Name = "point-name")]
+      //  [FromForm(Name = "point-name")]
         public string? PointName { get; set; }
-        [FromForm(Name = "location-id")]
+      //  [FromForm(Name = "location-id")]
         public string? LocationId { get; set; }
-        [FromForm(Name = "poi-type-id")]
+     //   [FromForm(Name = "poi-type-id")]
         public string? POITypeId { get; set; }
-        [FromForm(Name = "create-date")]
+     //   [FromForm(Name = "create-date")]
         public EStatus? Status { get; set; }
 
     }

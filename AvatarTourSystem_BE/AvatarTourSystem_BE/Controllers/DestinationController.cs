@@ -37,7 +37,7 @@ namespace AvatarTourSystem_BE.Controllers
         }
 
         [HttpPost("destination")]
-        public async Task<IActionResult> CreateDestinationAsync([FromForm] DestinationCreateModel createModel)
+        public async Task<IActionResult> CreateDestinationAsync( DestinationCreateModel createModel)
         {
             if (!ModelState.IsValid)
             {
@@ -55,7 +55,7 @@ namespace AvatarTourSystem_BE.Controllers
         }
 
         [HttpPut("destination")]
-        public async Task<IActionResult> UpdateDestinationAsync([FromForm] DestinationUpdateModel updateModel)
+        public async Task<IActionResult> UpdateDestinationAsync( DestinationUpdateModel updateModel)
         {
             if (!ModelState.IsValid)
             {

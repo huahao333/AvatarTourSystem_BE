@@ -12,13 +12,13 @@ namespace BusinessObjects.ViewModels.Destination
     public class DestinationUpdateModel
     {
         [Required]
-        [FromForm(Name = "destination-id")]
+      //  [FromForm(Name = "destination-id")]
         public Guid DestinationId { get; set; }
-        [FromForm(Name = "destination-name")]
+     //   [FromForm(Name = "destination-name")]
         public string? DestinationName { get; set; }
-        [FromForm(Name = "destination-img-url")]
+     //   [FromForm(Name = "destination-img-url")]
         public string? DestinationImgUrl { get; set; }
-        [FromForm(Name = "staus")]
+      //  [FromForm(Name = "staus")]
         public EStatus? Status { get; set; }
     }
 }

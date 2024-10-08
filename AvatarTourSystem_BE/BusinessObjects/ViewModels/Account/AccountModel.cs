@@ -10,31 +10,31 @@ namespace BusinessObjects.ViewModels.Account
 {
     public class AccountModel
     {
-        [FromForm(Name = "user-id")]
+      //  [FromForm(Name = "user-id")]
         public Guid Id { get; set; }
-        [FromForm(Name = "user-name")]
+     //   [FromForm(Name = "user-name")]
         public string? UserName { get; set; }
-        [FromForm(Name = "gender")]
+     //   [FromForm(Name = "gender")]
         public bool? Gender { get; set; }
-        [FromForm(Name = "dob")]
+      //  [FromForm(Name = "dob")]
         public DateTime? Dob { get; set; }
-        [FromForm(Name = "address")]
+     //   [FromForm(Name = "address")]
         public string? Address { get; set; }
-        [FromForm(Name = "full-name")]
+      //  [FromForm(Name = "full-name")]
         public string? FullName { get; set; }
-        [FromForm(Name = "phone-number")]
+      //  [FromForm(Name = "phone-number")]
         public string? PhoneNumber { get; set; }
-        [FromForm(Name = "avatar-url")]
+     //   [FromForm(Name = "avatar-url")]
         public string? AvatarUrl { get; set; }
-        [FromForm(Name = "zalo-user")]
+      //  [FromForm(Name = "zalo-user")]
         public string? ZaloUser { get; set; }
-        [FromForm(Name = "email")]
+     //   [FromForm(Name = "email")]
         public string? Email { get; set; }
-        [FromForm(Name = "create-date")]
+      //  [FromForm(Name = "create-date")]
         public DateTime? CreateDate { get; set; }
-        [FromForm(Name = "update-date")]
+     //   [FromForm(Name = "update-date")]
         public DateTime? UpdateDate { get; set; }
-        [FromForm(Name = "status")]
+     //   [FromForm(Name = "status")]
         public EStatus? Status { get; set; }
         
     }

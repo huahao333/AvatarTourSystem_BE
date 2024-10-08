@@ -10,19 +10,19 @@ namespace BusinessObjects.ViewModels.Rate
 {
     public class RateModel
     {
-        [FromForm(Name = "rate-id")]
+      //  [FromForm(Name = "rate-id")]
         public string? RateId { get; set; }
-        [FromForm(Name = "user-id")]
+    //    [FromForm(Name = "user-id")]
         public string? UserId { get; set; }
-        [FromForm(Name = "booking-id")]
+     //   [FromForm(Name = "booking-id")]
         public string? BookingId { get; set; }
-        [FromForm(Name = "rate-star")]
+      //  [FromForm(Name = "rate-star")]
         public int? RateStar { get; set; }
-        [FromForm(Name = "create-date")]
+     //   [FromForm(Name = "create-date")]
         public DateTime? CreateDate { get; set; }
-        [FromForm(Name = "update-date")]
+     //   [FromForm(Name = "update-date")]
         public DateTime? UpdateDate { get; set; }
-        [FromForm(Name = "status")]
+     //   [FromForm(Name = "status")]
         public EStatus? Status { get; set; }
     }
 }

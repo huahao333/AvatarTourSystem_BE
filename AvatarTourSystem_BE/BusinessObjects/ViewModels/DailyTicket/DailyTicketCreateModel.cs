@@ -10,17 +10,17 @@ namespace BusinessObjects.ViewModels.DailyTicket
 {
     public class DailyTicketCreateModel
     {
-        [FromForm(Name = "ticket-type-id")]
+      //  [FromForm(Name = "ticket-type-id")]
         public string? TicketTypeId { get; set; }
 
-        [FromForm(Name = "daily-tour-id")]
+      //  [FromForm(Name = "daily-tour-id")]
         public string? DailyTourId { get; set; }
 
-        [FromForm(Name = "capacity")]
+      //  [FromForm(Name = "capacity")]
         public int? Capacity { get; set; }
-        [FromForm(Name = "daily-ticket-price")]
+     //   [FromForm(Name = "daily-ticket-price")]
         public float? DailyTicketPrice { get; set; }
-        [FromForm(Name = "status")]
+      //  [FromForm(Name = "status")]
         public EStatus? Status { get; set; }
     }
 }

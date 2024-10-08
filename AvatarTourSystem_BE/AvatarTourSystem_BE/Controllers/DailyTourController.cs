@@ -36,7 +36,7 @@ namespace AvatarTourSystem_BE.Controllers
         }
 
         [HttpPost("dailies-tour")]
-        public async Task<IActionResult> CreateDailyTourAsync([FromForm] DailyTourCreateModel createModel)
+        public async Task<IActionResult> CreateDailyTourAsync(DailyTourCreateModel createModel)
         {
             if (!ModelState.IsValid)
             {
@@ -54,7 +54,7 @@ namespace AvatarTourSystem_BE.Controllers
         }
 
         [HttpPut("dailies-tour")]
-        public async Task<IActionResult> UpdateDailyTourAsync([FromForm] DailyTourUpdateModel updateModel)
+        public async Task<IActionResult> UpdateDailyTourAsync(DailyTourUpdateModel updateModel)
         {
             if (!ModelState.IsValid)
             {

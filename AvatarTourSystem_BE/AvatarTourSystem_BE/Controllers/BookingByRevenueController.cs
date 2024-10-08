@@ -38,7 +38,7 @@ namespace AvatarTourSystem_BE.Controllers
         }
 
         [HttpPost("booking-revenue")]
-        public async Task<IActionResult> CreateBookingByRevenueAsync([FromForm] BookingByRevenueCreateModel createModel)
+        public async Task<IActionResult> CreateBookingByRevenueAsync(BookingByRevenueCreateModel createModel)
         {
             if (!ModelState.IsValid)
             {
@@ -56,7 +56,7 @@ namespace AvatarTourSystem_BE.Controllers
         }
 
         [HttpPut("booking-revenue")]
-        public async Task<IActionResult> UpdateBookingByRevenueAsync([FromForm] BookingByRevenueUpdateModel updateModel)
+        public async Task<IActionResult> UpdateBookingByRevenueAsync(BookingByRevenueUpdateModel updateModel)
         {
             if (!ModelState.IsValid)
             {

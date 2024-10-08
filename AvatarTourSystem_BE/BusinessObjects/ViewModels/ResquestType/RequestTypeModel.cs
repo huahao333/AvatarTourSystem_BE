@@ -10,17 +10,17 @@ namespace BusinessObjects.ViewModels.ResquestType
 {
     public class RequestTypeModel
     {
-        [FromForm(Name = "request-type-id")]
+      //  [FromForm(Name = "request-type-id")]
         public string? RequestTypeId { get; set; }
-        [FromForm(Name = "type-name")]
+     //   [FromForm(Name = "type-name")]
         public string? Type { get; set; }
-        [FromForm(Name = "priority")]
+     //   [FromForm(Name = "priority")]
         public int? Priority { get; set; }
-        [FromForm(Name = "create-date")]
+     //   [FromForm(Name = "create-date")]
         public DateTime? CreateDate { get; set; }
-        [FromForm(Name = "update-date")]
+     //   [FromForm(Name = "update-date")]
         public DateTime? UpdateDate { get; set; }
-        [FromForm(Name = "status")]
+     //   [FromForm(Name = "status")]
         public EStatus? Status { get; set; }
     }
 }

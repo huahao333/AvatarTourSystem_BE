@@ -10,9 +10,9 @@ namespace BusinessObjects.ViewModels.POIType
 {
     public class POITypeCreateModel
     {
-        [FromForm(Name = "poi-type-name")]
+      //  [FromForm(Name = "poi-type-name")]
         public string? POITypeName { get; set; }
-        [FromForm(Name = "status")]
+    //    [FromForm(Name = "status")]
         public EStatus? Status { get; set; }
     }
 }

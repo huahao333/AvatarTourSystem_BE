@@ -12,11 +12,11 @@ namespace BusinessObjects.ViewModels.POIType
     public class POITypeUpdateModel
     {
         [Required]
-        [FromForm(Name = "poi-type-id")]
+      //  [FromForm(Name = "poi-type-id")]
         public Guid POITypeId { get; set; }
-        [FromForm(Name = "poi-type-name")]
+     //   [FromForm(Name = "poi-type-name")]
         public string? POITypeName { get; set; }
-        [FromForm(Name = "status")]
+     //   [FromForm(Name = "status")]
         public EStatus? Status { get; set; }
     }
 }

@@ -12,15 +12,15 @@ namespace BusinessObjects.ViewModels.Feedback
     public class FeedbackUpdateModel
     {
         [Required]
-        [FromForm(Name = "feedback-id")]      
+      //  [FromForm(Name = "feedback-id")]      
         public Guid FeedbackId { get; set; }
-        [FromForm(Name = "user-id")]
+      //  [FromForm(Name = "user-id")]
         public string? UserId { get; set; }
-        [FromForm(Name = "booking-id")]
+     //   [FromForm(Name = "booking-id")]
         public string? BookingId { get; set; }
-        [FromForm(Name = "feedback-msg")]
+      //  [FromForm(Name = "feedback-msg")]
         public string? FeedbackMsg { get; set; }
-        [FromForm(Name = "status")]
+      //  [FromForm(Name = "status")]
         public EStatus? Status { get; set; }
     }
 }

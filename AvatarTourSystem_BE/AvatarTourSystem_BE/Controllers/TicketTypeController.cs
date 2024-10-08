@@ -39,7 +39,7 @@ namespace AvatarTourSystem_BE.Controllers
         }
 
         [HttpPost("ticket-type")]
-        public async Task<IActionResult> CreateTicketTypeAsync([FromForm] TicketTypeCreateModel createModel)
+        public async Task<IActionResult> CreateTicketTypeAsync(TicketTypeCreateModel createModel)
         {
             if (!ModelState.IsValid)
             {
@@ -57,7 +57,7 @@ namespace AvatarTourSystem_BE.Controllers
         }
 
         [HttpPut("ticket-type")]
-        public async Task<IActionResult> UpdateTicketTypeAsync([FromForm] TicketTypeUpdateModel updateModel)
+        public async Task<IActionResult> UpdateTicketTypeAsync(TicketTypeUpdateModel updateModel)
         {
             if (!ModelState.IsValid)
             {

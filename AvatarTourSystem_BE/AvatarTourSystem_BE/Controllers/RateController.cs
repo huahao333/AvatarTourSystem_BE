@@ -50,7 +50,7 @@ namespace AvatarTourSystem_BE.Controllers
         }
 
         [HttpPost("rate")]
-        public async Task<IActionResult> CreateRate([FromForm] RateCreateModel rate)
+        public async Task<IActionResult> CreateRate(RateCreateModel rate)
         {
             if (!ModelState.IsValid)
             {
@@ -68,7 +68,7 @@ namespace AvatarTourSystem_BE.Controllers
         }
 
         [HttpPut("rate")]
-        public async Task<IActionResult> UpdateRate([FromForm] RateUpdateModel rate)
+        public async Task<IActionResult> UpdateRate(RateUpdateModel rate)
         {
             if (!ModelState.IsValid)
             {

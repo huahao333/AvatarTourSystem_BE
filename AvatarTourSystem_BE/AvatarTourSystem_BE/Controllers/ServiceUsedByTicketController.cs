@@ -40,7 +40,7 @@ namespace AvatarTourSystem_BE.Controllers
         }
 
         [HttpPost("service-used-ticket")]
-        public async Task<IActionResult> CreateServiceUsedByTicketAsync([FromForm] ServiceUsedByTicketCreateModel createModel)
+        public async Task<IActionResult> CreateServiceUsedByTicketAsync( ServiceUsedByTicketCreateModel createModel)
         {
             if (!ModelState.IsValid)
             {
@@ -58,7 +58,7 @@ namespace AvatarTourSystem_BE.Controllers
         }
 
         [HttpPut("service-used-ticket")]
-        public async Task<IActionResult> UpdateServiceUsedByTicketAsync([FromForm] ServiceUsedByTicketUpdateModel updateModel)
+        public async Task<IActionResult> UpdateServiceUsedByTicketAsync( ServiceUsedByTicketUpdateModel updateModel)
         {
             if (!ModelState.IsValid)
             {

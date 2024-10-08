@@ -38,7 +38,7 @@ namespace AvatarTourSystem_BE.Controllers
         }
 
         [HttpPost("supplier")]
-        public async Task<IActionResult> CreateSupplierAsync([FromForm] SupplierCreateModel createModel)
+        public async Task<IActionResult> CreateSupplierAsync(SupplierCreateModel createModel)
         {
             if (!ModelState.IsValid)
             {
@@ -56,7 +56,7 @@ namespace AvatarTourSystem_BE.Controllers
         }
 
         [HttpPut("supplier")]
-        public async Task<IActionResult> UpdateSupplierAsync([FromForm] SupplierUpdateModel updateModel)
+        public async Task<IActionResult> UpdateSupplierAsync(SupplierUpdateModel updateModel)
         {
             if (!ModelState.IsValid)
             {

@@ -10,15 +10,15 @@ namespace BusinessObjects.ViewModels.TransactionHistory
 {
     public class TransactionHistoryUpdateModel
     {
-        [FromForm(Name = "transaction-history-id")]
+     //   [FromForm(Name = "transaction-history-id")]
         public Guid TransactionHistoryId { get; set; }
-        [FromForm(Name = "user-id")]
+     //   [FromForm(Name = "user-id")]
         public string UserId { get; set; }
-        [FromForm(Name = "booking-id")]
+     //   [FromForm(Name = "booking-id")]
         public string BookingId { get; set; }
-        [FromForm(Name = "order-id")]
+     //   [FromForm(Name = "order-id")]
         public string? OrderId { get; set; }
-        [FromForm(Name = "status")]
+     //   [FromForm(Name = "status")]
         public EStatus? Status { get; set; }
     }
 }

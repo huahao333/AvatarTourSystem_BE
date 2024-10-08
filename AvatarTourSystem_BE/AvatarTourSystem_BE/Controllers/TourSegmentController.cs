@@ -40,7 +40,7 @@ namespace AvatarTourSystem_BE.Controllers
         }
 
         [HttpPost("tour-segment")]
-        public async Task<IActionResult> CreateTourSegmentAsync([FromForm] TourSegmentCreateModel createModel)
+        public async Task<IActionResult> CreateTourSegmentAsync( TourSegmentCreateModel createModel)
         {
             if (!ModelState.IsValid)
             {
@@ -58,7 +58,7 @@ namespace AvatarTourSystem_BE.Controllers
         }
 
         [HttpPut("tour-segment")]
-        public async Task<IActionResult> UpdateTourSegmentAsync([FromForm] TourSegmentUpdateModel updateModel)
+        public async Task<IActionResult> UpdateTourSegmentAsync( TourSegmentUpdateModel updateModel)
         {
             if (!ModelState.IsValid)
             {

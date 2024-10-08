@@ -38,7 +38,7 @@ namespace AvatarTourSystem_BE.Controllers
         }
 
         [HttpPost("city")]
-        public async Task<IActionResult> CreateCityAsync([FromForm] CityCreateModel createModel)
+        public async Task<IActionResult> CreateCityAsync( CityCreateModel createModel)
         {
             if (!ModelState.IsValid)
             {
@@ -56,7 +56,7 @@ namespace AvatarTourSystem_BE.Controllers
         }
 
         [HttpPut("city")]
-        public async Task<IActionResult> UpdateCityAsync([FromForm] CityUpdateModel updateModel)
+        public async Task<IActionResult> UpdateCityAsync(CityUpdateModel updateModel)
         {
             if (!ModelState.IsValid)
             {

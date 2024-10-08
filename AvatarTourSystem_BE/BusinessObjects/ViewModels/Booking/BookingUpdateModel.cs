@@ -12,22 +12,22 @@ namespace BusinessObjects.ViewModels.Booking
     public class BookingUpdateModel
     {
         [Required]
-        [FromForm(Name = "booking-id")]
+      //  [FromForm(Name = "booking-id")]
         public Guid BookingId { get; set; }
 
-        [FromForm(Name = "user-id")]
+     //   [FromForm(Name = "user-id")]
         public string? UserId { get; set; }
 
-        [FromForm(Name = "daily-tour-id")]
+     //   [FromForm(Name = "daily-tour-id")]
         public string? DailyTourId { get; set; }
 
-        [FromForm(Name = "payment-id")]
+      //  [FromForm(Name = "payment-id")]
         public string? PaymentId { get; set; }
 
-        [FromForm(Name = "total-price")]
+      //  [FromForm(Name = "total-price")]
         public float? TotalPrice { get; set; }
 
-        [FromForm(Name = "status")]
+      //  [FromForm(Name = "status")]
         public EStatus? Status { get; set; }
     }
 }

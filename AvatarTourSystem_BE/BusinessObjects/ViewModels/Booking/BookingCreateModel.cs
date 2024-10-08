@@ -10,19 +10,19 @@ namespace BusinessObjects.ViewModels.Booking
 {
     public class BookingCreateModel
     {
-        [FromForm(Name = "user-id")]
+      //  [FromForm(Name = "user-id")]
         public string? UserId { get; set; }
 
-        [FromForm(Name = "daily-tour-id")]
+      //  [FromForm(Name = "daily-tour-id")]
         public string? DailyTourId { get; set; }
 
-        [FromForm(Name = "payment-id")]
+     //   [FromForm(Name = "payment-id")]
         public string? PaymentId { get; set; }
 
-        [FromForm(Name = "total-price")]
+      //  [FromForm(Name = "total-price")]
         public float? TotalPrice { get; set; }
 
-        [FromForm(Name = "status")]
+      //  [FromForm(Name = "status")]
         public EStatus? Status { get; set; }
     }
 }

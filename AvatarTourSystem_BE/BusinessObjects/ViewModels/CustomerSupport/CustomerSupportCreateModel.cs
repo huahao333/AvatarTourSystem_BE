@@ -11,15 +11,15 @@ namespace BusinessObjects.ViewModels.CustomerSupport
     public class CustomerSupportCreateModel
     {
         
-        [FromForm(Name = "user-id")]
+      //  [FromForm(Name = "user-id")]
         public string? UserId { get; set; }
-        [FromForm(Name = "request-type-id")]
+     //   [FromForm(Name = "request-type-id")]
         public string? RequestTypeId { get; set; }
-        [FromForm(Name = "description")]
+      //  [FromForm(Name = "description")]
         public string? Description { get; set; }
-        [FromForm(Name = "date-resolved")]
+      //  [FromForm(Name = "date-resolved")]
         public DateTime? DateResolved { get; set; }      
-        [FromForm(Name = "status")]
+     //   [FromForm(Name = "status")]
         public EStatus? Status { get; set; }
     }
 }

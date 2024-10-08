@@ -12,16 +12,16 @@ namespace BusinessObjects.ViewModels.ServiceUsedByTicket
     public class ServiceUsedByTicketUpdateModel
     {
         [Required]
-        [FromForm(Name = "subt-id")]
+      //  [FromForm(Name = "subt-id")]
         public Guid SUBTId { get; set; }
 
-        [FromForm(Name = "ticket-id")]
+      //  [FromForm(Name = "ticket-id")]
         public string? TicketId { get; set; }
 
-        [FromForm(Name = "service-id")]
+      //  [FromForm(Name = "service-id")]
         public string? ServiceId { get; set; }
 
-        [FromForm(Name = "status")]
+      //  [FromForm(Name = "status")]
         public EStatus? Status { get; set; }
     }
 }

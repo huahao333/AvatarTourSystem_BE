@@ -36,7 +36,7 @@ namespace AvatarTourSystem_BE.Controllers
         }
 
         [HttpPost("payment-method")]
-        public async Task<IActionResult> CreatePaymentMethod([FromForm] PaymentMethodCreateModel createModel)
+        public async Task<IActionResult> CreatePaymentMethod( PaymentMethodCreateModel createModel)
         {
             if (!ModelState.IsValid)
             {
@@ -54,7 +54,7 @@ namespace AvatarTourSystem_BE.Controllers
         }
 
         [HttpPut("payment-method")]
-        public async Task<IActionResult> UpdatePaymentMethod([FromForm] PaymentMethodUpdateModel updateModel)
+        public async Task<IActionResult> UpdatePaymentMethod( PaymentMethodUpdateModel updateModel)
         {
             if (!ModelState.IsValid)
             {

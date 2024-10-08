@@ -35,7 +35,7 @@ namespace AvatarTourSystem_BE.Controllers
         }
 
         [HttpPost("poi-type")]
-        public async Task<IActionResult> CreatePOIType([FromForm] POITypeCreateModel createModel)
+        public async Task<IActionResult> CreatePOIType(POITypeCreateModel createModel)
         {
             if (!ModelState.IsValid)
             {
@@ -53,7 +53,7 @@ namespace AvatarTourSystem_BE.Controllers
         }
 
         [HttpPut("poi-type")]
-        public async Task<IActionResult> UpdatePOIType([FromForm] POITypeUpdateModel updateModel)
+        public async Task<IActionResult> UpdatePOIType(POITypeUpdateModel updateModel)
         {
             if (!ModelState.IsValid)
             {

@@ -10,13 +10,13 @@ namespace BusinessObjects.ViewModels.TicketType
 {
     public class TicketTypeCreateModel
     {
-        [FromForm(Name = "package-tour-id")]
+      //  [FromForm(Name = "package-tour-id")]
         public string? PackageTourId { get; set; }
 
-        [FromForm(Name = "ticket-type-name")]
+      //  [FromForm(Name = "ticket-type-name")]
         public string? TicketTypeName { get; set; }
 
-        [FromForm(Name = "status")]
+      //  [FromForm(Name = "status")]
         public EStatus? Status { get; set; }
     }
 }

@@ -16,7 +16,7 @@ namespace AvatarTourSystem_BE.Controllers
         }
 
         [HttpPost("request-type")]
-        public async Task<IActionResult> CreateRequestType([FromBody] RequestTypeCreateModel requestTypeCreateModel)
+        public async Task<IActionResult> CreateRequestType( RequestTypeCreateModel requestTypeCreateModel)
         {
             if (!ModelState.IsValid)
             {
@@ -56,7 +56,7 @@ namespace AvatarTourSystem_BE.Controllers
         }
 
         [HttpPut("request-type")]
-        public async Task<IActionResult> UpdateRequestType([FromBody] RequestTypeUpdateModel updateModel)
+        public async Task<IActionResult> UpdateRequestType( RequestTypeUpdateModel updateModel)
         {
             if (!ModelState.IsValid)
             {

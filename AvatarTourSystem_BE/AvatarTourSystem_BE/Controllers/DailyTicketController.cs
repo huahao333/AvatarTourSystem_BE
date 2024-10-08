@@ -39,7 +39,7 @@ namespace AvatarTourSystem_BE.Controllers
         }
 
         [HttpPost("daily-ticket")]
-        public async Task<IActionResult> CreateDailyTicketAsync([FromForm] DailyTicketCreateModel createModel)
+        public async Task<IActionResult> CreateDailyTicketAsync( DailyTicketCreateModel createModel)
         {
             if (!ModelState.IsValid)
             {
@@ -57,7 +57,7 @@ namespace AvatarTourSystem_BE.Controllers
         }
 
         [HttpPut("daily-ticket")]
-        public async Task<IActionResult> UpdateDailyTicketAsync([FromForm] DailyTicketUpdateModel updateModel)
+        public async Task<IActionResult> UpdateDailyTicketAsync( DailyTicketUpdateModel updateModel)
         {
             if (!ModelState.IsValid)
             {

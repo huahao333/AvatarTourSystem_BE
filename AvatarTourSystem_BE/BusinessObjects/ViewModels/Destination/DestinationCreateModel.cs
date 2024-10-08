@@ -5,13 +5,13 @@ namespace BusinessObjects.ViewModels.Destination
 {
     public class DestinationCreateModel
     {
-        [FromForm(Name = "city-id")]
+     //   [FromForm(Name = "city-id")]
         public string? CityId { get; set; }
-        [FromForm(Name = "destination-name")]
+      //  [FromForm(Name = "destination-name")]
         public string? DestinationName { get; set; }
-        [FromForm(Name = "destination-img-url")]
+      //  [FromForm(Name = "destination-img-url")]
         public string? DestinationImgUrl { get; set; }
-        [FromForm(Name = "status")]
+      //  [FromForm(Name = "status")]
         public EStatus? Status { get; set; }
     }
 }

@@ -51,7 +51,7 @@ namespace AvatarTourSystem_BE.Controllers
         }
 
         [HttpPost("transaction-history")]
-        public async Task<IActionResult> CreateTransactionsHistoryAsync([FromForm] TransactionHistoryCreateModel createModel)
+        public async Task<IActionResult> CreateTransactionsHistoryAsync(TransactionHistoryCreateModel createModel)
         {
             if (!ModelState.IsValid)
             {
@@ -70,7 +70,7 @@ namespace AvatarTourSystem_BE.Controllers
         }
 
         [HttpPut("transaction-history")]
-        public async Task<IActionResult> UpdateTransactionsHistoryAsync([FromForm] TransactionHistoryUpdateModel updateModel)
+        public async Task<IActionResult> UpdateTransactionsHistoryAsync(TransactionHistoryUpdateModel updateModel)
         {
             if (!ModelState.IsValid)
             {

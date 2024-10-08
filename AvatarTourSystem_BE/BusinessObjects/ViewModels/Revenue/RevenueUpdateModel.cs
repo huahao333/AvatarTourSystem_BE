@@ -12,13 +12,13 @@ namespace BusinessObjects.ViewModels.Revenue
     public class RevenueUpdateModel
     {
         [Required]
-        [FromForm(Name = "revenue-id")]
+      //  [FromForm(Name = "revenue-id")]
         public Guid RevenueId { get; set; }
 
-        [FromForm(Name = "total-revenue")]
+      //  [FromForm(Name = "total-revenue")]
         public float? TotalRevenue { get; set; }
 
-        [FromForm(Name = "status")]
+      //  [FromForm(Name = "status")]
         public EStatus? Status { get; set; }
     }
 }

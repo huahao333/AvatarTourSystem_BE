@@ -9,15 +9,15 @@ namespace BusinessObjects.ViewModels.PaymentMethod
 {
     public class PaymentMethodModel
     {
-        [FromForm(Name = "payment-id")]
+      //  [FromForm(Name = "payment-id")]
         public Guid? PaymentId { get; set; }
-        [FromForm(Name = "payment-type")]
+      //  [FromForm(Name = "payment-type")]
         public string? PaymentType { get; set; }
-        [FromForm(Name = "create-date")]
+     //   [FromForm(Name = "create-date")]
         public DateTime? CreateDate { get; set; }
-        [FromForm(Name = "update-date")]
+      //  [FromForm(Name = "update-date")]
         public DateTime? UpdateDate { get; set; }
-        [FromForm(Name = "status")]
+      //  [FromForm(Name = "status")]
         public int Status { get; set; }
     }
 }

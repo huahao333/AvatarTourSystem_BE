@@ -9,15 +9,15 @@ namespace BusinessObjects.ViewModels.POIType
 {
     public class POITypeModel
     {
-        [FromForm(Name = "poi-type-id")]
+      //  [FromForm(Name = "poi-type-id")]
         public string? POITypeId { get; set; }
-        [FromForm(Name = "poi-type-name")]
+     //   [FromForm(Name = "poi-type-name")]
         public string? POITypeName { get; set; }
-        [FromForm(Name = "create-date")]
+     //   [FromForm(Name = "create-date")]
         public DateTime? CreateDate { get; set; }
-        [FromForm(Name = "update-date")]
+     //   [FromForm(Name = "update-date")]
         public DateTime? UpdateDate { get; set; }
-        [FromForm(Name = "status")]
+     //   [FromForm(Name = "status")]
         public int? Status { get; set; }
     }
 }

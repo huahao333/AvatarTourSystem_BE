@@ -52,7 +52,7 @@ namespace AvatarTourSystem_BE.Controllers
         }
 
         [HttpPost("feedback")]
-        public async Task<IActionResult> CreateFeedbackAsync([FromBody] FeedbackCreateModel feedbackCreateModel)
+        public async Task<IActionResult> CreateFeedbackAsync( FeedbackCreateModel feedbackCreateModel)
         {
             if (!ModelState.IsValid)
             {
@@ -63,7 +63,7 @@ namespace AvatarTourSystem_BE.Controllers
         }
 
         [HttpPut("feedback")]
-        public async Task<IActionResult> UpdateFeedbackAsync([FromBody] FeedbackUpdateModel feedbackUpdateModel)
+        public async Task<IActionResult> UpdateFeedbackAsync(FeedbackUpdateModel feedbackUpdateModel)
         {
             if (!ModelState.IsValid)
             {
