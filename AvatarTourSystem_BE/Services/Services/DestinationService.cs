@@ -17,10 +17,12 @@ namespace Services.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        public DestinationService(IUnitOfWork unitOfWork, IMapper mapper)
+        private readonly GoogleMapsService _googleMapsService;
+        public DestinationService(IUnitOfWork unitOfWork, IMapper mapper, GoogleMapsService googleMapsService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _googleMapsService = googleMapsService;
         }
         public async Task<APIResponseModel> GetActiveDestinationsAsync()
         {
@@ -64,11 +66,30 @@ namespace Services.Services
                 Data = destinations,
             };
         }
+
+        //Embed code 
         public async Task<APIResponseModel> CreateDestinationAsync(DestinationCreateModel createModel)
         {
-            var destination = _mapper.Map<Destination>(createModel);
-            destination.DestinationId = Guid.NewGuid().ToString();
-            destination.CreateDate = DateTime.Now;
+            //var destination = _mapper.Map<Destination>(createModel);
+            //destination.DestinationId = Guid.NewGuid().ToString();
+            //destination.CreateDate = DateTime.Now;
+
+            var destination = new Destination
+            {
+                DestinationId = Guid.NewGuid().ToString(),
+                CityId = createModel.CityId,
+                DestinationName = createModel.DestinationName,
+              //  DestinationImgUrl = createModel.DestinationImgUrl,
+                Status = createModel.Status,
+                CreateDate = DateTime.Now
+            };
+
+            if (!string.IsNullOrEmpty(createModel.DestinationName))
+            {
+                var embedCode = await _googleMapsService.GetEmbedCodesAsync(createModel.DestinationName);
+                destination.DestinationImgUrl = embedCode;
+            }
+
             await _unitOfWork.DestinationRepository.AddAsync(destination);
             _unitOfWork.Save();
             return new APIResponseModel
@@ -78,6 +99,8 @@ namespace Services.Services
                 Data = destination,
             };
         }
+
+
         public async Task<APIResponseModel> UpdateDestinationAsync(DestinationUpdateModel updateModel)
         {
             var existingDestination = await _unitOfWork.DestinationRepository.GetByIdGuidAsync(updateModel.DestinationId);

@@ -1,5 +1,6 @@
 ﻿using BusinessObjects.Enums;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json.Serialization;
 
 namespace BusinessObjects.ViewModels.Destination
 {
@@ -10,8 +11,11 @@ namespace BusinessObjects.ViewModels.Destination
       //  [FromForm(Name = "destination-name")]
         public string? DestinationName { get; set; }
       //  [FromForm(Name = "destination-img-url")]
-        public string? DestinationImgUrl { get; set; }
+      //  public string? DestinationImgUrl { get; set; }
       //  [FromForm(Name = "status")]
-        public EStatus? Status { get; set; }
+        public int? Status { get; set; }
+
+        [JsonIgnore]
+        public string? EmbedCode { get; set; }
     }
 }

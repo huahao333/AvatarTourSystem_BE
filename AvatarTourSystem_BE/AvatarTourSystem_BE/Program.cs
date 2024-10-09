@@ -35,6 +35,9 @@ builder.Services.AddApiWebService(builder);
 //config cors
 
 
+var googleApiKey = builder.Configuration.GetSection("GoogleMaps:ApiKey").Value;
+builder.Services.AddSingleton(new GoogleMapsService(googleApiKey));
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("app-cors",

@@ -84,7 +84,7 @@ namespace AvatarTourSystem_BE.AutoMapper
             
             //Destination
             CreateMap<Destination, DestinationModel>().ReverseMap();
-            CreateMap<Destination, DestinationCreateModel>().ReverseMap();
+     //      CreateMap<Destination, DestinationCreateModel>().ReverseMap();
             CreateMap<Destination, DestinationUpdateModel>().ReverseMap();
             
             //Location
