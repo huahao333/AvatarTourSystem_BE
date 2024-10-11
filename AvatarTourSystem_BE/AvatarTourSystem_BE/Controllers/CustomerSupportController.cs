@@ -7,9 +7,13 @@ namespace AvatarTourSystem_BE.Controllers
 {
     [Route("api/v1")]
     [ApiController]
-    public class CustomerSupportController : ControllerBase
+    public class CustomerSupportController : Controller
     {
         private readonly ICustomerSupportService _customerSupportService;
+        public CustomerSupportController(ICustomerSupportService customerSupportService)
+        {
+            _customerSupportService = customerSupportService;
+        }
 
         [HttpPost("customer-support")]
         public async Task<IActionResult> CreateCustomerSupport(CustomerSupportCreateModel createModel)
