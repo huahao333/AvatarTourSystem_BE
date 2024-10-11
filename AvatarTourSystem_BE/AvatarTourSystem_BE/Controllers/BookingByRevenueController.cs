@@ -6,7 +6,7 @@ using Services.Interfaces;
 
 namespace AvatarTourSystem_BE.Controllers
 {
-    [Route("api/bookingbyrevenues")]
+    [Route("api/v1")]
     [ApiController]
     public class BookingByRevenueController : Controller
     {
@@ -16,30 +16,29 @@ namespace AvatarTourSystem_BE.Controllers
         {
             _bookingByRevenueService = bookingByRevenueService;
         }
-
-        [HttpGet("active")]
+        [HttpGet("booking-revenues-active")]
         public async Task<IActionResult> GetListActiveBookingByRevenuesAsync()
         {
             var result = await _bookingByRevenueService.GetActiveBookingByRevenuesAsync();
             return Ok(result);
         }
 
-        [HttpGet]
+        [HttpGet("booking-revenues")]
         public async Task<IActionResult> GetListBookingByRevenuesAsync()
         {
             var result = await _bookingByRevenueService.GetBookingByRevenuesAsync();
             return Ok(result);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("booking-revenues/{id}")]
         public async Task<IActionResult> GetBookingByRevenueById(string id)
         {
             var result = await _bookingByRevenueService.GetBookingByRevenueByIdAsync(id);
             return Ok(result);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateBookingByRevenueAsync([FromForm] BookingByRevenueCreateModel createModel)
+        [HttpPost("booking-revenue")]
+        public async Task<IActionResult> CreateBookingByRevenueAsync(BookingByRevenueCreateModel createModel)
         {
             if (!ModelState.IsValid)
             {
@@ -56,8 +55,8 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpPut]
-        public async Task<IActionResult> UpdateBookingByRevenueAsync([FromForm] BookingByRevenueUpdateModel updateModel)
+        [HttpPut("booking-revenue")]
+        public async Task<IActionResult> UpdateBookingByRevenueAsync(BookingByRevenueUpdateModel updateModel)
         {
             if (!ModelState.IsValid)
             {
@@ -65,7 +64,6 @@ namespace AvatarTourSystem_BE.Controllers
             }
             try
             {
-
                 var result = await _bookingByRevenueService.UpdateBookingByRevenueAsync(updateModel);
                 return Ok(result);
             }
@@ -74,7 +72,8 @@ namespace AvatarTourSystem_BE.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpDelete("{id}")]
+
+        [HttpDelete("booking-revenue/{id}")]
         public async Task<IActionResult> DeleteBookingByRevenue(string id)
         {
             var result = await _bookingByRevenueService.DeleteBookingByRevenue(id);

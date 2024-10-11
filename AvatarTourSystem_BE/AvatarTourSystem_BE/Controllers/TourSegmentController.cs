@@ -7,7 +7,7 @@ using Services.Services;
 
 namespace AvatarTourSystem_BE.Controllers
 {
-    [Route("api/toursegments")]
+    [Route("api/v1")]
     [ApiController]
     public class TourSegmentController : Controller
     {
@@ -18,29 +18,29 @@ namespace AvatarTourSystem_BE.Controllers
             _ourSegmentService = ourSegmentService;
         }
 
-        [HttpGet("active")]
+        [HttpGet("tour-segments-active")]
         public async Task<IActionResult> GetListActiveTourSegmentsAsync()
         {
             var result = await _ourSegmentService.GetActiveTourSegmentsAsync();
             return Ok(result);
         }
 
-        [HttpGet]
+        [HttpGet("tour-segments")]
         public async Task<IActionResult> GetListTourSegmentsAsync()
         {
             var result = await _ourSegmentService.GetTourSegmentsAsync();
             return Ok(result);
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetTourSegmentById(string id)
+        [HttpGet("tour-segment/{id}")]
+        public async Task<IActionResult> GetTourSegmentByIdAsync(string id)
         {
             var result = await _ourSegmentService.GetTourSegmentByIdAsync(id);
             return Ok(result);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateTourSegmentAsync([FromForm] TourSegmentCreateModel createModel)
+        [HttpPost("tour-segment")]
+        public async Task<IActionResult> CreateTourSegmentAsync( TourSegmentCreateModel createModel)
         {
             if (!ModelState.IsValid)
             {
@@ -57,8 +57,8 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpPut]
-        public async Task<IActionResult> UpdateTourSegmentAsync([FromForm] TourSegmentUpdateModel updateModel)
+        [HttpPut("tour-segment")]
+        public async Task<IActionResult> UpdateTourSegmentAsync( TourSegmentUpdateModel updateModel)
         {
             if (!ModelState.IsValid)
             {
@@ -66,7 +66,6 @@ namespace AvatarTourSystem_BE.Controllers
             }
             try
             {
-
                 var result = await _ourSegmentService.UpdateTourSegmentAsync(updateModel);
                 return Ok(result);
             }
@@ -75,7 +74,8 @@ namespace AvatarTourSystem_BE.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpDelete("{id}")]
+
+        [HttpDelete("tour-segment/{id}")]
         public async Task<IActionResult> DeleteTourSegmentAsync(string id)
         {
             var result = await _ourSegmentService.DeleteTourSegment(id);

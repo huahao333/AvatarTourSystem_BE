@@ -5,7 +5,7 @@ using Services.Interfaces;
 
 namespace AvatarTourSystem_BE.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v1")]
     [ApiController]
     public class RequestTypeController : ControllerBase
     {
@@ -15,44 +15,56 @@ namespace AvatarTourSystem_BE.Controllers
             _requestTypeService = requestTypeService;
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateRequestType(RequestTypeCreateModel requestTypeCreateModel)
+        [HttpPost("request-type")]
+        public async Task<IActionResult> CreateRequestType( RequestTypeCreateModel requestTypeCreateModel)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var result = await _requestTypeService.CreateRequestType(requestTypeCreateModel);
             return Ok(result);
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteRequestType(string id)
+        [HttpDelete("request-type/{id}")]
+        public async Task<IActionResult> DeleteRequestTypeAsync(string id)
         {
             var result = await _requestTypeService.DeleteRequestType(id);
             return Ok(result);
         }
-        [HttpGet]
-        public async Task<IActionResult> GetAllRequestType()
+
+        [HttpGet("requests-type")]
+        public async Task<IActionResult> GetAllRequestTypes()
         {
             var response = await _requestTypeService.GetAllRequestType();
             return Ok(response);
         }
-        [HttpGet("GetRequestTypeById")]
-        public async Task<IActionResult> GetRequestTypeById(string requestTypeId)
+
+        [HttpGet("request-type/{id}")]
+        public async Task<IActionResult> GetRequestTypeById(string id)
         {
-            var response = await _requestTypeService.GetRequestTypeById(requestTypeId);
+            var response = await _requestTypeService.GetRequestTypeById(id);
             return Ok(response);
         }
-        [HttpGet("GetRequestTypeByStatus")]
-        public async Task<IActionResult> GetRequestTypeByStatus()
+
+        [HttpGet("requests-type-active")]
+        public async Task<IActionResult> GetRequestTypesByStatus()
         {
             var response = await _requestTypeService.GetRequestTypeByStatus();
             return Ok(response);
         }
-        [HttpPut]
-        public async Task<IActionResult> UpdateRequestType(RequestTypeUpdateModel updateModel)
+
+        [HttpPut("request-type")]
+        public async Task<IActionResult> UpdateRequestType( RequestTypeUpdateModel updateModel)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var result = await _requestTypeService.UpdateRequestType(updateModel);
             return Ok(result);
         }
-
-
     }
 }

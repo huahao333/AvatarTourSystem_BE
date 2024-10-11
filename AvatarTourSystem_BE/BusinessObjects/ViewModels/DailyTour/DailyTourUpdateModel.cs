@@ -10,23 +10,23 @@ namespace BusinessObjects.ViewModels.DailyTour
 {
     public class DailyTourUpdateModel
     {
-        [FromForm(Name = "daily-tour-id")]
+     //   [FromForm(Name = "daily-tour-id")]
         public Guid DailyTourId { get; set; }
-        [FromForm(Name = "package-tour-id")]
+     //   [FromForm(Name = "package-tour-id")]
         public string? PackageTourId { get; set; }
-        [FromForm(Name = "daily-tour-name")]
+      //  [FromForm(Name = "daily-tour-name")]
         public string? DailyTourName { get; set; }
-        [FromForm(Name = "description")]
+      //  [FromForm(Name = "description")]
         public string? Description { get; set; }
-        [FromForm(Name = "daily-tour-price")]
+      //  [FromForm(Name = "daily-tour-price")]
         public float? DailyTourPrice { get; set; }
-        [FromForm(Name = "img-url")]
+      //  [FromForm(Name = "img-url")]
         public string? ImgUrl { get; set; }
-        [FromForm(Name = "start-date")]
+      //  [FromForm(Name = "start-date")]
         public DateTime? StartDate { get; set; }
-        [FromForm(Name = "discount")]
+       // [FromForm(Name = "discount")]
         public int? Discount { get; set; }
-        [FromForm(Name = "status")]
+      //  [FromForm(Name = "status")]
         public EStatus? Status { get; set; }
     }
 }

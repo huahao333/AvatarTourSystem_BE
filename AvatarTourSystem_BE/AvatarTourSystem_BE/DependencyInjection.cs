@@ -22,7 +22,7 @@ namespace AvatarTourSystem_BE
             //config authen
             builder.Services.AddSwaggerGen(opt =>
             {
-                opt.SwaggerDoc("v1", new OpenApiInfo { Title = "Artwork Sharing Platform", Version = "v.10.24" });
+                opt.SwaggerDoc("v1", new OpenApiInfo { Title = "Avatar Tour System", Version = "v.10.24" });
                 opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     In = ParameterLocation.Header,
@@ -91,8 +91,8 @@ namespace AvatarTourSystem_BE
             services.AddScoped<ILocationRepository, LocationRepository>();
             services.AddScoped<ILocationService, LocationService>();
 
-            services.AddScoped<IPOITypeRepository, POITypeRepository>();
-            services.AddScoped<IPOITypeService, POITypeService>();
+            //services.AddScoped<IPOITypeRepository, POITypeRepository>();
+            //services.AddScoped<IPOITypeService, POITypeService>();
 
             services.AddScoped<IPointOfInterestRepository, PointOfInterestRepository>();
             services.AddScoped<IPointOfInterestService, PointOfInterestService>();
@@ -139,6 +139,13 @@ namespace AvatarTourSystem_BE
             services.AddScoped<IDailyTourService, DailyTourSerivce>();
             services.AddScoped<IDailyTourRepository, DailyTourRepository>();
 
+            services.AddScoped<IDailyTourFlowService, DailyTourFlowService>();
+            services.AddScoped<IDailyTourFlowRepository, DailyTourFlowRepository>();
+
+            services.AddScoped<IPackageTourFlowService,  PackageTourFlowService>();
+
+            services.AddScoped<IDashboardService, DashboardService>();
+
             //auto mapper
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
@@ -150,8 +157,8 @@ namespace AvatarTourSystem_BE
             // kebab
             services.AddControllers().AddJsonOptions(options =>
             {
-                options.JsonSerializerOptions.PropertyNamingPolicy = new KebabCaseNamingPolicy();
-                options.JsonSerializerOptions.DictionaryKeyPolicy = new KebabCaseNamingPolicy();
+               // options.JsonSerializerOptions.PropertyNamingPolicy = new KebabCaseNamingPolicy();
+               // options.JsonSerializerOptions.DictionaryKeyPolicy = new KebabCaseNamingPolicy();
             });
 
             //DBcontext

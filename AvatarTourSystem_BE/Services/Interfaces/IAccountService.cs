@@ -13,11 +13,12 @@ namespace Services.Interfaces
         Task<APIResponseModel> GetAllAccount();
         Task<APIResponseModel> GetAccountByStatus();
         Task<APIResponseModel> GetAccountById(string accountId);
+        Task<APIResponseModel> GetAccountByZaloID(string zaloId);
         Task<APIResponseModel> CreateAccount(AccountCreateModel createModel);
         Task<APIResponseModel> UpdateAccount(AccountUpdateModel updateModel);
         Task<APIResponseModel> DeleteAccount(string accountId);
         Task<APIResponseModel> SignUpAccountAsync(AccountSignUpModel signUpModel);
-        Task<APIResponseModel> SignUpAccountZaloAsync(string zaloId);
+        Task<APIResponseModel> SignUpAccountZaloAsync(AccountZaloIdModel accountZaloIdModel);
         Task<APIAuthenticationResponseModel> SignInAccountAsync(AccountSignInModel signInModel);
     }
 }

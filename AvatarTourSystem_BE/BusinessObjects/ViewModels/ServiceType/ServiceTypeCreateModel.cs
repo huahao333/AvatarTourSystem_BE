@@ -10,9 +10,9 @@ namespace BusinessObjects.ViewModels.ServiceType
 {
     public class ServiceTypeCreateModel
     {
-        [FromForm(Name = "service-name")]
+     //   [FromForm(Name = "service-name")]
         public string? ServiceTypeName { get; set; }
-        [FromForm(Name = "status")]
+      //  [FromForm(Name = "status")]
         public EStatus? Status { get; set; }
     }
 }

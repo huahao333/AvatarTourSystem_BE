@@ -13,11 +13,11 @@ namespace BusinessObjects.ViewModels.PaymentMethod
     {
        
         [Required]
-        [FromForm(Name = "payment-method-id")]
+      //  [FromForm(Name = "payment-method-id")]
         public Guid PaymentMethodId { get; set; }
-        [FromForm(Name = "payment-type")]
+      //  [FromForm(Name = "payment-type")]
         public string PaymentType { get; set; }
-        [FromForm(Name = "status")]
+      //  [FromForm(Name = "status")]
         public EStatus? Status { get; set; }
         
     }

@@ -7,7 +7,7 @@ using Services.Interfaces;
 
 namespace AvatarTourSystem_BE.Controllers
 {
-    [Route("api/serviceusedbytickets")]
+    [Route("api/v1")]
     [ApiController]
     public class ServiceUsedByTicketController : Controller
     {
@@ -18,29 +18,29 @@ namespace AvatarTourSystem_BE.Controllers
             _serviceUsedByTicketService = serviceUsedByTicketService;
         }
 
-        [HttpGet("active")]
+        [HttpGet("service-used-tickets-active")]
         public async Task<IActionResult> GetListActiveServiceUsedByTicketsAsync()
         {
             var result = await _serviceUsedByTicketService.GetActiveServiceUsedByTicketsAsync();
             return Ok(result);
         }
 
-        [HttpGet]
+        [HttpGet("service-used-tickets")]
         public async Task<IActionResult> GetListServiceUsedByTicketsAsync()
         {
             var result = await _serviceUsedByTicketService.GetServiceUsedByTicketsAsync();
             return Ok(result);
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetServiceUsedByTicketById(string id)
+        [HttpGet("service-used-ticket/{id}")]
+        public async Task<IActionResult> GetServiceUsedByTicketByIdAsync(string id)
         {
             var result = await _serviceUsedByTicketService.GetServiceUsedByTicketByIdAsync(id);
             return Ok(result);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateServiceUsedByTicketAsync([FromForm] ServiceUsedByTicketCreateModel createModel)
+        [HttpPost("service-used-ticket")]
+        public async Task<IActionResult> CreateServiceUsedByTicketAsync( ServiceUsedByTicketCreateModel createModel)
         {
             if (!ModelState.IsValid)
             {
@@ -57,8 +57,8 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpPut]
-        public async Task<IActionResult> UpdateServiceUsedByTicketAsync([FromForm] ServiceUsedByTicketUpdateModel updateModel)
+        [HttpPut("service-used-ticket")]
+        public async Task<IActionResult> UpdateServiceUsedByTicketAsync( ServiceUsedByTicketUpdateModel updateModel)
         {
             if (!ModelState.IsValid)
             {
@@ -66,7 +66,6 @@ namespace AvatarTourSystem_BE.Controllers
             }
             try
             {
-
                 var result = await _serviceUsedByTicketService.UpdateServiceUsedByTicketAsync(updateModel);
                 return Ok(result);
             }
@@ -75,8 +74,9 @@ namespace AvatarTourSystem_BE.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteServiceUsedByTicket(string id)
+
+        [HttpDelete("service-used-ticket/{id}")]
+        public async Task<IActionResult> DeleteServiceUsedByTicketAsync(string id)
         {
             var result = await _serviceUsedByTicketService.DeleteServiceUsedByTicket(id);
             return Ok(result);

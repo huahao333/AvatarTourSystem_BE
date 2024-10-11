@@ -15,10 +15,18 @@ using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
 // Add services to the container.
 //WORKFLOW test 4
 builder.Services.AddControllers()
-    .AddJsonOptions(options => { options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()); });
+    .AddJsonOptions(options =>
+    {
+       // options.JsonSerializerOptions.MaxDepth = 64;
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+        options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
+    });
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -26,6 +34,9 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddApiWebService(builder);
 //config cors
 
+
+var googleApiKey = builder.Configuration.GetSection("GoogleMaps:ApiKey").Value;
+builder.Services.AddSingleton(new GoogleMapsService(googleApiKey));
 
 builder.Services.AddCors(options =>
 {
@@ -41,13 +52,8 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
+app.UseSwagger();
+app.UseSwaggerUI();
 //use cors
 app.UseCors("app-cors");
 app.UseHttpsRedirection();

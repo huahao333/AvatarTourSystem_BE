@@ -9,15 +9,15 @@ namespace BusinessObjects.ViewModels.City
 {
     public class CityModel
     {
-        [FromForm(Name = "city-id")]
+       // [FromForm(Name = "city-id")]
         public string? CityId { get; set; }
-        [FromForm(Name = "city-name")]
+      //  [FromForm(Name = "city-name")]
         public string? CityName { get; set; }
-        [FromForm(Name = "create-date")]
+      //  [FromForm(Name = "create-date")]
         public DateTime? CreateDate { get; set; }
-        [FromForm(Name = "update-date")]
+     //   [FromForm(Name = "update-date")]
         public DateTime? UpdateDate { get; set; }
-        [FromForm(Name = "status")]
+     //   [FromForm(Name = "status")]
         public int? Status { get; set; }
     }
 }

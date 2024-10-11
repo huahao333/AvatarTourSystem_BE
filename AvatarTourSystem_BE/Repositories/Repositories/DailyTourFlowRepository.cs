@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace Repositories.Repositories
 {
-    public class POITypeRepository : GenericRepository<POIType>, IPOITypeRepository
+    public class DailyTourFlowRepository : GenericRepository<DailyTour>, IDailyTourFlowRepository
     {
-        public POITypeRepository(AvatarTourDBContext context) : base(context)
+        public DailyTourFlowRepository(AvatarTourDBContext context) : base(context)
         {
         }
     }

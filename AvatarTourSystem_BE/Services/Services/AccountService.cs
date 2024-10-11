@@ -31,7 +31,7 @@ namespace Services.Services
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly SignInManager<Account> _signInManager;
         private readonly IConfiguration _configuration;
-        public AccountService(IUnitOfWork unitOfWork, 
+        public AccountService(IUnitOfWork unitOfWork,
                               IMapper mapper,
                               UserManager<Account> userManager,
                               RoleManager<IdentityRole> roleManager,
@@ -103,7 +103,7 @@ namespace Services.Services
             account.Status = (int?)EStatus.IsDeleted;
             account.UpdateDate = DateTime.Now;
             account.CreateDate = createDate;
-             await _unitOfWork.AccountRepository.UpdateAsync(account);
+            await _unitOfWork.AccountRepository.UpdateAsync(account);
             _unitOfWork.Save();
             return new APIResponseModel
             {
@@ -115,7 +115,7 @@ namespace Services.Services
 
         public async Task<APIResponseModel> GetAccountById(string accountId)
         {
-            var account = await _unitOfWork.AccountRepository.GetByConditionAsync(x => x.Id == accountId);
+            var account = await _unitOfWork.AccountRepository.GetByIdStringAsync(accountId);
             if (account == null)
             {
                 return new APIResponseModel
@@ -125,8 +125,7 @@ namespace Services.Services
                     Data = null
                 };
             }
-            else
-            {
+           
                 var accountViewModels = _mapper.Map<List<AccountViewModel>>(account);
 
                 return new APIResponseModel
@@ -136,8 +135,8 @@ namespace Services.Services
                     Data = accountViewModels
                 };
 
-            }
             
+
 
         }
 
@@ -241,7 +240,7 @@ namespace Services.Services
                         Dob = signUpModel.BirthDate,
                         Gender = signUpModel.Gender,
                         Address = signUpModel.Address,
-                        UserName = signUpModel.AccountEmail, 
+                        UserName = signUpModel.AccountEmail,
                         Email = signUpModel.AccountEmail,
                         PhoneNumber = signUpModel.AccountPhone,
                         CreateDate = DateTime.Now,
@@ -344,8 +343,8 @@ namespace Services.Services
                         Status = true,
                         Message = "Login successfully!",
                         JwtToken = new JwtSecurityTokenHandler().WriteToken(token),
-                      //  Expired = token.ValidTo,
-                      //  JwtRefreshToken = refreshToken,
+                        //  Expired = token.ValidTo,
+                        //  JwtRefreshToken = refreshToken,
                     };
                 }
                 else
@@ -363,11 +362,11 @@ namespace Services.Services
             }
         }
 
-       public async Task<APIResponseModel> SignUpAccountZaloAsync(string zaloId )
+        public async Task<APIResponseModel> SignUpAccountZaloAsync(AccountZaloIdModel accountZaloIdModel)
         {
             try
             {
-                var accountZaloExisting = (await _unitOfWork.AccountRepository.GetByConditionAsync(s => s.ZaloUser.ToString() == zaloId.ToString()))
+                var accountZaloExisting = (await _unitOfWork.AccountRepository.GetByConditionAsync(s => s.ZaloUser.ToString() == accountZaloIdModel.ZaloUser))
                                           .FirstOrDefault();
                 if (accountZaloExisting != null)
                 {
@@ -388,12 +387,12 @@ namespace Services.Services
                         Dob = null,
                         Gender = true,
                         Address = "",
-                        UserName = "UserName",
+                        UserName = accountZaloIdModel.ZaloUser,
                         Email = "",
                         PhoneNumber = "",
                         CreateDate = DateTime.Now,
                         Status = 1,
-                        ZaloUser = zaloId 
+                        ZaloUser = accountZaloIdModel.ZaloUser,
                     };
 
                     var result = await _userManager.CreateAsync(user);
@@ -402,7 +401,7 @@ namespace Services.Services
 
                     if (result.Succeeded)
                     {
-                        
+
                         if (!await _roleManager.RoleExistsAsync(ERole.Customer.ToString()))
                         {
                             await _roleManager.CreateAsync(new IdentityRole(ERole.Customer.ToString()));
@@ -412,7 +411,7 @@ namespace Services.Services
                             await _userManager.AddToRoleAsync(user, ERole.Customer.ToString());
                         }
 
-                      
+
                         var accessToken = await GenerateAccessTokenForAccount(user);
 
                         return new APIResponseModel
@@ -439,32 +438,17 @@ namespace Services.Services
 
         private async Task<string> GenerateAccessTokenForAccount(Account account)
         {
-            
             var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_configuration["JWT:SecretKey"]));
 
-            
-            var claims = new List<Claim>();
+            var claims = new List<Claim>
+                   {
+                    new Claim(JwtRegisteredClaimNames.Sub, account.UserName),
+                    new Claim(JwtRegisteredClaimNames.Email, account.Email),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    new Claim(JwtRegisteredClaimNames.Aud, _configuration["JWT:ValidAudience"]),
+                    new Claim(JwtRegisteredClaimNames.Iss, _configuration["JWT:ValidIssuer"])
+                  };
 
-            
-            if (!string.IsNullOrEmpty(account.UserName))
-            {
-                claims.Add(new Claim(JwtRegisteredClaimNames.Sub, account.UserName));
-            }
-
-            if (!string.IsNullOrEmpty(account.Email))
-            {
-                claims.Add(new Claim(JwtRegisteredClaimNames.Email, account.Email));
-            }
-
-            
-            claims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
-
-            if (!string.IsNullOrEmpty(account.Id))
-            {
-                claims.Add(new Claim(ClaimTypes.NameIdentifier, account.Id));
-            }
-
-           
             var roles = await _userManager.GetRolesAsync(account);
             foreach (var role in roles)
             {
@@ -474,15 +458,38 @@ namespace Services.Services
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.UtcNow.AddHours(1), 
-                SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature)
+                Expires = DateTime.UtcNow.AddHours(1),
+                SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature) // Đặt khóa và thuật toán mã hóa
             };
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
-           
             return tokenHandler.WriteToken(token);
+        }
+
+        public async Task<APIResponseModel> GetAccountByZaloID(string zaloId)
+        {
+            var account = await _unitOfWork.AccountRepository.GetByConditionAsync(z => z.ZaloUser == zaloId);
+            if (account == null || !account.Any())
+            {
+                return new APIResponseModel
+                {
+                    Message = "Account not found.",
+                    IsSuccess = false,
+                    Data = null
+                };
+            }
+            
+                var accountViewModels = _mapper.Map<List<AccountViewModel>>(account);
+
+                return new APIResponseModel
+                {
+                    Message = "Account found",
+                    IsSuccess = true,
+                    Data = accountViewModels
+                };
+            
         }
     }
 }

@@ -10,15 +10,15 @@ namespace BusinessObjects.ViewModels.Rate
 {
     public class RateUpdateModel
     {
-        [FromForm(Name = "rate-id")]
+      //  [FromForm(Name = "rate-id")]
         public Guid RateId { get; set; }
-        [FromForm(Name = "user-id")]
+      //  [FromForm(Name = "user-id")]
         public string? UserId { get; set; }
-        [FromForm(Name = "booking-id")]
+     //   [FromForm(Name = "booking-id")]
         public string? BookingId { get; set; }
-        [FromForm(Name = "rate-star")]
+     //   [FromForm(Name = "rate-star")]
         public int? RateStar { get; set; }
-        [FromForm(Name = "status")]
+     //   [FromForm(Name = "status")]
         public EStatus? Status { get; set; }
     }
 }

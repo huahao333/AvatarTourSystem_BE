@@ -12,9 +12,9 @@ using BusinessObjects.ViewModels.Feedback;
 using BusinessObjects.ViewModels.Location;
 using BusinessObjects.ViewModels.Notification;
 using BusinessObjects.ViewModels.PackageTour;
+using BusinessObjects.ViewModels.PackageTourFlow;
 using BusinessObjects.ViewModels.PaymentMethod;
 using BusinessObjects.ViewModels.POI;
-using BusinessObjects.ViewModels.POIType;
 using BusinessObjects.ViewModels.Rate;
 using BusinessObjects.ViewModels.ResquestType;
 using BusinessObjects.ViewModels.Revenue;
@@ -83,7 +83,7 @@ namespace AvatarTourSystem_BE.AutoMapper
             
             //Destination
             CreateMap<Destination, DestinationModel>().ReverseMap();
-            CreateMap<Destination, DestinationCreateModel>().ReverseMap();
+     //      CreateMap<Destination, DestinationCreateModel>().ReverseMap();
             CreateMap<Destination, DestinationUpdateModel>().ReverseMap();
             
             //Location
@@ -115,6 +115,7 @@ namespace AvatarTourSystem_BE.AutoMapper
             CreateMap<Booking, BookingModel>().ReverseMap();
             CreateMap<Booking, BookingCreateModel>().ReverseMap();
             CreateMap<Booking, BookingUpdateModel>().ReverseMap();
+            CreateMap<Booking, BookingFlowModel>().ReverseMap();
 
             //Revenue
             CreateMap<Revenue, RevenueModel>().ReverseMap();
@@ -158,10 +159,10 @@ namespace AvatarTourSystem_BE.AutoMapper
             CreateMap<PointOfInterest, POICreateModel>().ReverseMap();
             CreateMap<PointOfInterest, POIUpdateModel>().ReverseMap();
 
-            //PointOfInterestTypes
-            CreateMap<POIType, POITypeModel>().ReverseMap();
-            CreateMap<POIType, POITypeCreateModel>().ReverseMap();
-            CreateMap<POIType, POITypeUpdateModel>().ReverseMap();
+            ////PointOfInterestTypes
+            //CreateMap<POIType, POITypeModel>().ReverseMap();
+            //CreateMap<POIType, POITypeCreateModel>().ReverseMap();
+            //CreateMap<POIType, POITypeUpdateModel>().ReverseMap();
 
             //Notification
             CreateMap<Notification, NotificationModel>().ReverseMap();
@@ -172,6 +173,59 @@ namespace AvatarTourSystem_BE.AutoMapper
             CreateMap<DailyTour, DailyTourModel>().ReverseMap();
             CreateMap<DailyTour, DailyTourCreateModel>().ReverseMap();
             CreateMap<DailyTour, DailyTourUpdateModel>().ReverseMap();
+
+            //Flow-Packagetour
+            #region
+            //       CreateMap<FPackageTourCreateModel, PackageTour>()
+            //.ForMember(dest => dest.CreateDate, opt => opt.MapFrom(src => DateTime.Now))
+            //.ForMember(dest => dest.UpdateDate, opt => opt.MapFrom(src => DateTime.Now))
+            //.ForMember(dest => dest.TourSegments, opt => opt.MapFrom(src => src.Destinations.Select(d => new TourSegment
+            //{
+            //    DestinationId = d.DestinationId,
+            //    Status = 1, // Set default status
+            //    CreateDate = DateTime.Now,
+            //    UpdateDate = DateTime.Now,
+            //    ServiceByTourSegments = d.Locations.SelectMany(l => l.Services.Select(s => new ServiceByTourSegment
+            //    {
+            //        ServiceId = s.ServiceId,
+            //        Status = 1, // Set default status
+            //        CreateDate = DateTime.Now,
+            //        UpdateDate = DateTime.Now
+            //    })).ToList()
+            //})));
+            CreateMap<FPackageTourCreateModel, PackageTour>()
+    .ForMember(dest => dest.CreateDate, opt => opt.MapFrom(src => DateTime.Now))
+    .ForMember(dest => dest.UpdateDate, opt => opt.MapFrom(src => DateTime.Now))
+    .ForMember(dest => dest.TicketTypes, opt => opt.MapFrom(src => src.TicketTypesCreate.Select(d => new TicketType
+    {
+        TicketTypeId = d.TicketTypeId,
+        Status = 1, // Set default status
+        CreateDate = DateTime.Now,
+        UpdateDate = DateTime.Now,
+       
+    })));
+
+            // Map từ DestinationModel sang Destination Entity
+            CreateMap<DestinationModel, Destination>()
+                .ForMember(dest => dest.CreateDate, opt => opt.MapFrom(src => DateTime.Now))
+                .ForMember(dest => dest.UpdateDate, opt => opt.MapFrom(src => DateTime.Now));
+
+            // Map từ LocationModel sang Location Entity
+            CreateMap<LocationModel, Location>()
+                .ForMember(dest => dest.CreateDate, opt => opt.MapFrom(src => DateTime.Now))
+                .ForMember(dest => dest.UpdateDate, opt => opt.MapFrom(src => DateTime.Now));
+
+            // Map từ ServiceModel sang Service Entity
+            CreateMap<ServiceModel, Service>()
+                .ForMember(dest => dest.CreateDate, opt => opt.MapFrom(src => DateTime.Now))
+                .ForMember(dest => dest.UpdateDate, opt => opt.MapFrom(src => DateTime.Now));
+            CreateMap<PackageTour, FPackageTourResponseModel>()
+            .ForMember(dest => dest.Destinations, opt => opt.MapFrom(src => src.TourSegments.Select(ts => ts.Destinations)));
+
+            CreateMap<Destination, FDestinationResponseModel>();
+            CreateMap<Location, FLocationResponseModel>();
+            CreateMap<Service, FServiceResponseModel>();
+            #endregion
         }
     }
 }

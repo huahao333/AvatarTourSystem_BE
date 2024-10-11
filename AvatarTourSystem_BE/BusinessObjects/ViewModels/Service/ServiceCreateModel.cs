@@ -10,22 +10,23 @@ namespace BusinessObjects.ViewModels.Service
 {
     public class ServiceCreateModel
     {
-        [FromForm(Name = "service-name")]
+      //  [FromForm(Name = "service-name")]
         public string? ServiceName { get; set; }
 
-        [FromForm(Name = "service-price")]
+     //   [FromForm(Name = "service-price")]
         public float? ServicePrice { get; set; }
-
-        [FromForm(Name = "service-type-id")]
+     //   [FromForm(Name = "service-img-url")]
+        public string? ServiceImgUrl { get; set; }
+     //   [FromForm(Name = "service-type-id")]
         public string? ServiceTypeId { get; set; }
 
-        [FromForm(Name = "location-id")]
+     //   [FromForm(Name = "location-id")]
         public string? LocationId { get; set; }
 
-        [FromForm(Name = "supplier-id")]
+     //   [FromForm(Name = "supplier-id")]
         public string? SupplierId { get; set; }
 
-        [FromForm(Name = "status")]
+      //  [FromForm(Name = "status")]
         public EStatus? Status { get; set; }
     }
 }

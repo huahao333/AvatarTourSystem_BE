@@ -19,6 +19,8 @@ namespace BusinessObjects.Models
         public string? CityId { get; set; }
         public string? PackageTourName { get; set; }
         public float? PackageTourPrice { get; set; }
+        public string? PackageTourImgUrl{ get; set; }
+
         public DateTime? CreateDate { get; set; }
         public DateTime? UpdateDate { get; set; }
         public int? Status { get; set; }

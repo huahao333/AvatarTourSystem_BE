@@ -4,7 +4,7 @@ using Services.Interfaces;
 
 namespace AvatarTourSystem_BE.Controllers
 {
-    [Route("[controller]")]
+    [Route("api/v1")]
     [ApiController]
     public class ServiceByTourSegmentController : ControllerBase
     {
@@ -14,30 +14,29 @@ namespace AvatarTourSystem_BE.Controllers
         {
             _serviceByTourSegmentService = serviceByTourSegmentService;
         }
-
-        [HttpGet("active")]
+        [HttpGet("service-toursegments-active")]
         public async Task<IActionResult> GetListActiveServiceByTourSegmentsAsync()
         {
             var result = await _serviceByTourSegmentService.GetActiveServiceByTourSegmentsAsync();
             return Ok(result);
         }
 
-        [HttpGet]
+        [HttpGet("service-toursegments")]
         public async Task<IActionResult> GetListServiceByTourSegmentsAsync()
         {
             var result = await _serviceByTourSegmentService.GetServiceByTourSegmentsAsync();
             return Ok(result);
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetServiceByTourSegmentById(string id)
+        [HttpGet("service-toursegment/{id}")]
+        public async Task<IActionResult> GetServiceByTourSegmentByIdAsync(string id)
         {
             var result = await _serviceByTourSegmentService.GetServiceByTourSegmentByIdAsync(id);
             return Ok(result);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateServiceByTourSegmentAsync([FromForm] ServiceByTourSegmentCreateModel createModel)
+        [HttpPost("service-toursegment")]
+        public async Task<IActionResult> CreateServiceByTourSegmentAsync(ServiceByTourSegmentCreateModel createModel)
         {
             if (!ModelState.IsValid)
             {
@@ -54,8 +53,8 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpPut]
-        public async Task<IActionResult> UpdateServiceByTourSegmentAsync([FromForm] ServiceByTourSegmentUpdateModel updateModel)
+        [HttpPut("service-toursegment")]
+        public async Task<IActionResult> UpdateServiceByTourSegmentAsync(ServiceByTourSegmentUpdateModel updateModel)
         {
             if (!ModelState.IsValid)
             {
@@ -63,7 +62,6 @@ namespace AvatarTourSystem_BE.Controllers
             }
             try
             {
-
                 var result = await _serviceByTourSegmentService.UpdateServiceByTourSegmentAsync(updateModel);
                 return Ok(result);
             }
@@ -72,8 +70,9 @@ namespace AvatarTourSystem_BE.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteServiceByTourSegment(string id)
+
+        [HttpDelete("service-toursegment/{id}")]
+        public async Task<IActionResult> DeleteServiceByTourSegmentAsync(string id)
         {
             var result = await _serviceByTourSegmentService.DeleteServiceByTourSegment(id);
             return Ok(result);

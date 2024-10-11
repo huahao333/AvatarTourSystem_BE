@@ -6,7 +6,7 @@ using Services.Interfaces;
 
 namespace AvatarTourSystem_BE.Controllers
 {
-    [Route("api/tickets")]
+    [Route("api/v1")]
     [ApiController]
     public class TicketController : Controller
     {
@@ -17,29 +17,30 @@ namespace AvatarTourSystem_BE.Controllers
             _ticketService = ticketService;
         }
 
-        [HttpGet("active")]
+
+        [HttpGet("tickets-active")]
         public async Task<IActionResult> GetListActiveTicketsAsync()
         {
             var result = await _ticketService.GetActiveTicketsAsync();
             return Ok(result);
         }
 
-        [HttpGet]
+        [HttpGet("tickets")]
         public async Task<IActionResult> GetListTicketsAsync()
         {
             var result = await _ticketService.GetTicketsAsync();
             return Ok(result);
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetTicketById(string id)
+        [HttpGet("ticket/{id}")]
+        public async Task<IActionResult> GetTicketByIdAsync(string id)
         {
             var result = await _ticketService.GetTicketByIdAsync(id);
             return Ok(result);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateTicketAsync([FromForm] TicketCreateModel createModel)
+        [HttpPost("ticket")]
+        public async Task<IActionResult> CreateTicketAsync(TicketCreateModel createModel)
         {
             if (!ModelState.IsValid)
             {
@@ -56,8 +57,8 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpPut]
-        public async Task<IActionResult> UpdateTicketAsync([FromForm] TicketUpdateModel updateModel)
+        [HttpPut("ticket")]
+        public async Task<IActionResult> UpdateTicketAsync(TicketUpdateModel updateModel)
         {
             if (!ModelState.IsValid)
             {
@@ -65,7 +66,6 @@ namespace AvatarTourSystem_BE.Controllers
             }
             try
             {
-
                 var result = await _ticketService.UpdateTicketAsync(updateModel);
                 return Ok(result);
             }
@@ -74,8 +74,9 @@ namespace AvatarTourSystem_BE.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteTicket(string id)
+
+        [HttpDelete("ticket/{id}")]
+        public async Task<IActionResult> DeleteTicketAsync(string id)
         {
             var result = await _ticketService.DeleteTicket(id);
             return Ok(result);

@@ -10,11 +10,13 @@ namespace BusinessObjects.ViewModels.TransactionHistory
 {
     public class TransactionHistoryCreateModel
     {
-        [FromForm(Name = "user-id")]
+      //  [FromForm(Name = "user-id")]
         public string UserId { get; set; }
-        [FromForm(Name = "booking-id")]
+      //  [FromForm(Name = "booking-id")]
         public string BookingId { get; set; }
-        [FromForm(Name = "status")]
+      //  [FromForm(Name = "order-id")]
+        public string? OrderId { get; set; }
+     //   [FromForm(Name = "status")]
         public EStatus? Status { get; set; }
     }
 }

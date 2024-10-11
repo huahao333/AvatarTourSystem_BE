@@ -12,16 +12,16 @@ namespace BusinessObjects.ViewModels.BookingByRevenue
     public class BookingByRevenueUpdateModel
     {
         [Required]
-        [FromForm(Name = "booking-by-revenue-id")]
+      //  [FromForm(Name = "booking-by-revenue-id")]
         public Guid BookingByRevenueId { get; set; }
 
-        [FromForm(Name = "revenue-id")]
+      //  [FromForm(Name = "revenue-id")]
         public string? RevenueId { get; set; }
 
-        [FromForm(Name = "booking-id")]
+     //   [FromForm(Name = "booking-id")]
         public string? BookingId { get; set; }
 
-        [FromForm(Name = "status")]
+      //  [FromForm(Name = "status")]
         public EStatus? Status { get; set; }
     }
 }

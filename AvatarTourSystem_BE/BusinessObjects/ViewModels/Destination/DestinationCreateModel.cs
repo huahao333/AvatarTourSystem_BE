@@ -1,17 +1,27 @@
 ﻿using BusinessObjects.Enums;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json.Serialization;
 
 namespace BusinessObjects.ViewModels.Destination
 {
     public class DestinationCreateModel
     {
-        [FromForm(Name = "city-id")]
+     //   [FromForm(Name = "city-id")]
         public string? CityId { get; set; }
-        [FromForm(Name = "destination-name")]
+      //  [FromForm(Name = "destination-name")]
         public string? DestinationName { get; set; }
-        [FromForm(Name = "price-destination")]
-        public float? PriceDestination { get; set; }
-        [FromForm(Name = "status")]
-        public EStatus? Status { get; set; }
+
+      //  [FromForm(Name = "destination-img-url")]
+      //  public string? DestinationImgUrl { get; set; }
+      //  [FromForm(Name = "status")]
+        public int? Status { get; set; }
+        public string? DestinationHotline { get; set; }
+        public string? DestinationGoogleMap { get; set; }
+        public string? DestinationImgUrl { get; set; }
+        public string? DestinationAddress { get; set; }
+
+
+        [JsonIgnore]
+        public string? EmbedCode { get; set; }
     }
 }

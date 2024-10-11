@@ -5,7 +5,7 @@ using Services.Interfaces;
 
 namespace AvatarTourSystem_BE.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v1")]
     [ApiController]
     public class DestinationController : Controller
     {
@@ -15,30 +15,29 @@ namespace AvatarTourSystem_BE.Controllers
         {
             _DestinationService = DestinationService;
         }
-
-        [HttpGet("active")]
-        public async Task<IActionResult> GetListActiveDestinationsAsync()
+        [HttpGet("destinations-active")]
+        public async Task<IActionResult> GetActiveDestinationsAsync()
         {
             var result = await _DestinationService.GetActiveDestinationsAsync();
             return Ok(result);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetListDestinationssAsync()
+        [HttpGet("destinations")]
+        public async Task<IActionResult> GetAllDestinationsAsync()
         {
             var result = await _DestinationService.GetDestinationsAsync();
             return Ok(result);
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetDestinationById(string id)
+        [HttpGet("destination/{id}")]
+        public async Task<IActionResult> GetDestinationByIdAsync(string id)
         {
             var result = await _DestinationService.GetDestinationByIdAsync(id);
             return Ok(result);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateDestinationAsync([FromForm] DestinationCreateModel createModel)
+        [HttpPost("destination")]
+        public async Task<IActionResult> CreateDestinationAsync( DestinationCreateModel createModel)
         {
             if (!ModelState.IsValid)
             {
@@ -55,8 +54,8 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpPut]
-        public async Task<IActionResult> UpdateDestinationAsync([FromForm] DestinationUpdateModel updateModel)
+        [HttpPut("destination")]
+        public async Task<IActionResult> UpdateDestinationAsync( DestinationUpdateModel updateModel)
         {
             if (!ModelState.IsValid)
             {
@@ -64,7 +63,6 @@ namespace AvatarTourSystem_BE.Controllers
             }
             try
             {
-
                 var result = await _DestinationService.UpdateDestinationAsync(updateModel);
                 return Ok(result);
             }
@@ -73,8 +71,9 @@ namespace AvatarTourSystem_BE.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteDestination(string id)
+
+        [HttpDelete("destinations/{id}")]
+        public async Task<IActionResult> DeleteDestinationAsync(string id)
         {
             var result = await _DestinationService.DeleteDestination(id);
             return Ok(result);

@@ -10,11 +10,11 @@ namespace BusinessObjects.ViewModels.City
 {
     public class CityUpdateModel
     {
-        [FromForm(Name = "city-id")]
+      //  [FromForm(Name = "city-id")]
         public Guid CityId { get; set; }
-        [FromForm(Name = "city-name")]
+      //  [FromForm(Name = "city-name")]
         public string? CityName { get; set; }
-        [FromForm(Name = "status")]
+      //  [FromForm(Name = "status")]
         public EStatus? Status { get; set; }
     }
 }

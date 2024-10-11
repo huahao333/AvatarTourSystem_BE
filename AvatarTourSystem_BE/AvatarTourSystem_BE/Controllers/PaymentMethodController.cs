@@ -5,7 +5,7 @@ using Services.Interfaces;
 
 namespace AvatarTourSystem_BE.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v1")]
     [ApiController]
     public class PaymentMethodController : ControllerBase
     {
@@ -14,26 +14,29 @@ namespace AvatarTourSystem_BE.Controllers
         {
             _paymentMethodService = paymentMethodService;
         }
-        [HttpGet]
-        public async Task<IActionResult> GetPaymentMethods()
+        [HttpGet("payment-methods")]
+        public async Task<IActionResult> GetAllPaymentMethods()
         {
             var result = await _paymentMethodService.GetAllPaymentMethods();
             return Ok(result);
         }
-        [HttpGet("active")]
+
+        [HttpGet("payment-methods-active")]
         public async Task<IActionResult> GetActivePaymentMethods()
         {
             var result = await _paymentMethodService.GetPaymentMethodsByStatus();
             return Ok(result);
         }
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetPaymentMethodById(string id)
+
+        [HttpGet("payment-method/{id}")]
+        public async Task<IActionResult> GetPaymentMethodByIdAsync(string id)
         {
             var result = await _paymentMethodService.GetPaymentMethodById(id);
             return Ok(result);
         }
-        [HttpPost]
-        public async Task<IActionResult> CreatePaymentMethod([FromForm] PaymentMethodCreateModel createModel)
+
+        [HttpPost("payment-method")]
+        public async Task<IActionResult> CreatePaymentMethod( PaymentMethodCreateModel createModel)
         {
             if (!ModelState.IsValid)
             {
@@ -49,8 +52,9 @@ namespace AvatarTourSystem_BE.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpPut]
-        public async Task<IActionResult> UpdatePaymentMethod([FromForm] PaymentMethodUpdateModel updateModel)
+
+        [HttpPut("payment-method")]
+        public async Task<IActionResult> UpdatePaymentMethod( PaymentMethodUpdateModel updateModel)
         {
             if (!ModelState.IsValid)
             {
@@ -66,7 +70,8 @@ namespace AvatarTourSystem_BE.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpDelete("{id}")]
+
+        [HttpDelete("payment-method/{id}")]
         public async Task<IActionResult> DeletePaymentMethod(string id)
         {
             var result = await _paymentMethodService.DeletePaymentMethod(id);

@@ -5,7 +5,7 @@ using Services.Interfaces;
 
 namespace AvatarTourSystem_BE.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v1")]
     [ApiController]
     public class TransactionsHistoryController : ControllerBase
     {
@@ -16,43 +16,42 @@ namespace AvatarTourSystem_BE.Controllers
             _transactionsHistoryService = transactionsHistoryService;  
         }
 
-        [HttpGet]
+        [HttpGet("transactions-history")]
         public async Task<IActionResult> GetAllTransactionsHistory()
         {
             var result = await _transactionsHistoryService.GetAllTransactionsHistory();
             return Ok(result);
         }
-        [HttpGet("GetByStatus")]
-        public async Task<IActionResult> GetTransactionsHistoryByStatus()
+        [HttpGet("transactions-history-active")]
+        public async Task<IActionResult> GetTransactionsHistoryByStatusAsync()
         {
             var result = await _transactionsHistoryService.GetTransactionsHistoryByStatus();
             return Ok(result);
         }
 
-
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetTransactionsHistoryById(string id)
+        [HttpGet("transaction-history/{id}")]
+        public async Task<IActionResult> GetTransactionsHistoryByIdAsync(string id)
         {
             var result = await _transactionsHistoryService.GetTransactionsHistoryById(id);
             return Ok(result);
         }
 
-        [HttpGet("GetTransactionsHistoryByUserId/{userId}")]
-        public async Task<IActionResult> GetTransactionsHistoryByUserId(string userId)
+        [HttpGet("transaction-history-user/{userId}")]
+        public async Task<IActionResult> GetTransactionsHistoryByUserIdAsync(string userId)
         {
             var result = await _transactionsHistoryService.GetTransactionsHistoryByUserId(userId);
             return Ok(result);
         }
 
-        [HttpGet("GetTransactionsHistoryByBookingId/{bookingId}")]
-        public async Task<IActionResult> GetTransactionsHistoryByBookingId(string bookingId)
+        [HttpGet("transaction-history-booking/{bookingId}")]
+        public async Task<IActionResult> GetTransactionsHistoryByBookingIdAsync(string bookingId)
         {
             var result = await _transactionsHistoryService.GetTransactionsHistoryByBookingId(bookingId);
             return Ok(result);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateTransactionsHistory([FromForm] TransactionHistoryCreateModel createModel)
+        [HttpPost("transaction-history")]
+        public async Task<IActionResult> CreateTransactionsHistoryAsync(TransactionHistoryCreateModel createModel)
         {
             if (!ModelState.IsValid)
             {
@@ -70,8 +69,8 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpPut]
-        public async Task<IActionResult> UpdateTransactionsHistory([FromForm] TransactionHistoryUpdateModel updateModel)
+        [HttpPut("transaction-history")]
+        public async Task<IActionResult> UpdateTransactionsHistoryAsync(TransactionHistoryUpdateModel updateModel)
         {
             if (!ModelState.IsValid)
             {
@@ -89,8 +88,8 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteTransactionsHistory(string id)
+        [HttpDelete("transaction-history/{id}")]
+        public async Task<IActionResult> DeleteTransactionsHistoryAsync(string id)
         {
             var result = await _transactionsHistoryService.DeleteTransactionsHistory(id);
             return Ok(result);

@@ -5,7 +5,7 @@ using Services.Interfaces;
 
 namespace AvatarTourSystem_BE.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v1")]
     [ApiController]
     public class DailyTourController : ControllerBase
     {
@@ -14,26 +14,29 @@ namespace AvatarTourSystem_BE.Controllers
         {
             _dailyTourService = dailyTourService;
         }
-        [HttpGet]
-        public async Task<IActionResult> GetAllDailyTour()
+        [HttpGet("dailies-tour")]
+        public async Task<IActionResult> GetAllDailyToursAsync()
         {
             var response = await _dailyTourService.GetAllDailyTour();
             return Ok(response);
         }
-        [HttpGet("GetDailyTourByStatus")]
-        public async Task<IActionResult> GetDailyTourByStatus()
+
+        [HttpGet("dailies-tour-active")]
+        public async Task<IActionResult> GetDailyToursByStatusAsync()
         {
             var response = await _dailyTourService.GetDailyTourByStatus();
             return Ok(response);
         }
-        [HttpGet("GetDailyTourById")]
-        public async Task<IActionResult> GetDailyTourById(string dailyTourId)
+
+        [HttpGet("dailies-tour/{id}")]
+        public async Task<IActionResult> GetDailyTourByIdAsync(string id)
         {
-            var response = await _dailyTourService.GetDailyTourById(dailyTourId);
+            var response = await _dailyTourService.GetDailyTourById(id);
             return Ok(response);
         }
-        [HttpPost]
-        public async Task<IActionResult> CreateDailyTour(DailyTourCreateModel createModel)
+
+        [HttpPost("dailies-tour")]
+        public async Task<IActionResult> CreateDailyTourAsync(DailyTourCreateModel createModel)
         {
             if (!ModelState.IsValid)
             {
@@ -49,8 +52,9 @@ namespace AvatarTourSystem_BE.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, result);
             }
         }
-        [HttpPut]
-        public async Task<IActionResult> UpdateDailyTour(DailyTourUpdateModel updateModel)
+
+        [HttpPut("dailies-tour")]
+        public async Task<IActionResult> UpdateDailyTourAsync(DailyTourUpdateModel updateModel)
         {
             if (!ModelState.IsValid)
             {
@@ -66,10 +70,11 @@ namespace AvatarTourSystem_BE.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, result);
             }
         }
-        [HttpDelete]
-        public async Task<IActionResult> DeleteDailyTour(string dailyTourId)
+
+        [HttpDelete("dailies-tour/{id}")]
+        public async Task<IActionResult> DeleteDailyTourAsync(string id)
         {
-            var result = await _dailyTourService.DeleteDailyTour(dailyTourId);
+            var result = await _dailyTourService.DeleteDailyTour(id);
             if (result.IsSuccess)
             {
                 return Ok(result);
@@ -79,8 +84,9 @@ namespace AvatarTourSystem_BE.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, result);
             }
         }
-        [HttpGet("GetDailyTourByPackageTourID")]
-        public async Task<IActionResult> GetDailyTourByPackageTour(string packId)
+
+        [HttpGet("dailies-tour-package/{packId}")]
+        public async Task<IActionResult> GetDailyToursByPackageTourIdAsync(string packId)
         {
             var response = await _dailyTourService.GetDailyTourByPackageTour(packId);
             return Ok(response);

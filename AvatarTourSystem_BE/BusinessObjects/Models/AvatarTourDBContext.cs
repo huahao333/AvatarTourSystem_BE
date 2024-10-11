@@ -33,7 +33,7 @@ namespace BusinessObjects.Models
         public virtual DbSet<PackageTour> PackageTours { get; set; } = null!;
         public virtual DbSet<PaymentMethod> PaymentMethods { get; set; } = null!;
         public virtual DbSet<PointOfInterest> PointOfInterests { get; set; } = null!;
-        public virtual DbSet<POIType> POITypes { get; set; } = null!;
+        //public virtual DbSet<POIType> POITypes { get; set; } = null!;
         public virtual DbSet<Rate> Rates { get; set; } = null!;
         public virtual DbSet<RequestType> RequestTypes { get; set; } = null!;
         public virtual DbSet<Revenue> Revenues { get; set; } = null!;
@@ -318,27 +318,27 @@ namespace BusinessObjects.Models
 
 
 
-                entity.HasOne(d => d.POITypes)
-                  .WithMany(p => p.PointOfInterests)
-                  .HasForeignKey(d => d.POITypeId)
-                  .HasConstraintName("FK__PointOfInterest__POITypeId__3F21F217");
+                //entity.HasOne(d => d.POITypes)
+                //  .WithMany(p => p.PointOfInterests)
+                //  .HasForeignKey(d => d.POITypeId)
+                //  .HasConstraintName("FK__PointOfInterest__POITypeId__3F21F217");
                 entity.HasOne(d => d.Locations)
                   .WithMany(p => p.PointOfInterests)
                   .HasForeignKey(d => d.LocationId)
                   .HasConstraintName("FK__PointOfInterest__LocationId__3F21C417");
             });
 
-            modelBuilder.Entity<POIType>(entity =>
-            {
-                entity.HasKey(e => e.POITypeId)
-                   .HasName("PK__POIType__511372467B17FFC3");
-                entity.ToTable("POIType");
+            //modelBuilder.Entity<POIType>(entity =>
+            //{
+            //    entity.HasKey(e => e.POITypeId)
+            //       .HasName("PK__POIType__511372467B17FFC3");
+            //    entity.ToTable("POIType");
 
-                entity.Property(e => e.CreateDate)
-                    .HasColumnType("date");
-                entity.Property(e => e.UpdateDate)
-                    .HasColumnType("date");
-            });
+            //    entity.Property(e => e.CreateDate)
+            //        .HasColumnType("date");
+            //    entity.Property(e => e.UpdateDate)
+            //        .HasColumnType("date");
+            //});
 
             modelBuilder.Entity<Rate>(entity =>
             {

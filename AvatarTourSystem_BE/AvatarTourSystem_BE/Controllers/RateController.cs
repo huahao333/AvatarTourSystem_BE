@@ -5,7 +5,7 @@ using Services.Interfaces;
 
 namespace AvatarTourSystem_BE.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v1")]
     [ApiController]
     public class RateController : ControllerBase
     {
@@ -14,38 +14,43 @@ namespace AvatarTourSystem_BE.Controllers
         {
             _rateService = rateService;
         }
-        [HttpGet]
-        public async Task<IActionResult> GetAllRate()
+        [HttpGet("rates")]
+        public async Task<IActionResult> GetAllRates()
         {
             var result = await _rateService.GetAllRate();
             return Ok(result);
         }
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetRateById(string id)
+
+        [HttpGet("rate/{id}")]
+        public async Task<IActionResult> GetRateByIdAsync(string id)
         {
             var result = await _rateService.GetRateById(id);
             return Ok(result);
         }
-        [HttpGet("GetRateByBookingId/{bookingId}")]
+
+        [HttpGet("rates-booking/{bookingId}")]
         public async Task<IActionResult> GetRateByBookingId(string bookingId)
         {
             var result = await _rateService.GetRateByBookingId(bookingId);
             return Ok(result);
         }
-        [HttpGet("GetRateByUserId/{userId}")]
+
+        [HttpGet("rates-user/{userId}")]
         public async Task<IActionResult> GetRateByUserId(string userId)
         {
             var result = await _rateService.GetRateByUserId(userId);
             return Ok(result);
         }
-        [HttpGet("GetRateByStatus")]
-        public async Task<IActionResult> GetRateByStatus()
+
+        [HttpGet("rates-active")]
+        public async Task<IActionResult> GetRatesByStatus()
         {
             var result = await _rateService.GetRateByStatus();
             return Ok(result);
         }
-        [HttpPost]
-        public async Task<IActionResult> CreateRate([FromForm] RateCreateModel rate)
+
+        [HttpPost("rate")]
+        public async Task<IActionResult> CreateRate(RateCreateModel rate)
         {
             if (!ModelState.IsValid)
             {
@@ -61,8 +66,9 @@ namespace AvatarTourSystem_BE.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
-        [HttpPut]
-        public async Task<IActionResult> UpdateRate([FromForm] RateUpdateModel rate)
+
+        [HttpPut("rate")]
+        public async Task<IActionResult> UpdateRate(RateUpdateModel rate)
         {
             if (!ModelState.IsValid)
             {
@@ -78,13 +84,12 @@ namespace AvatarTourSystem_BE.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
-        [HttpDelete("{id}")]
+
+        [HttpDelete("rate/{id}")]
         public async Task<IActionResult> DeleteRate(string id)
         {
             var result = await _rateService.DeleteRate(id);
             return Ok(result);
         }
-
-
     }
 }

@@ -10,15 +10,16 @@ namespace BusinessObjects.ViewModels.Location
 {
     public class LocationUpdateModel
     {
-        [FromForm(Name = "location-id")]
+      //  [FromForm(Name = "location-id")]
         public Guid LocationId { get; set; }
-        [FromForm(Name = "location-name")]
+     //  [FromForm(Name = "location-name")]
         public string? LocationName { get; set; }
-        [FromForm(Name = "location-type")]
-        public int? LocationType { get; set; }
-        [FromForm(Name = "destination-id")]
+     //   [FromForm(Name = "location-type")]
+      //  [FromForm(Name = "location-img-url")]
+        public string? LocationImgUrl { get; set; }
+     //   [FromForm(Name = "destination-id")]
         public string? DestinationId { get; set; }
-        [FromForm(Name = "status")]
+     //   [FromForm(Name = "status")]
         public EStatus? Status { get; set; }
     }
 }

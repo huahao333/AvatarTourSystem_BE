@@ -71,6 +71,7 @@ namespace Services.Services
             var ticketType = _mapper.Map<TicketType>(createModel);
             ticketType.TicketTypeId = Guid.NewGuid().ToString();
             ticketType.CreateDate = DateTime.Now;
+            ticketType.MinBuyTicket = createModel.MinBuyTicket;
             var result = await _unitOfWork.TicketTypeRepository.AddAsync(ticketType);
             _unitOfWork.Save();
             return new APIResponseModel

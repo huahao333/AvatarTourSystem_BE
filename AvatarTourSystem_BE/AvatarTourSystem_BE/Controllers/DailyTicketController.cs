@@ -6,7 +6,7 @@ using Services.Interfaces;
 
 namespace AvatarTourSystem_BE.Controllers
 {
-    [Route("api/dailytickets")]
+    [Route("api/v1")]
     [ApiController]
     public class DailyTicketController : Controller
     {
@@ -17,29 +17,29 @@ namespace AvatarTourSystem_BE.Controllers
             _dailyTicketService = dailyTicketService;
         }
 
-        [HttpGet("active")]
+        [HttpGet("daily-tickets-active")]
         public async Task<IActionResult> GetListActiveDailyTicketsAsync()
         {
             var result = await _dailyTicketService.GetActiveDailyTicketsAsync();
             return Ok(result);
         }
 
-        [HttpGet]
+        [HttpGet("daily-tickets")]
         public async Task<IActionResult> GetListDailyTicketsAsync()
         {
             var result = await _dailyTicketService.GetDailyTicketsAsync();
             return Ok(result);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("daily-ticket/{id}")]
         public async Task<IActionResult> GetDailyTicketById(string id)
         {
             var result = await _dailyTicketService.GetDailyTicketByIdAsync(id);
             return Ok(result);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateDailyTicketAsync([FromForm] DailyTicketCreateModel createModel)
+        [HttpPost("daily-ticket")]
+        public async Task<IActionResult> CreateDailyTicketAsync( DailyTicketCreateModel createModel)
         {
             if (!ModelState.IsValid)
             {
@@ -56,8 +56,8 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpPut]
-        public async Task<IActionResult> UpdateDailyTicketAsync([FromForm] DailyTicketUpdateModel updateModel)
+        [HttpPut("daily-ticket")]
+        public async Task<IActionResult> UpdateDailyTicketAsync( DailyTicketUpdateModel updateModel)
         {
             if (!ModelState.IsValid)
             {
@@ -65,7 +65,6 @@ namespace AvatarTourSystem_BE.Controllers
             }
             try
             {
-
                 var result = await _dailyTicketService.UpdateDailyTicketAsync(updateModel);
                 return Ok(result);
             }
@@ -74,7 +73,8 @@ namespace AvatarTourSystem_BE.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpDelete("{id}")]
+
+        [HttpDelete("daily-ticket/{id}")]
         public async Task<IActionResult> DeleteDailyTicket(string id)
         {
             var result = await _dailyTicketService.DeleteDailyTicket(id);

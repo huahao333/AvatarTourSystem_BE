@@ -2,10 +2,11 @@
 using BusinessObjects.ViewModels.Supplier;
 using Microsoft.AspNetCore.Mvc;
 using Services.Interfaces;
+using Services.Services;
 
 namespace AvatarTourSystem_BE.Controllers
 {
-    [Route("api/suppliers")]
+    [Route("api/v1")]
     [ApiController]
     public class SupplierController : Controller
     {
@@ -15,26 +16,29 @@ namespace AvatarTourSystem_BE.Controllers
             _supplierlService = supplierService;
         }
 
-        [HttpGet("active")]
+        [HttpGet("suppliers-active")]
         public async Task<IActionResult> GetListActiveSuppliersAsync()
         {
             var result = await _supplierlService.GetActiveSuppliersAsync();
             return Ok(result);
         }
-        [HttpGet]
+
+        [HttpGet("suppliers")]
         public async Task<IActionResult> GetListSuppliersAsync()
         {
             var result = await _supplierlService.GetSuppliersAsync();
             return Ok(result);
         }
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetSupplierById(string id)
+
+        [HttpGet("supplier/{id}")]
+        public async Task<IActionResult> GetSupplierByIdAsync(string id)
         {
             var result = await _supplierlService.GetSupplierByIdAsync(id);
             return Ok(result);
         }
-        [HttpPost]
-        public async Task<IActionResult> CreateSupplierAsync([FromForm] SupplierCreateModel createModel)
+
+        [HttpPost("supplier")]
+        public async Task<IActionResult> CreateSupplierAsync(SupplierCreateModel createModel)
         {
             if (!ModelState.IsValid)
             {
@@ -50,8 +54,9 @@ namespace AvatarTourSystem_BE.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpPut]
-        public async Task<IActionResult> UpdateSupplierAsync([FromForm] SupplierUpdateModel updateModel)
+
+        [HttpPut("supplier")]
+        public async Task<IActionResult> UpdateSupplierAsync(SupplierUpdateModel updateModel)
         {
             if (!ModelState.IsValid)
             {
@@ -59,7 +64,6 @@ namespace AvatarTourSystem_BE.Controllers
             }
             try
             {
-
                 var result = await _supplierlService.UpdateSupplierAsync(updateModel);
                 return Ok(result);
             }
@@ -68,7 +72,8 @@ namespace AvatarTourSystem_BE.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpDelete("{id}")]
+
+        [HttpDelete("supplier/{id}")]
         public async Task<IActionResult> DeleteSupplierAsync(string id)
         {
             var result = await _supplierlService.DeleteSupplier(id);

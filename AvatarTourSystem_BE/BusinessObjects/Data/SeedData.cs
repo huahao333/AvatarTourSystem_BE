@@ -56,21 +56,18 @@ namespace BusinessObjects.Data
                 new TourSegment { TourSegmentId = "2", DestinationId = "2", PackageTourId = "2", CreateDate = DateTime.Now, Status = 1 }
             );
             modelBuilder.Entity<Destination>().HasData(
-                new Destination { DestinationId = "1", DestinationName = "Quận 1", CityId = "1", PriceDestination = 390000, CreateDate = DateTime.Now, Status = 0 },
-                new Destination { DestinationId = "2", DestinationName = "Quận 2", CityId = "2", PriceDestination = 350000, CreateDate = DateTime.Now, Status = 1 }
+                new Destination { DestinationId = "1", DestinationName = "Quận 1", CityId = "1", CreateDate = DateTime.Now, Status = 0 },
+                new Destination { DestinationId = "2", DestinationName = "Quận 2", CityId = "2", CreateDate = DateTime.Now, Status = 1 }
             );
             modelBuilder.Entity<Location>().HasData(
-                new Location { LocationId = "1", LocationName = "Nhà hàng", LocationType = 1, DestinationId = "1", CreateDate = DateTime.Now, Status = 0 },
-                new Location { LocationId = "2", LocationName = "Khách sạn", LocationType = 1, DestinationId = "1", CreateDate = DateTime.Now, Status = 1 }
+                new Location { LocationId = "1", LocationName = "Nhà hàng", DestinationId = "1", CreateDate = DateTime.Now, Status = 0 },
+                new Location { LocationId = "2", LocationName = "Khách sạn", DestinationId = "1", CreateDate = DateTime.Now, Status = 1 }
             );
             modelBuilder.Entity<PointOfInterest>().HasData(
-                new PointOfInterest { PointId = "1", PointName = "Chợ Bến Thành", LocationId = "1", POITypeId = "1", CreateDate = DateTime.Now, Status = 0 },
-                new PointOfInterest { PointId = "2", PointName = "Bảo tàng Hồ Chí Minh", LocationId = "1", POITypeId = "2", CreateDate = DateTime.Now, Status = 1 }
+                new PointOfInterest { PointId = "1", PointName = "Chợ Bến Thành", LocationId = "1", CreateDate = DateTime.Now, Status = 0 },
+                new PointOfInterest { PointId = "2", PointName = "Bảo tàng Hồ Chí Minh", LocationId = "1", CreateDate = DateTime.Now, Status = 1 }
             );
-            modelBuilder.Entity<POIType>().HasData(
-                new POIType { POITypeId = "1", POITypeName = "Chợ", CreateDate = DateTime.Now, Status = 0 },
-                new POIType { POITypeId = "2", POITypeName = "Bảo tàng", CreateDate = DateTime.Now, Status = 1 }
-            );
+            
             modelBuilder.Entity<PackageTour>().HasData(
                 new PackageTour { PackageTourId = "1", PackageTourName = "Tour Hồ Chí Minh", PackageTourPrice = 500000, CityId = "1", CreateDate = DateTime.Now, Status = 0 },
                 new PackageTour { PackageTourId = "2", PackageTourName = "Tour Hà Nội", PackageTourPrice = 600000, CityId = "2", CreateDate = DateTime.Now, Status = 1 }

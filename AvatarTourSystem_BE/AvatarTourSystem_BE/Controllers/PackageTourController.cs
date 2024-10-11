@@ -7,7 +7,7 @@ using Services.Services;
 
 namespace AvatarTourSystem_BE.Controllers
 {
-    [Route("api/packagetours")]
+    [Route("api/v1")]
     [ApiController]
     public class PackageTourController : Controller
     {
@@ -18,29 +18,29 @@ namespace AvatarTourSystem_BE.Controllers
             _packageTourService = packageTourService;
         }
 
-        [HttpGet("active")]
-        public async Task<IActionResult> GetListActivePackageToursAsync()
+        [HttpGet("package-tours-active")]
+        public async Task<IActionResult> GetActivePackageToursAsync()
         {
             var result = await _packageTourService.GetActivePackageToursAsync();
             return Ok(result);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetListPackageToursAsync()
+        [HttpGet("package-tours")]
+        public async Task<IActionResult> GetAllPackageToursAsync()
         {
             var result = await _packageTourService.GetPackageToursAsync();
             return Ok(result);
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetPackageTourById(string id)
+        [HttpGet("package-tour/{id}")]
+        public async Task<IActionResult> GetPackageTourByIdAsync(string id)
         {
             var result = await _packageTourService.GetPackageTourByIdAsync(id);
             return Ok(result);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreatePackageTourAsync([FromForm] PackageTourCreateModel createModel)
+        [HttpPost("package-tour")]
+        public async Task<IActionResult> CreatePackageTourAsync(PackageTourCreateModel createModel)
         {
             if (!ModelState.IsValid)
             {
@@ -57,8 +57,8 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpPut]
-        public async Task<IActionResult> UpdatePackageTourAsync([FromForm] PackageTourUpdateModel updateModel)
+        [HttpPut("package-tour")]
+        public async Task<IActionResult> UpdatePackageTourAsync(PackageTourUpdateModel updateModel)
         {
             if (!ModelState.IsValid)
             {
@@ -66,7 +66,6 @@ namespace AvatarTourSystem_BE.Controllers
             }
             try
             {
-
                 var result = await _packageTourService.UpdatePackageTourAsync(updateModel);
                 return Ok(result);
             }
@@ -75,7 +74,8 @@ namespace AvatarTourSystem_BE.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpDelete("{id}")]
+
+        [HttpDelete("package-tour/{id}")]
         public async Task<IActionResult> DeletePackageTour(string id)
         {
             var result = await _packageTourService.DeletePackageTour(id);

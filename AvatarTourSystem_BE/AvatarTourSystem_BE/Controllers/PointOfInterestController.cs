@@ -4,7 +4,7 @@ using Services.Interfaces;
 
 namespace AvatarTourSystem_BE.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v1")]
     [ApiController]
     public class PointOfInterestController : ControllerBase 
     {
@@ -13,26 +13,29 @@ namespace AvatarTourSystem_BE.Controllers
         {
             _pointOfInterestService = pointOfInterestService;
         }
-        [HttpGet]
-        public async Task<IActionResult> GetPointOfInterests()
+        [HttpGet("point-of-interests")]
+        public async Task<IActionResult> GetAllPointOfInterests()
         {
             var result = await _pointOfInterestService.GetAllPointOfInterests();
             return Ok(result);
         }
-        [HttpGet("active")]
+
+        [HttpGet("point-of-interests-active")]
         public async Task<IActionResult> GetActivePointOfInterests()
         {
             var result = await _pointOfInterestService.GetPointOfInterestsByStatus();
             return Ok(result);
         }
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetPointOfInterestById(string id)
+
+        [HttpGet("point-of-interest/{id}")]
+        public async Task<IActionResult> GetPointOfInterestByIdAsync(string id)
         {
             var result = await _pointOfInterestService.GetPointOfInterestById(id);
             return Ok(result);
         }
-        [HttpPost]
-        public async Task<IActionResult> CreatePointOfInterest([FromForm] POICreateModel createModel)
+
+        [HttpPost("point-of-interest")]
+        public async Task<IActionResult> CreatePointOfInterest(POICreateModel createModel)
         {
             if (!ModelState.IsValid)
             {
@@ -48,8 +51,9 @@ namespace AvatarTourSystem_BE.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpPut]
-        public async Task<IActionResult> UpdatePointOfInterest([FromForm] POIUpdateModel updateModel)
+
+        [HttpPut("point-of-interest")]
+        public async Task<IActionResult> UpdatePointOfInterest(POIUpdateModel updateModel)
         {
             if (!ModelState.IsValid)
             {
@@ -65,7 +69,8 @@ namespace AvatarTourSystem_BE.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpDelete("{id}")]
+
+        [HttpDelete("point-of-interest/{id}")]
         public async Task<IActionResult> DeletePointOfInterest(string id)
         {
             var result = await _pointOfInterestService.DeletePointOfInterest(id);

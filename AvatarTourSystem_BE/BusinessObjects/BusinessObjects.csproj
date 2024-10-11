@@ -28,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="DAO\" />
+    <Folder Include="Migrations\" />
   </ItemGroup>
 
 </Project>

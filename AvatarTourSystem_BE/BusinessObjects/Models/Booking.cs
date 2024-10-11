@@ -21,6 +21,7 @@ namespace BusinessObjects.Models
         public string? BookingId { get; set; }
         public string? UserId { get; set; }
         public DateTime? BookingDate { get; set; }
+        public DateTime? ExpirationDate { get; set; }
         public string? DailyTourId { get; set; }
         public string? PaymentId { get; set; }
         public float? TotalPrice { get; set; }

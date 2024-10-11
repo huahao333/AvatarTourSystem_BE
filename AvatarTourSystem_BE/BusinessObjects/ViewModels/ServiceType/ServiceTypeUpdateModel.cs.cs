@@ -10,11 +10,11 @@ namespace BusinessObjects.ViewModels.ServiceType
 {
     public class ServiceTypeUpdateModel
     {
-        [FromForm(Name = "service-id")]
+      //  [FromForm(Name = "service-id")]
         public Guid ServiceTypeId { get; set; }
-        [FromForm(Name = "service-name")]
+      //  [FromForm(Name = "service-name")]
         public string? ServiceTypeName { get; set; }
-        [FromForm(Name = "status")]
+      //  [FromForm(Name = "status")]
         public EStatus? Status { get; set; }
     }
 }

@@ -12,9 +12,9 @@ namespace BusinessObjects.ViewModels.PaymentMethod
     public class PaymentMethodCreateModel
     {
         [Required]
-        [FromForm(Name = "payment-type")]
+      //  [FromForm(Name = "payment-type")]
         public string PaymentType { get; set; }
-        [FromForm(Name = "status")]
+      //  [FromForm(Name = "status")]
         public EStatus? Status { get; set; }
     }
 }

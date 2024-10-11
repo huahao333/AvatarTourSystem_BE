@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Repositories.Interfaces
 {
-    public interface IPOITypeRepository : IGenericRepository<POIType>
+    public interface IDailyTourFlowRepository : IGenericRepository<DailyTour>
     {
     }
 }

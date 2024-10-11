@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Services.Interfaces;
 namespace AvatarTourSystem_BE.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v1")]
     [ApiController]
     public class LocationController : ControllerBase
     {
@@ -15,29 +15,29 @@ namespace AvatarTourSystem_BE.Controllers
             _locationService = locationService;
         }
 
-        [HttpGet("active")]
-        public async Task<IActionResult> GetListActiveLocationsAsync()
+        [HttpGet("locations-active")]
+        public async Task<IActionResult> GetActiveLocationsAsync()
         {
             var result = await _locationService.GetActiveLocationsAsync();
             return Ok(result);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetListLocationsAsync()
+        [HttpGet("locations")]
+        public async Task<IActionResult> GetAllLocationsAsync()
         {
             var result = await _locationService.GetLocationsAsync();
             return Ok(result);
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetLocationById(string id)
+        [HttpGet("location/{id}")]
+        public async Task<IActionResult> GetLocationByIdAsync(string id)
         {
             var result = await _locationService.GetLocationByIdAsync(id);
             return Ok(result);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreatelocationAsync([FromForm] LocationCreateModel createModel)
+        [HttpPost("location")]
+        public async Task<IActionResult> CreateLocationAsync(LocationCreateModel createModel)
         {
             if (!ModelState.IsValid)
             {
@@ -54,8 +54,8 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
-        [HttpPut]
-        public async Task<IActionResult> UpdateLocationAsync([FromForm] LocationUpdateModel updateModel)
+        [HttpPut("location")]
+        public async Task<IActionResult> UpdateLocationAsync(LocationUpdateModel updateModel)
         {
             if (!ModelState.IsValid)
             {
@@ -63,7 +63,6 @@ namespace AvatarTourSystem_BE.Controllers
             }
             try
             {
-
                 var result = await _locationService.UpdateLocationAsync(updateModel);
                 return Ok(result);
             }
@@ -72,8 +71,9 @@ namespace AvatarTourSystem_BE.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Deletelocation(string id)
+
+        [HttpDelete("location/{id}")]
+        public async Task<IActionResult> DeleteLocationAsync(string id)
         {
             var result = await _locationService.DeleteLocation(id);
             return Ok(result);
