@@ -432,7 +432,7 @@ namespace Services.Services
             {
                 var dailyTour = await _unitOfWork.DailyTourRepository.GetFirstOrDefaultAsync(query => query
                     .Where(dt => dt.DailyTourId == dailyTourId && dt.Status == 1)
-                    .Include(dt => dt.PackageTours)
+                    .Include(dt => dt.PackageTours )
                         .ThenInclude(pt => pt.TourSegments)
                             .ThenInclude(des => des.Destinations)
                                 .ThenInclude(lo => lo.Locations)
@@ -450,10 +450,7 @@ namespace Services.Services
                         IsSuccess = false,
                     };
                 }
-
-                var pointOfI = await _unitOfWork.PointOfInterestRepository.GetAllAsyncs(query => query
-                                          .Where(c => c.POITypeId == c.POITypes.POITypeId)
-                                          .Include(type => type.POITypes));
+                var pointOfI = await _unitOfWork.PointOfInterestRepository.GetAllAsyncs(query => query);
 
                 var result = new
                 {
@@ -478,6 +475,7 @@ namespace Services.Services
                                 tt.DailyTicketId,
                                 tt.Capacity,
                                 tt.TicketTypes?.TicketTypeName,
+                                tt.TicketTypes?.MinBuyTicket,
                                 tt.DailyTicketPrice,
                                 tt.CreateDate
                             }).ToList()
@@ -492,31 +490,36 @@ namespace Services.Services
                         StatusPackageTour = dailyTour.PackageTours?.Status,
                         dailyTour.PackageTours?.Cities?.CityName,
                         TourSegments = dailyTour.PackageTours?.TourSegments
-                            .Where(ts => ts.Status == 1)
+                            .Where(ts => ts.Status == 1 && ts.Destinations?.Status==1)
                             .Select(ts => new
                             {
                                 ts.TourSegmentId,
                                 ts.DestinationId,
                                 ts.Destinations?.DestinationName,
+                                ts.Destinations?.DestinationAddress,
+                                ts.Destinations?.DestinationImgUrl,
+                                ts.Destinations?.DestinationHotline,
+                                ts.Destinations?.DestinationGoogleMap,
                                 StatusDestinations = ts.Destinations?.Status,
                                 Locations = ts.Destinations?.Locations
                                     .Where(c => c.Status == 1 &&
                                                 c.DestinationId == ts.DestinationId &&
                                                 dailyTour.PackageTours?.PackageTourId == ts.PackageTourId &&
-                                                ts.ServiceByTourSegments.Any(sbts => sbts.Services?.LocationId == c.LocationId))
+                                                ts.ServiceByTourSegments.Any(sbts => sbts.Services?.LocationId == c.LocationId &&
+                                                                                      sbts.Status==1))
                                     .Select(lo => new
                                     {
                                         lo.LocationId,
                                         lo.LocationName,
                                         lo.LocationImgUrl,
-                                        lo.LocationType,
+                                        lo.LocationHotline,
+                                        lo.LocationGoogleMap,
+                                        //lo.LocationType,
                                         lo.DestinationId,
                                         PointOfInterests = pointOfI.Where(poi => poi.LocationId == lo.LocationId).Select(type => new
                                         {
                                             type.PointId,
                                             type.PointName,
-                                            type.POITypes?.POITypeId,
-                                            type.POITypes?.POITypeName,
                                         }),
                                         StatusLocation = lo.Status,
                                         Services = ts.ServiceByTourSegments
@@ -586,9 +589,7 @@ namespace Services.Services
 
                 foreach (var dailyTour in dailyTours)
                 {
-                    var pointOfI = await _unitOfWork.PointOfInterestRepository.GetAllAsyncs(query => query
-                                          .Where(c=> c.POITypeId == c.POITypes.POITypeId)
-                                          .Include(type=>type.POITypes));
+                    var pointOfI = await _unitOfWork.PointOfInterestRepository.GetAllAsyncs(query => query);
                     var result = new
                     {
                         DailyTour = new
@@ -612,6 +613,7 @@ namespace Services.Services
                                     tt.DailyTicketId,
                                     tt.Capacity,
                                     tt.TicketTypes?.TicketTypeName,
+                                    tt.TicketTypes?.MinBuyTicket,
                                     tt.DailyTicketPrice,
                                     tt.CreateDate
                                 }).ToList()
@@ -626,31 +628,36 @@ namespace Services.Services
                             StatusPackageTour = dailyTour.PackageTours?.Status,
                             dailyTour.PackageTours?.Cities?.CityName,
                             TourSegments = dailyTour.PackageTours?.TourSegments
-                                .Where(ts => ts.Status == 1)
+                                .Where(ts => ts.Status == 1 && ts.Destinations?.Status == 1)
                                 .Select(ts => new
                                 {
                                     ts.TourSegmentId,
                                     ts.DestinationId,
                                     ts.Destinations?.DestinationName,
-                                    StatusDestinations= ts.Destinations?.Status,
+                                    ts.Destinations?.DestinationAddress,
+                                    ts.Destinations?.DestinationImgUrl,
+                                    ts.Destinations?.DestinationHotline,
+                                    ts.Destinations?.DestinationGoogleMap,
+                                    StatusDestinations = ts.Destinations?.Status,
                                     Locations = ts.Destinations?.Locations
                                         .Where(c=>  c.Status==1 &&
                                                     c.DestinationId == ts.DestinationId &&
                                                     dailyTour.PackageTours?.PackageTourId ==ts.PackageTourId &&
-                                                    ts.ServiceByTourSegments.Any(sbts=> sbts.Services?.LocationId==c.LocationId))
+                                                    ts.ServiceByTourSegments.Any(sbts=> sbts.Services?.LocationId==c.LocationId &&
+                                                                                        sbts.Status == 1))
                                         .Select(lo => new
                                         {
                                             lo.LocationId,
                                             lo.LocationName,
                                             lo.LocationImgUrl,
-                                            lo.LocationType,
+                                            lo.LocationHotline,
+                                            lo.LocationGoogleMap,
+                                            //lo.LocationType,
                                             lo.DestinationId,
-                                            PointOfInterests = pointOfI.Where(poi=> poi.LocationId==lo.LocationId).Select(type=> new
+                                            PointOfInterests = pointOfI.Where(poi => poi.LocationId == lo.LocationId).Select(type => new
                                             {
                                                 type.PointId,
                                                 type.PointName,
-                                                type.POITypes?.POITypeId,
-                                                type.POITypes?.POITypeName,
                                             }),
                                             StatusLocation = lo.Status,
                                             Services = ts.ServiceByTourSegments
@@ -720,9 +727,7 @@ namespace Services.Services
 
                 foreach (var dailyTour in dailyTours)
                 {
-                    var pointOfI = await _unitOfWork.PointOfInterestRepository.GetAllAsyncs(query => query
-                                          .Where(c => c.POITypeId == c.POITypes.POITypeId)
-                                          .Include(type => type.POITypes));
+                    var pointOfI = await _unitOfWork.PointOfInterestRepository.GetAllAsyncs(query => query);
 
                     var result = new
                     {
@@ -747,6 +752,7 @@ namespace Services.Services
                                     tt.DailyTicketId,
                                     tt.Capacity,
                                     tt.TicketTypes?.TicketTypeName,
+                                    tt.TicketTypes?.MinBuyTicket,
                                     tt.DailyTicketPrice,
                                     tt.CreateDate
                                 }).ToList()
@@ -761,31 +767,36 @@ namespace Services.Services
                             StatusPackageTour = dailyTour.PackageTours?.Status,
                             dailyTour.PackageTours?.Cities?.CityName,
                             TourSegments = dailyTour.PackageTours?.TourSegments
-                                .Where(ts => ts.Status == 1)
+                                .Where(ts => ts.Status == 1 && ts.Destinations?.Status == 1)
                                 .Select(ts => new
                                 {
                                     ts.TourSegmentId,
                                     ts.DestinationId,
                                     ts.Destinations?.DestinationName,
+                                    ts.Destinations?.DestinationAddress,
+                                    ts.Destinations?.DestinationImgUrl,
+                                    ts.Destinations?.DestinationHotline,
+                                    ts.Destinations?.DestinationGoogleMap,
                                     StatusDestinations = ts.Destinations?.Status,
                                     Locations = ts.Destinations?.Locations
                                         .Where(c => c.Status == 1 &&
                                                     c.DestinationId == ts.DestinationId &&
                                                     dailyTour.PackageTours?.PackageTourId == ts.PackageTourId &&
-                                                    ts.ServiceByTourSegments.Any(sbts => sbts.Services?.LocationId == c.LocationId))
+                                                    ts.ServiceByTourSegments.Any(sbts => sbts.Services?.LocationId == c.LocationId && 
+                                                                                         sbts.Status == 1))
                                         .Select(lo => new
                                         {
                                             lo.LocationId,
                                             lo.LocationName,
                                             lo.LocationImgUrl,
-                                            lo.LocationType,
+                                            lo.LocationHotline,
+                                            lo.LocationGoogleMap,
+                                            //lo.LocationType,
                                             lo.DestinationId,
                                             PointOfInterests = pointOfI.Where(poi => poi.LocationId == lo.LocationId).Select(type => new
                                             {
                                                 type.PointId,
                                                 type.PointName,
-                                                type.POITypes?.POITypeId,
-                                                type.POITypes?.POITypeName,
                                             }),
                                             StatusLocation = lo.Status,
                                             Services = ts.ServiceByTourSegments
@@ -830,7 +841,7 @@ namespace Services.Services
             {
                 // Query all DailyTours with related entities in one query
                 var dailyTours = await _unitOfWork.DailyTourRepository.GetAllAsyncs(query => query
-                   .Where(dt => dt.PackageTours.TourSegments.Any(c=>c.Destinations.Locations.Any(loca=>loca.PointOfInterests.Any(poi=>poi.LocationId==loca.LocationId))))
+                   .Where(dt => dt.PackageTours.TourSegments.Any(c=>c.Destinations.Locations.Any(loca=>loca.PointOfInterests.Any(poi=>poi.LocationId==loca.LocationId && poi.Status==1))))
                     .Include(dt => dt.PackageTours)
                         .ThenInclude(pt => pt.TourSegments)
                            .ThenInclude(des => des.Destinations)
@@ -854,9 +865,7 @@ namespace Services.Services
 
                 foreach (var dailyTour in dailyTours)
                 {
-                    var pointOfI = await _unitOfWork.PointOfInterestRepository.GetAllAsyncs(query => query
-                                           .Where(c => c.POITypeId == c.POITypes.POITypeId)
-                                           .Include(type => type.POITypes));
+                    var pointOfI = await _unitOfWork.PointOfInterestRepository.GetAllAsyncs(query => query);
                     var result = new
                     {
                         DailyTour = new
@@ -880,6 +889,7 @@ namespace Services.Services
                                     tt.DailyTicketId,
                                     tt.Capacity,
                                     tt.TicketTypes?.TicketTypeName,
+                                    tt.TicketTypes?.MinBuyTicket,
                                     tt.DailyTicketPrice,
                                     tt.CreateDate
                                 }).ToList()
@@ -894,31 +904,36 @@ namespace Services.Services
                             StatusPackageTour = dailyTour.PackageTours?.Status,
                             dailyTour.PackageTours?.Cities?.CityName,
                             TourSegments = dailyTour.PackageTours?.TourSegments
-                                .Where(ts => ts.Status == 1)
+                                .Where(ts => ts.Status == 1 && ts.Destinations?.Status == 1)
                                 .Select(ts => new
                                 {
                                     ts.TourSegmentId,
                                     ts.DestinationId,
                                     ts.Destinations?.DestinationName,
+                                    ts.Destinations?.DestinationAddress,
+                                    ts.Destinations?.DestinationImgUrl,
+                                    ts.Destinations?.DestinationHotline,
+                                    ts.Destinations?.DestinationGoogleMap,
                                     StatusDestinations = ts.Destinations?.Status,
                                     Locations = ts.Destinations?.Locations
                                         .Where(c => c.Status == 1 &&
                                                     c.DestinationId == ts.DestinationId &&
                                                     dailyTour.PackageTours?.PackageTourId == ts.PackageTourId &&
-                                                    ts.ServiceByTourSegments.Any(sbts => sbts.Services?.LocationId == c.LocationId))
+                                                    ts.ServiceByTourSegments.Any(sbts => sbts.Services?.LocationId == c.LocationId && 
+                                                                                         sbts.Status == 1))
                                         .Select(lo => new
                                         {
                                             lo.LocationId,
                                             lo.LocationName,
                                             lo.LocationImgUrl,
-                                            lo.LocationType,
+                                            lo.LocationHotline,
+                                            lo.LocationGoogleMap,
+                                            //lo.LocationType,
                                             lo.DestinationId,
                                             PointOfInterests = pointOfI.Where(poi => poi.LocationId == lo.LocationId).Select(type => new
                                             {
                                                 type.PointId,
                                                 type.PointName,
-                                                type.POITypes?.POITypeId,
-                                                type.POITypes?.POITypeName,
                                             }),
                                             StatusLocation = lo.Status,
                                             Services = ts.ServiceByTourSegments

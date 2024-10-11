@@ -91,8 +91,8 @@ namespace AvatarTourSystem_BE
             services.AddScoped<ILocationRepository, LocationRepository>();
             services.AddScoped<ILocationService, LocationService>();
 
-            services.AddScoped<IPOITypeRepository, POITypeRepository>();
-            services.AddScoped<IPOITypeService, POITypeService>();
+            //services.AddScoped<IPOITypeRepository, POITypeRepository>();
+            //services.AddScoped<IPOITypeService, POITypeService>();
 
             services.AddScoped<IPointOfInterestRepository, PointOfInterestRepository>();
             services.AddScoped<IPointOfInterestService, PointOfInterestService>();
