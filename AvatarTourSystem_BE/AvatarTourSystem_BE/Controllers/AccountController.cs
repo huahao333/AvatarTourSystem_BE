@@ -19,7 +19,7 @@ namespace AvatarTourSystem_BE.Controllers
 
 
        // [Authorize(Roles = "Admin")]
-        [HttpGet("acccounts")]
+        [HttpGet("accounts")]
         public async Task<IActionResult> GetAllAccount()
         {
             var response = await _accountService.GetAllAccount();

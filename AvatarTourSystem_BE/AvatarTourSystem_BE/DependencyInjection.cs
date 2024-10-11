@@ -22,7 +22,7 @@ namespace AvatarTourSystem_BE
             //config authen
             builder.Services.AddSwaggerGen(opt =>
             {
-                opt.SwaggerDoc("v1", new OpenApiInfo { Title = "Artwork Sharing Platform", Version = "v.10.24" });
+                opt.SwaggerDoc("v1", new OpenApiInfo { Title = "Avatar Tour System", Version = "v.10.24" });
                 opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     In = ParameterLocation.Header,
