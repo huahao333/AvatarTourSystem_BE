@@ -13,6 +13,7 @@ namespace BusinessObjects.ViewModels.PackageTourFlow
         public string? TicketTypeId { get; set; }
         public string? PackageTourId { get; set; }
         public string? TicketTypeName { get; set; }
+        public int? MinBuyTicket { get; set; }
         public int? Status { get; set; }
     }
 }
