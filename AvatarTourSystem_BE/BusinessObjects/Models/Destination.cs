@@ -17,7 +17,10 @@ namespace BusinessObjects.Models
         public string? DestinationId { get; set; }
         public string? CityId { get; set; }
         public string? DestinationName { get; set; }
+        public string? DestinationAddress { get; set; }
         public string? DestinationImgUrl { get; set; }
+        public string? DestinationHotline { get; set; }
+        public string? DestinationGoogleMap { get; set; }
         public DateTime? CreateDate { get; set; }
         public DateTime? UpdateDate { get; set; }
         public int? Status { get; set; }
