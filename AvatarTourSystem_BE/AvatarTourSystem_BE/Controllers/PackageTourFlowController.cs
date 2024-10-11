@@ -33,23 +33,23 @@ namespace AvatarTourSystem_BE.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, result);
             }
         }
-        [HttpPut("parts-package-tour-flow")]
-        public async Task<IActionResult> CreatePartsPackageTourFlowAsync([FromBody] FPackageTourUpdate packageTourFlowModel)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            var result = await _packageTourFlow.CreatePartsPackageTourFlowAsync(packageTourFlowModel);
-            if (result.IsSuccess)
-            {
-                return Ok(result);
-            }
-            else
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, result);
-            }
-        }
+        //[HttpPut("parts-package-tour-flow")]
+        //public async Task<IActionResult> CreatePartsPackageTourFlowAsync([FromBody] FPackageTourUpdate packageTourFlowModel)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest(ModelState);
+        //    }
+        //    var result = await _packageTourFlow.CreatePartsPackageTourFlowAsync(packageTourFlowModel);
+        //    if (result.IsSuccess)
+        //    {
+        //        return Ok(result);
+        //    }
+        //    else
+        //    {
+        //        return StatusCode(StatusCodes.Status500InternalServerError, result);
+        //    }
+        //}
         [HttpGet("package-tour-flow/{id}")]
         public async Task<IActionResult> GetPackageTourByIdFlowAsync(string id)
         {

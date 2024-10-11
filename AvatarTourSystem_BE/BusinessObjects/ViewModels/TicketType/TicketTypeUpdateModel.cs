@@ -20,8 +20,10 @@ namespace BusinessObjects.ViewModels.TicketType
 
     //    [FromForm(Name = "ticket-type-name")]
         public string? TicketTypeName { get; set; }
+        public int? MinBuyTicket { get; set; }
 
-     //   [FromForm(Name = "status")]
-        public EStatus? Status { get; set; }
+
+        //   [FromForm(Name = "status")]
+        public int? Status { get; set; }
     }
 }
