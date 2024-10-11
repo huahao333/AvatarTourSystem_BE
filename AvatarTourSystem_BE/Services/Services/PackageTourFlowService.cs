@@ -138,6 +138,7 @@ namespace Services.Services
                 {
                     TicketTypeId = Guid.NewGuid().ToString(),
                     TicketTypeName = ticket.TicketTypeName,
+                    MinBuyTicket = ticket.MinBuyTicket,
                     Status = ticket.Status
                 }).ToList()
             };
@@ -274,14 +275,14 @@ namespace Services.Services
             try
             {
                 var packageToursRespone = await _unitOfWork.PackageTourRepository.GetAllAsyncs(query => query
-     .Where(pt => pt.PackageTourId == id && pt.Status == 1)
-     .Include(pt => pt.TourSegments)
-         .ThenInclude(ts => ts.Destinations)
-         .ThenInclude(d => d.Locations)
-         .ThenInclude(l => l.Services)
-         .ThenInclude(sbt => sbt.ServiceByTourSegments)
-     .Include(pt => pt.TicketTypes)
- );
+    .Where(pt => pt.PackageTourId == id && pt.Status == 1)
+    .Include(pt => pt.TourSegments)
+        .ThenInclude(ts => ts.Destinations)
+        .ThenInclude(d => d.Locations)
+        .ThenInclude(l => l.Services)
+        .ThenInclude(sbt => sbt.ServiceByTourSegments)
+    .Include(pt => pt.TicketTypes) // Bao gồm TicketTypes
+);
 
                 if (packageToursRespone == null || !packageToursRespone.Any())
                 {
@@ -306,7 +307,7 @@ namespace Services.Services
                     packageTour.PackageTourPrice = totalServicePrice;
 
                     // Gọi phương thức cập nhật của repository để lưu thay đổi
-                   await _unitOfWork.PackageTourRepository.UpdateAsync(packageTour);
+                    await _unitOfWork.PackageTourRepository.UpdateAsync(packageTour);
 
                     var result = new
                     {
@@ -336,7 +337,6 @@ namespace Services.Services
                                             l.LocationId,
                                             l.LocationName,
                                             l.LocationImgUrl,
-                                            //l.LocationType,
                                             l.DestinationId,
                                             Services = ts.ServiceByTourSegments
                                                 .Where(sbts => sbts.Services?.LocationId == l.LocationId)
@@ -359,6 +359,16 @@ namespace Services.Services
                                         }).ToList(),
                                 }).ToList(),
 
+                            // Thêm thông tin TicketTypes vào kết quả trả về
+                            TicketTypes = packageTour.TicketTypes
+                                .Select(tt => new
+                                {
+                                    tt.TicketTypeId,
+                                    tt.TicketTypeName,
+                                    tt.MinBuyTicket,
+                                    tt.Status
+                                }).ToList(),
+
                             // Tổng giá dịch vụ
                             TotalServicePrice = totalServicePrice
                         }
@@ -368,7 +378,7 @@ namespace Services.Services
                 }
 
                 // Lưu thay đổi vào cơ sở dữ liệu sau khi cập nhật giá package tour
-                 _unitOfWork.Save();
+                _unitOfWork.Save();
 
                 // Trả về kết quả
                 return new APIResponseModel
