@@ -324,7 +324,7 @@ namespace Services.Services
                                             l.LocationId,
                                             l.LocationName,
                                             l.LocationImgUrl,
-                                            l.LocationType,
+                                            //l.LocationType,
                                             l.DestinationId,
                                             Services = ts.ServiceByTourSegments
                                                 .Where(sbts => sbts.Services?.LocationId == l.LocationId
@@ -402,7 +402,7 @@ namespace Services.Services
                     {
                         LocationId = Guid.NewGuid().ToString(),
                         LocationName = locationModel.LocationName,
-                        LocationType = locationModel.LocationType,
+                        //LocationType = locationModel.LocationType,
                         DestinationId = destination.DestinationId,
                         CreateDate = DateTime.Now,
                         Status = 1,
@@ -516,7 +516,7 @@ namespace Services.Services
                                         l.LocationId,
                                         l.LocationName,
                                         l.LocationImgUrl,
-                                        l.LocationType,
+                                        //l.LocationType,
                                         l.DestinationId,
                                         Services = ts.ServiceByTourSegments
                                             .Where(sbts => sbts.Services?.LocationId == l.LocationId
@@ -736,7 +736,7 @@ namespace Services.Services
                                         l.LocationId,
                                         l.LocationName,
                                         l.LocationImgUrl,
-                                        l.LocationType,
+                                        //l.LocationType,
                                         l.DestinationId,
                                         Services = ts.ServiceByTourSegments
                                             .Where(sbts => sbts.Services?.LocationId == l.LocationId

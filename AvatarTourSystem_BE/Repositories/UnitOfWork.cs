@@ -29,7 +29,7 @@ namespace Repositories
         private GenericRepository<PackageTour> _packageTourRepository;
         private GenericRepository<PaymentMethod> _paymentMethodRepository;
         private GenericRepository<PointOfInterest> _pointOfInterestRepository;
-        private GenericRepository<POIType> _poiTypeRepository;
+        //private GenericRepository<POIType> _poiTypeRepository;
         private GenericRepository<Rate> _rateRepository;
         private GenericRepository<RequestType> _requestTypeRepository;
         private GenericRepository<Revenue> _revenueRepository;
@@ -216,17 +216,17 @@ namespace Repositories
             }
         }
 
-        public GenericRepository<POIType> POITypeRepository
-        {
-            get
-            {
-                if (this._poiTypeRepository == null)
-                {
-                    this._poiTypeRepository = new GenericRepository<POIType>(_context);
-                }
-                return _poiTypeRepository;
-            }
-        }
+        //public GenericRepository<POIType> POITypeRepository
+        //{
+        //    get
+        //    {
+        //        if (this._poiTypeRepository == null)
+        //        {
+        //            this._poiTypeRepository = new GenericRepository<POIType>(_context);
+        //        }
+        //        return _poiTypeRepository;
+        //    }
+        //}
 
         public GenericRepository<Rate> RateRepository
         {

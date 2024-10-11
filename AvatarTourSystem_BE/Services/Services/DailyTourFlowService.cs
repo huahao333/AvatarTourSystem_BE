@@ -450,10 +450,9 @@ namespace Services.Services
                         IsSuccess = false,
                     };
                 }
-
-                var pointOfI = await _unitOfWork.PointOfInterestRepository.GetAllAsyncs(query => query
-                                          .Where(c => c.POITypeId == c.POITypes.POITypeId)
-                                          .Include(type => type.POITypes));
+                //var pointOfI = await _unitOfWork.PointOfInterestRepository.GetAllAsyncs(query => query
+                //                          .Where(c => c.POITypeId == c.POITypes.POITypeId)
+                //                          .Include(type => type.POITypes));
 
                 var result = new
                 {
@@ -509,15 +508,15 @@ namespace Services.Services
                                         lo.LocationId,
                                         lo.LocationName,
                                         lo.LocationImgUrl,
-                                        lo.LocationType,
+                                        //lo.LocationType,
                                         lo.DestinationId,
-                                        PointOfInterests = pointOfI.Where(poi => poi.LocationId == lo.LocationId).Select(type => new
-                                        {
-                                            type.PointId,
-                                            type.PointName,
-                                            type.POITypes?.POITypeId,
-                                            type.POITypes?.POITypeName,
-                                        }),
+                                        //PointOfInterests = pointOfI.Where(poi => poi.LocationId == lo.LocationId).Select(type => new
+                                        //{
+                                        //    type.PointId,
+                                        //    type.PointName,
+                                        //    type.POITypes?.POITypeId,
+                                        //    type.POITypes?.POITypeName,
+                                        //}),
                                         StatusLocation = lo.Status,
                                         Services = ts.ServiceByTourSegments
                                             .Where(sbts => sbts.Services?.LocationId == lo.LocationId
@@ -586,9 +585,9 @@ namespace Services.Services
 
                 foreach (var dailyTour in dailyTours)
                 {
-                    var pointOfI = await _unitOfWork.PointOfInterestRepository.GetAllAsyncs(query => query
-                                          .Where(c=> c.POITypeId == c.POITypes.POITypeId)
-                                          .Include(type=>type.POITypes));
+                    //var pointOfI = await _unitOfWork.PointOfInterestRepository.GetAllAsyncs(query => query
+                    //                      .Where(c=> c.POITypeId == c.POITypes.POITypeId)
+                    //                      .Include(type=>type.POITypes));
                     var result = new
                     {
                         DailyTour = new
@@ -643,15 +642,15 @@ namespace Services.Services
                                             lo.LocationId,
                                             lo.LocationName,
                                             lo.LocationImgUrl,
-                                            lo.LocationType,
+                                            //lo.LocationType,
                                             lo.DestinationId,
-                                            PointOfInterests = pointOfI.Where(poi=> poi.LocationId==lo.LocationId).Select(type=> new
-                                            {
-                                                type.PointId,
-                                                type.PointName,
-                                                type.POITypes?.POITypeId,
-                                                type.POITypes?.POITypeName,
-                                            }),
+                                            //PointOfInterests = pointOfI.Where(poi=> poi.LocationId==lo.LocationId).Select(type=> new
+                                            //{
+                                            //    type.PointId,
+                                            //    type.PointName,
+                                            //    type.POITypes?.POITypeId,
+                                            //    type.POITypes?.POITypeName,
+                                            //}),
                                             StatusLocation = lo.Status,
                                             Services = ts.ServiceByTourSegments
                                                 .Where(sbts =>  sbts.Services?.LocationId == lo.LocationId
@@ -720,9 +719,9 @@ namespace Services.Services
 
                 foreach (var dailyTour in dailyTours)
                 {
-                    var pointOfI = await _unitOfWork.PointOfInterestRepository.GetAllAsyncs(query => query
-                                          .Where(c => c.POITypeId == c.POITypes.POITypeId)
-                                          .Include(type => type.POITypes));
+                    //var pointOfI = await _unitOfWork.PointOfInterestRepository.GetAllAsyncs(query => query
+                    //                      .Where(c => c.POITypeId == c.POITypes.POITypeId)
+                    //                      .Include(type => type.POITypes));
 
                     var result = new
                     {
@@ -778,15 +777,15 @@ namespace Services.Services
                                             lo.LocationId,
                                             lo.LocationName,
                                             lo.LocationImgUrl,
-                                            lo.LocationType,
+                                            //lo.LocationType,
                                             lo.DestinationId,
-                                            PointOfInterests = pointOfI.Where(poi => poi.LocationId == lo.LocationId).Select(type => new
-                                            {
-                                                type.PointId,
-                                                type.PointName,
-                                                type.POITypes?.POITypeId,
-                                                type.POITypes?.POITypeName,
-                                            }),
+                                            //PointOfInterests = pointOfI.Where(poi => poi.LocationId == lo.LocationId).Select(type => new
+                                            //{
+                                            //    type.PointId,
+                                            //    type.PointName,
+                                            //    type.POITypes?.POITypeId,
+                                            //    type.POITypes?.POITypeName,
+                                            //}),
                                             StatusLocation = lo.Status,
                                             Services = ts.ServiceByTourSegments
                                                 .Where(sbts => sbts.Services?.LocationId == lo.LocationId
@@ -854,9 +853,9 @@ namespace Services.Services
 
                 foreach (var dailyTour in dailyTours)
                 {
-                    var pointOfI = await _unitOfWork.PointOfInterestRepository.GetAllAsyncs(query => query
-                                           .Where(c => c.POITypeId == c.POITypes.POITypeId)
-                                           .Include(type => type.POITypes));
+                    //var pointOfI = await _unitOfWork.PointOfInterestRepository.GetAllAsyncs(query => query
+                    //                       .Where(c => c.POITypeId == c.POITypes.POITypeId)
+                    //                       .Include(type => type.POITypes));
                     var result = new
                     {
                         DailyTour = new
@@ -911,15 +910,15 @@ namespace Services.Services
                                             lo.LocationId,
                                             lo.LocationName,
                                             lo.LocationImgUrl,
-                                            lo.LocationType,
+                                            //lo.LocationType,
                                             lo.DestinationId,
-                                            PointOfInterests = pointOfI.Where(poi => poi.LocationId == lo.LocationId).Select(type => new
-                                            {
-                                                type.PointId,
-                                                type.PointName,
-                                                type.POITypes?.POITypeId,
-                                                type.POITypes?.POITypeName,
-                                            }),
+                                            //PointOfInterests = pointOfI.Where(poi => poi.LocationId == lo.LocationId).Select(type => new
+                                            //{
+                                            //    type.PointId,
+                                            //    type.PointName,
+                                            //    type.POITypes?.POITypeId,
+                                            //    type.POITypes?.POITypeName,
+                                            //}),
                                             StatusLocation = lo.Status,
                                             Services = ts.ServiceByTourSegments
                                                 .Where(sbts => sbts.Services?.LocationId == lo.LocationId
