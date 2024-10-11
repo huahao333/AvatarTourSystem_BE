@@ -478,6 +478,7 @@ namespace Services.Services
                                 tt.DailyTicketId,
                                 tt.Capacity,
                                 tt.TicketTypes?.TicketTypeName,
+                                tt.DailyTicketPrice,
                                 tt.CreateDate
                             }).ToList()
                     },
@@ -611,6 +612,7 @@ namespace Services.Services
                                     tt.DailyTicketId,
                                     tt.Capacity,
                                     tt.TicketTypes?.TicketTypeName,
+                                    tt.DailyTicketPrice,
                                     tt.CreateDate
                                 }).ToList()
                         },
@@ -745,6 +747,7 @@ namespace Services.Services
                                     tt.DailyTicketId,
                                     tt.Capacity,
                                     tt.TicketTypes?.TicketTypeName,
+                                    tt.DailyTicketPrice,
                                     tt.CreateDate
                                 }).ToList()
                         },
@@ -877,6 +880,7 @@ namespace Services.Services
                                     tt.DailyTicketId,
                                     tt.Capacity,
                                     tt.TicketTypes?.TicketTypeName,
+                                    tt.DailyTicketPrice,
                                     tt.CreateDate
                                 }).ToList()
                         },
