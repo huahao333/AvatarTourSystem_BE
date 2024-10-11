@@ -136,9 +136,9 @@ namespace Services.Services
                 Status = "1",
                 TicketTypes = packageTour.TicketTypes.Select(ticket => new FTicketType
                 {
-                    TicketTypeId = ticket.TicketTypeId,
+                    TicketTypeId = Guid.NewGuid().ToString(),
                     TicketTypeName = ticket.TicketTypeName,
-                    Status = "1"
+                    Status = ticket.Status
                 }).ToList()
             };
             // Return the API response
@@ -957,7 +957,7 @@ namespace Services.Services
                                         l.LocationId,
                                         l.LocationName,
                                         l.LocationImgUrl,
-                                        l.LocationType,
+                                     
                                         l.DestinationId,
                                         Services = ts.ServiceByTourSegments
                                             .Where(sbts => sbts.Services?.LocationId == l.LocationId && sbts.Status != -1 && sbts.Services?.Status == 1)

@@ -18,7 +18,10 @@ namespace BusinessObjects.ViewModels.Destination
         public string? DestinationName { get; set; }
      //   [FromForm(Name = "destination-img-url")]
         public string? DestinationImgUrl { get; set; }
-      //  [FromForm(Name = "staus")]
+        public string? DestinationAddress { get; set; }
+        public string? DestinationHotline { get; set; }
+        public string? DestinationGoogleMap { get; set; }
+        //  [FromForm(Name = "staus")]
         public EStatus? Status { get; set; }
     }
 }

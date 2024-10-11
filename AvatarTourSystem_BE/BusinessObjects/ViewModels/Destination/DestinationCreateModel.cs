@@ -10,10 +10,16 @@ namespace BusinessObjects.ViewModels.Destination
         public string? CityId { get; set; }
       //  [FromForm(Name = "destination-name")]
         public string? DestinationName { get; set; }
+
       //  [FromForm(Name = "destination-img-url")]
       //  public string? DestinationImgUrl { get; set; }
       //  [FromForm(Name = "status")]
         public int? Status { get; set; }
+        public string? DestinationHotline { get; set; }
+        public string? DestinationGoogleMap { get; set; }
+        public string? DestinationImgUrl { get; set; }
+        public string? DestinationAddress { get; set; }
+
 
         [JsonIgnore]
         public string? EmbedCode { get; set; }
