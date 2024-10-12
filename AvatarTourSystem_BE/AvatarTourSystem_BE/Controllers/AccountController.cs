@@ -128,5 +128,11 @@ namespace AvatarTourSystem_BE.Controllers
             return Ok(response);
         }
 
+        [HttpPost("phonenumber-zalo")]
+        public async Task<IActionResult> UpdatePhoneNumberByZaloID(AccountZaloCURLModel accountZaloCURLModel)
+        {
+            var response = await _accountService.GetPhoneInfoAndSaveAsync(accountZaloCURLModel);
+            return Ok(response);
+        }
     }
 }

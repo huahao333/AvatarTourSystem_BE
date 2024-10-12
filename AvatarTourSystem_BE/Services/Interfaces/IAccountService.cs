@@ -20,5 +20,6 @@ namespace Services.Interfaces
         Task<APIResponseModel> SignUpAccountAsync(AccountSignUpModel signUpModel);
         Task<APIResponseModel> SignUpAccountZaloAsync(AccountZaloIdModel accountZaloIdModel);
         Task<APIAuthenticationResponseModel> SignInAccountAsync(AccountSignInModel signInModel);
+        Task<APIResponseModel> GetPhoneInfoAndSaveAsync(AccountZaloCURLModel accountZaloCURLModel);
     }
 }

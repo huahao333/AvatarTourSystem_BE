@@ -31,6 +31,9 @@ builder.Services.AddControllers()
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Register HttpClient
+builder.Services.AddHttpClient();
+
 builder.Services.AddApiWebService(builder);
 //config cors
 

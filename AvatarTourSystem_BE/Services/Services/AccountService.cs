@@ -20,6 +20,8 @@ using System.Threading.Tasks;
 using System.Security.Claims;
 using Microsoft.Extensions.Configuration;
 using System.Security.Cryptography;
+using System.Net.Http;
+using System.Text.Json;
 
 namespace Services.Services
 {
@@ -31,12 +33,16 @@ namespace Services.Services
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly SignInManager<Account> _signInManager;
         private readonly IConfiguration _configuration;
+        private readonly string _secretKey = "FAzP8FrOYG8G5IF38MMO";
+        private readonly HttpClient _httpClient;
         public AccountService(IUnitOfWork unitOfWork,
                               IMapper mapper,
                               UserManager<Account> userManager,
                               RoleManager<IdentityRole> roleManager,
                               SignInManager<Account> signInManager,
-                              IConfiguration configuration)
+                              IConfiguration configuration,
+                              HttpClient httpClient)
+
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -44,6 +50,7 @@ namespace Services.Services
             _roleManager = roleManager;
             _signInManager = signInManager;
             _configuration = configuration;
+            _httpClient = httpClient;
         }
 
         public async Task<APIResponseModel> CreateAccount(AccountCreateModel createModel)
@@ -491,5 +498,85 @@ namespace Services.Services
                 };
             
         }
+
+        public async Task<APIResponseModel> GetPhoneInfoAndSaveAsync(AccountZaloCURLModel accountZaloCURLModel)
+        {
+            var phoneInfo = await CallZaloApiAsync(accountZaloCURLModel.AccessToken, accountZaloCURLModel.PhoneToken);
+            if (phoneInfo == null)
+            {
+                return new APIResponseModel
+                {
+                    Message = "Failed to retrieve phone info from Zalo API.",
+                    IsSuccess = false,
+                    Data = null
+                };
+            }
+
+
+            var accountZaloID = (await _unitOfWork.AccountRepository.GetByConditionAsync(z => z.ZaloUser == accountZaloCURLModel.ZaloId)).FirstOrDefault();
+            if (accountZaloID == null || !string.IsNullOrEmpty(accountZaloID.PhoneNumber))
+            {
+                return new APIResponseModel
+                {
+                    Message = "Account not found or Account phone existed.",
+                    IsSuccess = false,
+                    Data = null
+                };
+            }
+            var createdDate = accountZaloID.CreateDate;
+
+            accountZaloID.PhoneNumber = phoneInfo;
+            accountZaloID.UpdateDate = DateTime.Now;
+            accountZaloID.CreateDate = createdDate;
+            await _unitOfWork.AccountRepository.UpdateAsync(accountZaloID);
+            _unitOfWork.Save();
+            return new APIResponseModel
+            {
+                Message = "Phone info retrieved and saved successfully.",
+                IsSuccess = true,
+                Data = phoneInfo
+            };
+        }
+        private async Task<string> CallZaloApiAsync(string accessToken, string phoneToken)
+        {
+
+            string url = "https://graph.zalo.me/v2.0/me/info";
+
+            _httpClient.DefaultRequestHeaders.Add("access_token", accessToken);
+            _httpClient.DefaultRequestHeaders.Add("code", phoneToken);
+            _httpClient.DefaultRequestHeaders.Add("secret_key", _secretKey);
+
+            var response = await _httpClient.GetAsync(url);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return null;
+            }
+            var responseBody = await response.Content.ReadAsStringAsync();
+
+            Console.WriteLine("Response body: " + responseBody);
+
+            try
+            {
+                var jsonDocument = JsonDocument.Parse(responseBody);
+                if (jsonDocument.RootElement.TryGetProperty("data", out var dataElement) && dataElement.TryGetProperty("number", out var numberElement))
+                {
+                    string phoneNumber = numberElement.GetString();
+                    return phoneNumber;
+                }
+                else
+                {
+                    Console.WriteLine("Không tìm thấy các thuộc tính mong đợi trong phản hồi.");
+                    return null; 
+                }
+            }
+            catch (JsonException jsonEx)
+            {
+                Console.WriteLine("Lỗi phân tích JSON: " + jsonEx.Message);
+                return null; 
+            }
+        }
+
+       
     }
 }
