@@ -489,16 +489,23 @@ namespace Services.Services
                     Data = null
                 };
             }
-            
-                var accountViewModels = _mapper.Map<List<AccountViewModel>>(account);
 
-                return new APIResponseModel
-                {
-                    Message = "Account found",
-                    IsSuccess = true,
-                    Data = accountViewModels
-                };
-            
+            var accountViewModels = account.Select(a => new AccountZaloIdViewModel
+            {
+                ZaloUser = a.ZaloUser,
+                UserName = a.UserName,
+                FullName = a.FullName,
+                AvatarUrl = a.AvatarUrl,
+                IsPhoneNumber = a.PhoneNumber != null ? "True":"False"
+            }).ToList();
+
+            return new APIResponseModel
+            {
+                Message = "Account found",
+                IsSuccess = true,
+                Data = accountViewModels
+            };
+
         }
 
         public async Task<APIResponseModel> GetPhoneInfoAndSaveAsync(AccountZaloCURLModel accountZaloCURLModel)
@@ -580,6 +587,37 @@ namespace Services.Services
         //    }
         //}
 
-       
+        public async Task<APIResponseModel> UpdateAccountWithZaloId(AccountUpdateWithZaloIdModel updateModel)
+        {
+            var existingAccount = await _unitOfWork.AccountRepository.GetByConditionAsync(s => s.ZaloUser == updateModel.ZaloUser);
+
+            if (existingAccount == null || !existingAccount.Any())
+            {
+                return new APIResponseModel
+                {
+                    Message = "Account not found.",
+                    IsSuccess = false,
+                    Data = null
+                };
+            }
+
+            var accountToUpdate = existingAccount.FirstOrDefault();
+
+
+            _mapper.Map(updateModel, accountToUpdate);
+            accountToUpdate.UpdateDate = DateTime.Now;
+
+            _unitOfWork.Save();
+
+            var accountModel = _mapper.Map<AccountModel>(accountToUpdate);
+
+            return new APIResponseModel
+            {
+                Message = "Account Updated Successfully",
+                IsSuccess = true,
+                Data = accountModel
+            };
+
+        }
     }
 }

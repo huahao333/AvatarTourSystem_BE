@@ -18,6 +18,8 @@ namespace BusinessObjects.ViewModels.Location
         public string? LocationImgUrl { get; set; }
      //   [FromForm(Name = "destination-id")]
         public string? DestinationId { get; set; }
+        public DateTime? LocationOpeningHours{ get; set; }
+        public DateTime? LocationClosingHours { get; set; }
      //   [FromForm(Name = "status")]
         public EStatus? Status { get; set; }
     }

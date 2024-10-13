@@ -326,6 +326,10 @@ namespace Services.Services
                                     ts.TourSegmentId,
                                     ts.DestinationId,
                                     ts.Destinations?.DestinationName,
+                                    ts.Destinations?.DestinationOpeningDate,
+                                    ts.Destinations?.DestinationClosingDate,
+                                    ts.Destinations?.DestinationOpeningHours,
+                                    ts.Destinations?.DestinationClosingHours,
                                     StatusDestinations = ts.Destinations?.Status,
                                     Locations = ts.Destinations?.Locations
                                         .Where(l => l.Status == 1 &&
@@ -337,6 +341,8 @@ namespace Services.Services
                                             l.LocationId,
                                             l.LocationName,
                                             l.LocationImgUrl,
+                                            l.LocationOpeningHours,
+                                            l.LocationClosingHours,
                                             l.DestinationId,
                                             Services = ts.ServiceByTourSegments
                                                 .Where(sbts => sbts.Services?.LocationId == l.LocationId)
@@ -761,6 +767,11 @@ namespace Services.Services
                                 ts.TourSegmentId,
                                 ts.DestinationId,
                                 ts.Destinations?.DestinationName,
+                                ts.Destinations?.CityId,
+                                ts.Destinations?.DestinationOpeningDate,
+                                ts.Destinations?.DestinationClosingDate,
+                                ts.Destinations?.DestinationOpeningHours,
+                                ts.Destinations?.DestinationClosingHours,
                                 StatusDestinations = ts.Destinations?.Status,
                                 Locations = ts.Destinations?.Locations
                                     .Where(l => l.Status == 1 &&
@@ -772,6 +783,8 @@ namespace Services.Services
                                         l.LocationId,
                                         l.LocationName,
                                         l.LocationImgUrl,
+                                        l.LocationOpeningHours,
+                                        l.LocationClosingHours,                                       
                                         //l.LocationType,
                                         l.DestinationId,
                                         Services = ts.ServiceByTourSegments
@@ -957,6 +970,10 @@ namespace Services.Services
                                 ts.DestinationId,
                                 ts.Destinations?.DestinationName,
                                 StatusDestinations = ts.Destinations?.Status,
+                                ts.Destinations?.DestinationOpeningDate,
+                                ts.Destinations?.DestinationClosingDate,
+                                ts.Destinations?.DestinationOpeningHours,
+                                ts.Destinations?.DestinationClosingHours,
                                 Locations = ts.Destinations?.Locations
                                     .Where(l => l.Status == 1 &&
                                                 l.DestinationId == ts.DestinationId &&
@@ -967,7 +984,8 @@ namespace Services.Services
                                         l.LocationId,
                                         l.LocationName,
                                         l.LocationImgUrl,
-                                     
+                                        l.LocationOpeningHours,
+                                        l.LocationClosingHours,
                                         l.DestinationId,
                                         Services = ts.ServiceByTourSegments
                                             .Where(sbts => sbts.Services?.LocationId == l.LocationId && sbts.Status != -1 && sbts.Services?.Status == 1)

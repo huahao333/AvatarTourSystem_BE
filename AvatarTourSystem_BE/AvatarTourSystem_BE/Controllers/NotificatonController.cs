@@ -85,6 +85,18 @@ namespace AvatarTourSystem_BE.Controllers
             return Ok(response);
         }
 
+        [HttpGet("notifications-zalo/{zaloId}")]
+        public async Task<IActionResult> GetNotificationsByZaloID(string zaloId)
+        {
+            var response = await _notuService.GetNotificaitonByZaloID(zaloId);
+            if (response.IsSuccess) {
+                return Ok(response);
+            }
+            else
+            {
+                return StatusCode(StatusCodes.Status404NotFound, response);
+            }
+        }
 
     }
 }
