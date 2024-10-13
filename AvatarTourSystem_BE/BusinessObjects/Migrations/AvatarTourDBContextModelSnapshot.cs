@@ -38,7 +38,6 @@ namespace BusinessObjects.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("CreateDate")
@@ -48,8 +47,7 @@ namespace BusinessObjects.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
@@ -68,12 +66,13 @@ namespace BusinessObjects.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("NormalizedEmail")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NormalizedUserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Password")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
@@ -106,33 +105,24 @@ namespace BusinessObjects.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("UserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ZaloUser")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("NormalizedEmail")
-                        .HasDatabaseName("EmailIndex");
-
-                    b.HasIndex("NormalizedUserName")
-                        .IsUnique()
-                        .HasDatabaseName("UserNameIndex")
-                        .HasFilter("[NormalizedUserName] IS NOT NULL");
-
                     b.ToTable("Account", (string)null);
 
                     b.HasData(
                         new
                         {
-                            Id = "8661f506-770b-4b5a-951c-ba6e858e3e0c",
+                            Id = "948403c5-0241-420d-9c05-e8fd1e7220fe",
                             AccessFailedCount = 0,
                             Address = "Quận 10, Hồ chí minh",
                             AvatarUrl = "data:image/png;base64,iVBO",
-                            ConcurrencyStamp = "22d89624-c7d3-431e-b7e7-deefbc3f85e8",
-                            CreateDate = new DateTime(2024, 10, 13, 16, 6, 9, 200, DateTimeKind.Local).AddTicks(9756),
+                            ConcurrencyStamp = "bf5cce6a-328e-4240-a799-c3dedf63d321",
+                            CreateDate = new DateTime(2024, 10, 14, 0, 49, 57, 351, DateTimeKind.Local).AddTicks(7331),
                             Dob = new DateTime(1990, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "huahao04@gmail.com",
                             EmailConfirmed = false,
@@ -141,7 +131,7 @@ namespace BusinessObjects.Migrations
                             LockoutEnabled = false,
                             PhoneNumber = "0395840777",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "b419eedd-750e-4b65-b6ff-a1b1855d04c3",
+                            SecurityStamp = "697dbdd9-8023-4293-88e4-2ac8774174bc",
                             Status = 0,
                             TwoFactorEnabled = false,
                             ZaloUser = ""
@@ -195,13 +185,13 @@ namespace BusinessObjects.Migrations
                         new
                         {
                             BookingId = "1",
-                            BookingDate = new DateTime(2024, 10, 13, 16, 6, 9, 201, DateTimeKind.Local).AddTicks(111),
-                            CreateDate = new DateTime(2024, 10, 13, 16, 6, 9, 201, DateTimeKind.Local).AddTicks(113),
+                            BookingDate = new DateTime(2024, 10, 14, 0, 49, 57, 351, DateTimeKind.Local).AddTicks(7740),
+                            CreateDate = new DateTime(2024, 10, 14, 0, 49, 57, 351, DateTimeKind.Local).AddTicks(7742),
                             DailyTourId = "1",
                             PaymentId = "1",
                             Status = 0,
                             TotalPrice = 500000f,
-                            UserId = "8661f506-770b-4b5a-951c-ba6e858e3e0c"
+                            UserId = "948403c5-0241-420d-9c05-e8fd1e7220fe"
                         });
                 });
 
@@ -239,7 +229,7 @@ namespace BusinessObjects.Migrations
                         {
                             BookingByRevenueId = "1",
                             BookingId = "1",
-                            CreateDate = new DateTime(2024, 10, 13, 16, 6, 9, 201, DateTimeKind.Local).AddTicks(178),
+                            CreateDate = new DateTime(2024, 10, 14, 0, 49, 57, 351, DateTimeKind.Local).AddTicks(7826),
                             RevenueId = "1",
                             Status = 0
                         });
@@ -272,14 +262,14 @@ namespace BusinessObjects.Migrations
                         {
                             CityId = "1",
                             CityName = "Hồ Chí Minh",
-                            CreateDate = new DateTime(2024, 10, 13, 16, 6, 9, 200, DateTimeKind.Local).AddTicks(9539),
+                            CreateDate = new DateTime(2024, 10, 14, 0, 49, 57, 351, DateTimeKind.Local).AddTicks(7149),
                             Status = 0
                         },
                         new
                         {
                             CityId = "2",
                             CityName = "Hà Nội",
-                            CreateDate = new DateTime(2024, 10, 13, 16, 6, 9, 200, DateTimeKind.Local).AddTicks(9558),
+                            CreateDate = new DateTime(2024, 10, 14, 0, 49, 57, 351, DateTimeKind.Local).AddTicks(7167),
                             Status = 1
                         });
                 });
@@ -323,12 +313,12 @@ namespace BusinessObjects.Migrations
                         new
                         {
                             CusSupportId = "1",
-                            CreateDate = new DateTime(2024, 10, 13, 16, 6, 9, 201, DateTimeKind.Local).AddTicks(323),
-                            DateResolved = new DateTime(2024, 10, 13, 16, 6, 9, 201, DateTimeKind.Local).AddTicks(322),
+                            CreateDate = new DateTime(2024, 10, 14, 0, 49, 57, 351, DateTimeKind.Local).AddTicks(7997),
+                            DateResolved = new DateTime(2024, 10, 14, 0, 49, 57, 351, DateTimeKind.Local).AddTicks(7996),
                             Description = "Support",
                             RequestTypeId = "1",
                             Status = 0,
-                            UserId = "8661f506-770b-4b5a-951c-ba6e858e3e0c"
+                            UserId = "948403c5-0241-420d-9c05-e8fd1e7220fe"
                         });
                 });
 
@@ -372,7 +362,7 @@ namespace BusinessObjects.Migrations
                         {
                             DailyTicketId = "1",
                             Capacity = 10,
-                            CreateDate = new DateTime(2024, 10, 13, 16, 6, 9, 201, DateTimeKind.Local).AddTicks(42),
+                            CreateDate = new DateTime(2024, 10, 14, 0, 49, 57, 351, DateTimeKind.Local).AddTicks(7654),
                             DailyTourId = "1",
                             Status = 0,
                             TicketTypeId = "1"
@@ -381,7 +371,7 @@ namespace BusinessObjects.Migrations
                         {
                             DailyTicketId = "2",
                             Capacity = 10,
-                            CreateDate = new DateTime(2024, 10, 13, 16, 6, 9, 201, DateTimeKind.Local).AddTicks(44),
+                            CreateDate = new DateTime(2024, 10, 14, 0, 49, 57, 351, DateTimeKind.Local).AddTicks(7656),
                             DailyTourId = "1",
                             Status = 1,
                             TicketTypeId = "2"
@@ -437,7 +427,7 @@ namespace BusinessObjects.Migrations
                         new
                         {
                             DailyTourId = "1",
-                            CreateDate = new DateTime(2024, 10, 13, 16, 6, 9, 201, DateTimeKind.Local).AddTicks(66),
+                            CreateDate = new DateTime(2024, 10, 14, 0, 49, 57, 351, DateTimeKind.Local).AddTicks(7685),
                             DailyTourName = "Tour Hồ Chí Minh",
                             DailyTourPrice = 790000f,
                             Description = "Tour tham quan du lịch tp Hồ Chí Minh",
@@ -506,7 +496,7 @@ namespace BusinessObjects.Migrations
                         {
                             DestinationId = "1",
                             CityId = "1",
-                            CreateDate = new DateTime(2024, 10, 13, 16, 6, 9, 200, DateTimeKind.Local).AddTicks(9926),
+                            CreateDate = new DateTime(2024, 10, 14, 0, 49, 57, 351, DateTimeKind.Local).AddTicks(7535),
                             DestinationName = "Quận 1",
                             Status = 0
                         },
@@ -514,7 +504,7 @@ namespace BusinessObjects.Migrations
                         {
                             DestinationId = "2",
                             CityId = "2",
-                            CreateDate = new DateTime(2024, 10, 13, 16, 6, 9, 200, DateTimeKind.Local).AddTicks(9928),
+                            CreateDate = new DateTime(2024, 10, 14, 0, 49, 57, 351, DateTimeKind.Local).AddTicks(7538),
                             DestinationName = "Quận 2",
                             Status = 1
                         });
@@ -557,10 +547,10 @@ namespace BusinessObjects.Migrations
                         {
                             FeedbackId = "1",
                             BookingId = "1",
-                            CreateDate = new DateTime(2024, 10, 13, 16, 6, 9, 201, DateTimeKind.Local).AddTicks(245),
+                            CreateDate = new DateTime(2024, 10, 14, 0, 49, 57, 351, DateTimeKind.Local).AddTicks(7922),
                             FeedbackMsg = "Rất tuyệt vời",
                             Status = 0,
-                            UserId = "8661f506-770b-4b5a-951c-ba6e858e3e0c"
+                            UserId = "948403c5-0241-420d-9c05-e8fd1e7220fe"
                         });
                 });
 
@@ -610,7 +600,7 @@ namespace BusinessObjects.Migrations
                         new
                         {
                             LocationId = "1",
-                            CreateDate = new DateTime(2024, 10, 13, 16, 6, 9, 200, DateTimeKind.Local).AddTicks(9955),
+                            CreateDate = new DateTime(2024, 10, 14, 0, 49, 57, 351, DateTimeKind.Local).AddTicks(7571),
                             DestinationId = "1",
                             LocationName = "Nhà hàng",
                             Status = 0
@@ -618,7 +608,7 @@ namespace BusinessObjects.Migrations
                         new
                         {
                             LocationId = "2",
-                            CreateDate = new DateTime(2024, 10, 13, 16, 6, 9, 200, DateTimeKind.Local).AddTicks(9982),
+                            CreateDate = new DateTime(2024, 10, 14, 0, 49, 57, 351, DateTimeKind.Local).AddTicks(7575),
                             DestinationId = "1",
                             LocationName = "Khách sạn",
                             Status = 1
@@ -665,13 +655,13 @@ namespace BusinessObjects.Migrations
                         new
                         {
                             NotifyId = "1",
-                            CreateDate = new DateTime(2024, 10, 13, 16, 6, 9, 201, DateTimeKind.Local).AddTicks(307),
+                            CreateDate = new DateTime(2024, 10, 14, 0, 49, 57, 351, DateTimeKind.Local).AddTicks(7972),
                             Message = "Chúc mừng bạn đã đặt tour thành công",
-                            SendDate = new DateTime(2024, 10, 13, 16, 6, 9, 201, DateTimeKind.Local).AddTicks(305),
+                            SendDate = new DateTime(2024, 10, 14, 0, 49, 57, 351, DateTimeKind.Local).AddTicks(7969),
                             Status = 0,
                             Title = "Thành công",
                             Type = "Success",
-                            UserId = "8661f506-770b-4b5a-951c-ba6e858e3e0c"
+                            UserId = "948403c5-0241-420d-9c05-e8fd1e7220fe"
                         });
                 });
 
@@ -713,7 +703,7 @@ namespace BusinessObjects.Migrations
                         {
                             PackageTourId = "1",
                             CityId = "1",
-                            CreateDate = new DateTime(2024, 10, 13, 16, 6, 9, 201, DateTimeKind.Local).AddTicks(22),
+                            CreateDate = new DateTime(2024, 10, 14, 0, 49, 57, 351, DateTimeKind.Local).AddTicks(7628),
                             PackageTourName = "Tour Hồ Chí Minh",
                             PackageTourPrice = 500000f,
                             Status = 0
@@ -722,7 +712,7 @@ namespace BusinessObjects.Migrations
                         {
                             PackageTourId = "2",
                             CityId = "2",
-                            CreateDate = new DateTime(2024, 10, 13, 16, 6, 9, 201, DateTimeKind.Local).AddTicks(25),
+                            CreateDate = new DateTime(2024, 10, 14, 0, 49, 57, 351, DateTimeKind.Local).AddTicks(7630),
                             PackageTourName = "Tour Hà Nội",
                             PackageTourPrice = 600000f,
                             Status = 1
@@ -755,7 +745,7 @@ namespace BusinessObjects.Migrations
                         new
                         {
                             PaymentId = "1",
-                            CreateDate = new DateTime(2024, 10, 13, 16, 6, 9, 201, DateTimeKind.Local).AddTicks(210),
+                            CreateDate = new DateTime(2024, 10, 14, 0, 49, 57, 351, DateTimeKind.Local).AddTicks(7875),
                             PaymentType = "Momo",
                             Status = 0
                         });
@@ -792,7 +782,7 @@ namespace BusinessObjects.Migrations
                         new
                         {
                             PointId = "1",
-                            CreateDate = new DateTime(2024, 10, 13, 16, 6, 9, 201, DateTimeKind.Local).AddTicks(2),
+                            CreateDate = new DateTime(2024, 10, 14, 0, 49, 57, 351, DateTimeKind.Local).AddTicks(7597),
                             LocationId = "1",
                             PointName = "Chợ Bến Thành",
                             Status = 0
@@ -800,7 +790,7 @@ namespace BusinessObjects.Migrations
                         new
                         {
                             PointId = "2",
-                            CreateDate = new DateTime(2024, 10, 13, 16, 6, 9, 201, DateTimeKind.Local).AddTicks(3),
+                            CreateDate = new DateTime(2024, 10, 14, 0, 49, 57, 351, DateTimeKind.Local).AddTicks(7600),
                             LocationId = "1",
                             PointName = "Bảo tàng Hồ Chí Minh",
                             Status = 1
@@ -844,10 +834,10 @@ namespace BusinessObjects.Migrations
                         {
                             RateId = "1",
                             BookingId = "1",
-                            CreateDate = new DateTime(2024, 10, 13, 16, 6, 9, 201, DateTimeKind.Local).AddTicks(287),
+                            CreateDate = new DateTime(2024, 10, 14, 0, 49, 57, 351, DateTimeKind.Local).AddTicks(7946),
                             RateStar = 5,
                             Status = 0,
-                            UserId = "8661f506-770b-4b5a-951c-ba6e858e3e0c"
+                            UserId = "948403c5-0241-420d-9c05-e8fd1e7220fe"
                         });
                 });
 
@@ -880,7 +870,7 @@ namespace BusinessObjects.Migrations
                         new
                         {
                             RequestTypeId = "1",
-                            CreateDate = new DateTime(2024, 10, 13, 16, 6, 9, 201, DateTimeKind.Local).AddTicks(341),
+                            CreateDate = new DateTime(2024, 10, 14, 0, 49, 57, 351, DateTimeKind.Local).AddTicks(8018),
                             Priority = 1,
                             Status = 0,
                             Type = "Support"
@@ -916,8 +906,8 @@ namespace BusinessObjects.Migrations
                         new
                         {
                             RevenueId = "1",
-                            CreateDate = new DateTime(2024, 10, 13, 16, 6, 9, 201, DateTimeKind.Local).AddTicks(194),
-                            RevenueDate = new DateTime(2024, 10, 13, 16, 6, 9, 201, DateTimeKind.Local).AddTicks(193),
+                            CreateDate = new DateTime(2024, 10, 14, 0, 49, 57, 351, DateTimeKind.Local).AddTicks(7852),
+                            RevenueDate = new DateTime(2024, 10, 14, 0, 49, 57, 351, DateTimeKind.Local).AddTicks(7851),
                             Status = 0,
                             TotalRevenue = 900000f
                         });
@@ -970,7 +960,7 @@ namespace BusinessObjects.Migrations
                         new
                         {
                             ServiceId = "1",
-                            CreateDate = new DateTime(2024, 10, 13, 16, 6, 9, 200, DateTimeKind.Local).AddTicks(9848),
+                            CreateDate = new DateTime(2024, 10, 14, 0, 49, 57, 351, DateTimeKind.Local).AddTicks(7444),
                             ServiceName = "Tour Hồ Chí Minh",
                             ServiceTypeId = "1",
                             Status = 0,
@@ -979,7 +969,7 @@ namespace BusinessObjects.Migrations
                         new
                         {
                             ServiceId = "2",
-                            CreateDate = new DateTime(2024, 10, 13, 16, 6, 9, 200, DateTimeKind.Local).AddTicks(9851),
+                            CreateDate = new DateTime(2024, 10, 14, 0, 49, 57, 351, DateTimeKind.Local).AddTicks(7455),
                             ServiceName = "Tour Hà Nội",
                             ServiceTypeId = "1",
                             Status = 1,
@@ -1020,7 +1010,7 @@ namespace BusinessObjects.Migrations
                         new
                         {
                             SBTSId = "1",
-                            CreateDate = new DateTime(2024, 10, 13, 16, 6, 9, 200, DateTimeKind.Local).AddTicks(9878),
+                            CreateDate = new DateTime(2024, 10, 14, 0, 49, 57, 351, DateTimeKind.Local).AddTicks(7482),
                             ServiceId = "1",
                             Status = 0,
                             TourSegmentId = "1"
@@ -1028,7 +1018,7 @@ namespace BusinessObjects.Migrations
                         new
                         {
                             SBTSId = "2",
-                            CreateDate = new DateTime(2024, 10, 13, 16, 6, 9, 200, DateTimeKind.Local).AddTicks(9881),
+                            CreateDate = new DateTime(2024, 10, 14, 0, 49, 57, 351, DateTimeKind.Local).AddTicks(7484),
                             ServiceId = "2",
                             Status = 1,
                             TourSegmentId = "2"
@@ -1061,14 +1051,14 @@ namespace BusinessObjects.Migrations
                         new
                         {
                             ServiceTypeId = "1",
-                            CreateDate = new DateTime(2024, 10, 13, 16, 6, 9, 200, DateTimeKind.Local).AddTicks(9823),
+                            CreateDate = new DateTime(2024, 10, 14, 0, 49, 57, 351, DateTimeKind.Local).AddTicks(7413),
                             ServiceTypeName = "Tour",
                             Status = 0
                         },
                         new
                         {
                             ServiceTypeId = "2",
-                            CreateDate = new DateTime(2024, 10, 13, 16, 6, 9, 200, DateTimeKind.Local).AddTicks(9825),
+                            CreateDate = new DateTime(2024, 10, 14, 0, 49, 57, 351, DateTimeKind.Local).AddTicks(7415),
                             ServiceTypeName = "Hotel",
                             Status = 1
                         });
@@ -1107,7 +1097,7 @@ namespace BusinessObjects.Migrations
                         new
                         {
                             SUBTId = "1",
-                            CreateDate = new DateTime(2024, 10, 13, 16, 6, 9, 201, DateTimeKind.Local).AddTicks(154),
+                            CreateDate = new DateTime(2024, 10, 14, 0, 49, 57, 351, DateTimeKind.Local).AddTicks(7800),
                             ServiceId = "1",
                             Status = 0,
                             TicketId = "1"
@@ -1115,7 +1105,7 @@ namespace BusinessObjects.Migrations
                         new
                         {
                             SUBTId = "2",
-                            CreateDate = new DateTime(2024, 10, 13, 16, 6, 9, 201, DateTimeKind.Local).AddTicks(155),
+                            CreateDate = new DateTime(2024, 10, 14, 0, 49, 57, 351, DateTimeKind.Local).AddTicks(7803),
                             ServiceId = "2",
                             Status = 1,
                             TicketId = "2"
@@ -1148,14 +1138,14 @@ namespace BusinessObjects.Migrations
                         new
                         {
                             SupplierId = "1",
-                            CreateDate = new DateTime(2024, 10, 13, 16, 6, 9, 200, DateTimeKind.Local).AddTicks(9798),
+                            CreateDate = new DateTime(2024, 10, 14, 0, 49, 57, 351, DateTimeKind.Local).AddTicks(7383),
                             Status = 0,
                             SupplierName = "FPT"
                         },
                         new
                         {
                             SupplierId = "2",
-                            CreateDate = new DateTime(2024, 10, 13, 16, 6, 9, 200, DateTimeKind.Local).AddTicks(9801),
+                            CreateDate = new DateTime(2024, 10, 14, 0, 49, 57, 351, DateTimeKind.Local).AddTicks(7387),
                             Status = 1,
                             SupplierName = "VNPT"
                         });
@@ -1207,7 +1197,7 @@ namespace BusinessObjects.Migrations
                         {
                             TicketId = "1",
                             BookingId = "1",
-                            CreateDate = new DateTime(2024, 10, 13, 16, 6, 9, 201, DateTimeKind.Local).AddTicks(132),
+                            CreateDate = new DateTime(2024, 10, 14, 0, 49, 57, 351, DateTimeKind.Local).AddTicks(7766),
                             Price = 100000f,
                             QR = "",
                             Quantity = 10,
@@ -1219,7 +1209,7 @@ namespace BusinessObjects.Migrations
                         {
                             TicketId = "2",
                             BookingId = "1",
-                            CreateDate = new DateTime(2024, 10, 13, 16, 6, 9, 201, DateTimeKind.Local).AddTicks(134),
+                            CreateDate = new DateTime(2024, 10, 14, 0, 49, 57, 351, DateTimeKind.Local).AddTicks(7776),
                             Price = 50000f,
                             QR = "",
                             Quantity = 10,
@@ -1263,7 +1253,7 @@ namespace BusinessObjects.Migrations
                         new
                         {
                             TicketTypeId = "1",
-                            CreateDate = new DateTime(2024, 10, 13, 16, 6, 9, 201, DateTimeKind.Local).AddTicks(85),
+                            CreateDate = new DateTime(2024, 10, 14, 0, 49, 57, 351, DateTimeKind.Local).AddTicks(7709),
                             PackageTourId = "1",
                             Status = 0,
                             TicketTypeName = "Vé người lớn (>=16 tuổi)"
@@ -1271,7 +1261,7 @@ namespace BusinessObjects.Migrations
                         new
                         {
                             TicketTypeId = "2",
-                            CreateDate = new DateTime(2024, 10, 13, 16, 6, 9, 201, DateTimeKind.Local).AddTicks(87),
+                            CreateDate = new DateTime(2024, 10, 14, 0, 49, 57, 351, DateTimeKind.Local).AddTicks(7713),
                             PackageTourId = "1",
                             Status = 1,
                             TicketTypeName = "Vé trẻ em"
@@ -1311,7 +1301,7 @@ namespace BusinessObjects.Migrations
                         new
                         {
                             TourSegmentId = "1",
-                            CreateDate = new DateTime(2024, 10, 13, 16, 6, 9, 200, DateTimeKind.Local).AddTicks(9902),
+                            CreateDate = new DateTime(2024, 10, 14, 0, 49, 57, 351, DateTimeKind.Local).AddTicks(7508),
                             DestinationId = "1",
                             PackageTourId = "1",
                             Status = 0
@@ -1319,7 +1309,7 @@ namespace BusinessObjects.Migrations
                         new
                         {
                             TourSegmentId = "2",
-                            CreateDate = new DateTime(2024, 10, 13, 16, 6, 9, 200, DateTimeKind.Local).AddTicks(9904),
+                            CreateDate = new DateTime(2024, 10, 14, 0, 49, 57, 351, DateTimeKind.Local).AddTicks(7510),
                             DestinationId = "2",
                             PackageTourId = "2",
                             Status = 1
@@ -1363,143 +1353,10 @@ namespace BusinessObjects.Migrations
                         {
                             TransactionId = "1",
                             BookingId = "1",
-                            CreateDate = new DateTime(2024, 10, 13, 16, 6, 9, 201, DateTimeKind.Local).AddTicks(227),
+                            CreateDate = new DateTime(2024, 10, 14, 0, 49, 57, 351, DateTimeKind.Local).AddTicks(7898),
                             Status = 0,
-                            UserId = "8661f506-770b-4b5a-951c-ba6e858e3e0c"
+                            UserId = "948403c5-0241-420d-9c05-e8fd1e7220fe"
                         });
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("NormalizedName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedName")
-                        .IsUnique()
-                        .HasDatabaseName("RoleNameIndex")
-                        .HasFilter("[NormalizedName] IS NOT NULL");
-
-                    b.ToTable("AspNetRoles", (string)null);
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ClaimType")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ClaimValue")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("RoleId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("AspNetRoleClaims", (string)null);
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ClaimType")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ClaimValue")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("AspNetUserClaims", (string)null);
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
-                {
-                    b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("ProviderKey")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("ProviderDisplayName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("LoginProvider", "ProviderKey");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("AspNetUserLogins", (string)null);
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
-                {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("RoleId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("UserId", "RoleId");
-
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("AspNetUserRoles", (string)null);
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
-                {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Value")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("UserId", "LoginProvider", "Name");
-
-                    b.ToTable("AspNetUserTokens", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObjects.Models.Booking", b =>
@@ -1788,57 +1645,6 @@ namespace BusinessObjects.Migrations
                     b.Navigation("Accounts");
 
                     b.Navigation("Bookings");
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
-                {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
-                        .WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
-                {
-                    b.HasOne("BusinessObjects.Models.Account", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
-                {
-                    b.HasOne("BusinessObjects.Models.Account", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
-                {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
-                        .WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("BusinessObjects.Models.Account", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
-                {
-                    b.HasOne("BusinessObjects.Models.Account", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("BusinessObjects.Models.Account", b =>

@@ -22,6 +22,7 @@ namespace BusinessObjects.Data
            
             var adminAccount = new Account
             {
+              //  UserId= "1",
                 // Generate a new UserId
                 Gender = true,
                 Dob = new DateTime(1990, 5, 15),
@@ -100,7 +101,7 @@ namespace BusinessObjects.Data
                 new TicketType { TicketTypeId = "2", PackageTourId = "1", TicketTypeName = "Vé trẻ em", CreateDate = DateTime.Now, Status = 1 }
             );
             modelBuilder.Entity<Booking>().HasData(
-              new Booking { BookingId = "1", UserId = adminAccount.Id, BookingDate = DateTime.Now, TotalPrice = 500000, DailyTourId = "1", PaymentId = "1", CreateDate = DateTime.Now, Status = 0 }
+              new Booking { BookingId = "1", UserId = adminAccount.Id.ToString(), BookingDate = DateTime.Now, TotalPrice = 500000, DailyTourId = "1", PaymentId = "1", CreateDate = DateTime.Now, Status = 0 }
             );
             modelBuilder.Entity<Ticket>().HasData(
                 new Ticket { TicketId = "1", TicketTypeId = "1", BookingId = "1", TicketName = "Vé vào cổng", Quantity = 10, QR = "", Price = 100000, CreateDate = DateTime.Now, Status = 0 },
@@ -121,19 +122,19 @@ namespace BusinessObjects.Data
                 new PaymentMethod { PaymentId = "1", PaymentType = "Momo", CreateDate = DateTime.Now, Status = 0 }
             );
             modelBuilder.Entity<TransactionsHistory>().HasData(
-                new TransactionsHistory { TransactionId = "1", UserId = adminAccount.Id, BookingId = "1", CreateDate = DateTime.Now, Status = 0 }
+                new TransactionsHistory { TransactionId = "1", UserId = adminAccount.Id.ToString(), BookingId = "1", CreateDate = DateTime.Now, Status = 0 }
             );
             modelBuilder.Entity<Feedback>().HasData(
-                new Feedback { FeedbackId = "1", UserId = adminAccount.Id, FeedbackMsg = "Rất tuyệt vời", BookingId = "1", CreateDate = DateTime.Now, Status = 0 }
+                new Feedback { FeedbackId = "1", UserId = adminAccount.Id.ToString(), FeedbackMsg = "Rất tuyệt vời", BookingId = "1", CreateDate = DateTime.Now, Status = 0 }
             );
             modelBuilder.Entity<Rate>().HasData(
-                new Rate { RateId = "1", UserId = adminAccount.Id, RateStar = 5, BookingId = "1", CreateDate = DateTime.Now, Status = 0 }
+                new Rate { RateId = "1", UserId = adminAccount.Id.ToString(), RateStar = 5, BookingId = "1", CreateDate = DateTime.Now, Status = 0 }
             );
             modelBuilder.Entity<Notification>().HasData(
-                new Notification { NotifyId = "1", UserId = adminAccount.Id, SendDate = DateTime.Now, Message = "Chúc mừng bạn đã đặt tour thành công", Type = "Success", Title = "Thành công", CreateDate = DateTime.Now, Status = 0 }
+                new Notification { NotifyId = "1", UserId = adminAccount.Id.ToString(), SendDate = DateTime.Now, Message = "Chúc mừng bạn đã đặt tour thành công", Type = "Success", Title = "Thành công", CreateDate = DateTime.Now, Status = 0 }
             );
             modelBuilder.Entity<CustomerSupport>().HasData(
-                new CustomerSupport { CusSupportId = "1", UserId = adminAccount.Id, RequestTypeId = "1", Description = "Support", DateResolved = DateTime.Now, CreateDate = DateTime.Now, Status = 0 }
+                new CustomerSupport { CusSupportId = "1", UserId = adminAccount.Id.ToString(), RequestTypeId = "1", Description = "Support", DateResolved = DateTime.Now, CreateDate = DateTime.Now, Status = 0 }
             );
             modelBuilder.Entity<RequestType>().HasData(
                 new RequestType { RequestTypeId = "1", Type = "Support", Priority = 1, CreateDate = DateTime.Now, Status = 0 }

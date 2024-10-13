@@ -59,7 +59,7 @@ namespace Services.Services
         {
             var account = new Account
             {
-                Id = Guid.NewGuid().ToString(),
+                //UserId = Guid.NewGuid().ToString(),
                 UserName = createModel.UserName,
                 Email = createModel.Email,
                 FullName = createModel.FullName,
@@ -240,46 +240,35 @@ namespace Services.Services
                     return new APIResponseModel { IsSuccess = false, Message = "Email cannot be empty or whitespace." };
                 }
 
-                var exsistAccount = await _userManager.FindByNameAsync(signUpModel.AccountEmail);
-                if (exsistAccount == null)
+                // Kiểm tra xem tài khoản đã tồn tại chưa
+                var existAccount = await _unitOfWork.AccountRepository.GetByConditionAsync(a => a.Email == signUpModel.AccountEmail);
+                if (existAccount.Any())
                 {
-                    var user = new Account
-                    {
-                        FullName = signUpModel.FullName,
-                        Dob = signUpModel.BirthDate,
-                        Gender = signUpModel.Gender,
-                        Address = signUpModel.Address,
-                        UserName = signUpModel.AccountEmail,
-                        Email = signUpModel.AccountEmail,
-                        PhoneNumber = signUpModel.AccountPhone,
-                        CreateDate = DateTime.Now,
-                        Status = 1,
-                    };
-
-                    var result = await _userManager.CreateAsync(user, signUpModel.AccountPassword);
-
-                    string errorMessage = "Failed to register. Please check your input and try again.";
-
-                    if (result.Succeeded)
-                    {
-                        if (!await _roleManager.RoleExistsAsync(ERole.Admin.ToString()))
-                        {
-                            await _roleManager.CreateAsync(new IdentityRole(ERole.Admin.ToString()));
-                        }
-                        if (await _roleManager.RoleExistsAsync(ERole.Admin.ToString()))
-                        {
-                            await _userManager.AddToRoleAsync(user, ERole.Admin.ToString());
-                        }
-
-                        return new APIResponseModel { IsSuccess = true, Message = "Registration successful." };
-                    }
-                    foreach (var ex in result.Errors)
-                    {
-                        errorMessage = ex.Description;
-                    }
-                    return new APIResponseModel { IsSuccess = false, Message = errorMessage };
+                    return new APIResponseModel { IsSuccess = false, Message = "Account already exists" };
                 }
-                return new APIResponseModel { IsSuccess = false, Message = "Account already exists" };
+
+                // Tạo tài khoản mới
+                var user = new Account
+                {
+                    FullName = signUpModel.FullName,
+                    Dob = signUpModel.BirthDate,
+                    Gender = signUpModel.Gender,
+                    Address = signUpModel.Address,
+                    UserName = signUpModel.AccountEmail,
+                    Email = signUpModel.AccountEmail,
+                    PhoneNumber = signUpModel.AccountPhone,
+                    CreateDate = DateTime.Now,
+                    Status = 1,
+                    Roles= (int)ERole.Admin,
+                    Password = signUpModel.AccountPassword 
+                };
+
+                // Lưu tài khoản mới vào cơ sở dữ liệu
+                await _unitOfWork.AccountRepository.AddAsync(user);
+                _unitOfWork.Save(); 
+
+
+                return new APIResponseModel { IsSuccess = true, Message = "Registration successful." };
             }
             catch (Exception ex)
             {
@@ -299,7 +288,7 @@ namespace Services.Services
 
         public async Task<APIAuthenticationResponseModel> SignInAccountAsync(AccountSignInModel signInModel)
         {
-            var account = await _userManager.FindByNameAsync(signInModel.AccountEmail);
+            var account = (await _unitOfWork.AccountRepository.GetByConditionAsync(a => a.Email == signInModel.AccountEmail)).FirstOrDefault();
 
             if (account == null)
             {
@@ -309,59 +298,9 @@ namespace Services.Services
                     Message = "Invalid login attempt. Please check your email and password."
                 };
             }
-            var result = await _signInManager.PasswordSignInAsync(signInModel.AccountEmail, signInModel.AccountPassword, false, false);
 
-            if (result.Succeeded)
-            {
-                var user = await _userManager.FindByNameAsync(signInModel.AccountEmail);
-                if (user != null)
-                {
-                    var authClaims = new List<Claim>
-                    {
-                        new Claim(ClaimTypes.Name, signInModel.AccountEmail),
-                        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-                    };
-
-                    var userRole = await _userManager.GetRolesAsync(user);
-                    foreach (var role in userRole)
-                    {
-                        authClaims.Add(new Claim(ClaimTypes.Role, role.ToString()));
-                    }
-
-                    var authenKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:SecretKey"]));
-
-                    var token = new JwtSecurityToken(
-                        issuer: _configuration["JWT:ValidIssuer"],
-                        audience: _configuration["JWT:ValidAudience"],
-                        expires: DateTime.Now.AddHours(2),
-                        claims: authClaims,
-                        signingCredentials: new SigningCredentials(authenKey, SecurityAlgorithms.HmacSha256)
-                    );
-
-                    var refreshToken = GenerateRefreshToken();
-
-                    _ = int.TryParse(_configuration["JWT:RefreshTokenValidityInDays"], out int refreshTokenValidityInDays);
-
-                    account.RefreshToken = refreshToken;
-                    account.RefreshTokenExpiryTime = DateTime.Now.AddDays(refreshTokenValidityInDays);
-
-                    await _userManager.UpdateAsync(account);
-
-                    return new APIAuthenticationResponseModel
-                    {
-                        Status = true,
-                        Message = "Login successfully!",
-                        JwtToken = new JwtSecurityTokenHandler().WriteToken(token),
-                        //  Expired = token.ValidTo,
-                        //  JwtRefreshToken = refreshToken,
-                    };
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            else
+            // Kiểm tra mật khẩu
+            if (account.Password != signInModel.AccountPassword) // Thay đổi này để so sánh mật khẩu
             {
                 return new APIAuthenticationResponseModel
                 {
@@ -369,6 +308,47 @@ namespace Services.Services
                     Message = "Invalid login attempt. Please check your email and password."
                 };
             }
+
+            // Tạo các claims cho token
+             var authClaims = new List<Claim>
+               {
+                    new Claim(ClaimTypes.Name, account.Email),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                };
+
+            if (!string.IsNullOrEmpty(account.Roles.ToString()))
+            {
+                var roleName = ((ERole)account.Roles.Value).ToString();
+                authClaims.Add(new Claim(ClaimTypes.Role, roleName));
+            }
+
+            var authenKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:SecretKey"]));
+
+            var token = new JwtSecurityToken(
+                issuer: _configuration["JWT:ValidIssuer"],
+                audience: _configuration["JWT:ValidAudience"],
+                expires: DateTime.Now.AddHours(2),
+                claims: authClaims,
+                signingCredentials: new SigningCredentials(authenKey, SecurityAlgorithms.HmacSha256)
+            );
+
+            // Tạo refresh token nếu cần
+            var refreshToken = GenerateRefreshToken();
+            _ = int.TryParse(_configuration["JWT:RefreshTokenValidityInDays"], out int refreshTokenValidityInDays);
+
+            // Cập nhật thông tin refresh token vào database
+            account.RefreshToken = refreshToken;
+            account.RefreshTokenExpiryTime = DateTime.Now.AddDays(refreshTokenValidityInDays);
+            await _unitOfWork.AccountRepository.UpdateAsync(account); // Sử dụng repository để cập nhật
+
+            return new APIAuthenticationResponseModel
+            {
+                Status = true,
+                Message = "Login successfully!",
+                JwtToken = new JwtSecurityTokenHandler().WriteToken(token),
+                // Expired = token.ValidTo, // Nếu cần thời gian hết hạn
+                // JwtRefreshToken = refreshToken, // Nếu cần refresh token
+            };
         }
 
         public async Task<APIResponseModel> SignUpAccountZaloAsync(AccountZaloIdModel accountZaloIdModel)
@@ -397,45 +377,29 @@ namespace Services.Services
                         Gender = true,
                         Address = "",
                         UserName = accountZaloIdModel.ZaloUser,
-                        Email = "",
+                        Email =  "",
                         PhoneNumber = "",
                         CreateDate = DateTime.Now,
                         Status = 1,
                         ZaloUser = accountZaloIdModel.ZaloUser,
+                        Roles = (int) ERole.Customer
                     };
 
-                    var result = await _userManager.CreateAsync(user);
+                  //  var result = await _userManager.CreateAsync(user);
 
-                    string errorMessage = "Failed to register with Zalo. Please check your input and try again.";
+                 //   string errorMessage = "Failed to register with Zalo. Please check your input and try again.";
 
-                    if (result.Succeeded)
+                    await _unitOfWork.AccountRepository.AddAsync(user);
+                     _unitOfWork.Save(); // Lưu thay đổi vào cơ sở dữ liệu
+
+                    var accessToken = await GenerateAccessTokenForAccount(user);
+
+                    return new APIResponseModel
                     {
-
-                        if (!await _roleManager.RoleExistsAsync(ERole.Customer.ToString()))
-                        {
-                            await _roleManager.CreateAsync(new IdentityRole(ERole.Customer.ToString()));
-                        }
-                        if (await _roleManager.RoleExistsAsync(ERole.Customer.ToString()))
-                        {
-                            await _userManager.AddToRoleAsync(user, ERole.Customer.ToString());
-                        }
-
-
-                        var accessToken = await GenerateAccessTokenForAccount(user);
-
-                        return new APIResponseModel
-                        {
-                            IsSuccess = true,
-                            Message = "Registration successful with Zalo.",
-                            Data = new { AccessToken = accessToken }
-                        };
-                    }
-
-                    foreach (var ex in result.Errors)
-                    {
-                        errorMessage = ex.Description;
-                    }
-                    return new APIResponseModel { IsSuccess = false, Message = errorMessage };
+                        IsSuccess = true,
+                        Message = "Registration successful with Zalo.",
+                        Data = new { AccessToken = accessToken }
+                    };
                 }
             }
             catch (Exception ex)
@@ -455,20 +419,32 @@ namespace Services.Services
                     new Claim(JwtRegisteredClaimNames.Email, account.Email),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                     new Claim(JwtRegisteredClaimNames.Aud, _configuration["JWT:ValidAudience"]),
-                    new Claim(JwtRegisteredClaimNames.Iss, _configuration["JWT:ValidIssuer"])
+                    new Claim(JwtRegisteredClaimNames.Iss, _configuration["JWT:ValidIssuer"]),
+                    new Claim(ClaimTypes.Role, ERole.Customer.ToString())
                   };
 
-            var roles = await _userManager.GetRolesAsync(account);
-            foreach (var role in roles)
-            {
-                claims.Add(new Claim(ClaimTypes.Role, role));
-            }
+            //var roles = await _userManager.GetRolesAsync(account);
+            //foreach (var role in roles)
+            //{
+            //    claims.Add(new Claim(ClaimTypes.Role, role));
+            //}
 
+            //var tokenDescriptor = new SecurityTokenDescriptor
+            //{
+            //    Subject = new ClaimsIdentity(claims),
+            //    Expires = DateTime.UtcNow.AddHours(1),
+            //    SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature) // Đặt khóa và thuật toán mã hóa
+            //};
+
+            //var tokenHandler = new JwtSecurityTokenHandler();
+            //var token = tokenHandler.CreateToken(tokenDescriptor);
+
+            //return tokenHandler.WriteToken(token);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.UtcNow.AddHours(1),
-                SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature) // Đặt khóa và thuật toán mã hóa
+                SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256) // Đặt khóa và thuật toán mã hóa
             };
 
             var tokenHandler = new JwtSecurityTokenHandler();
