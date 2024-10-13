@@ -487,6 +487,7 @@ namespace Services.Services
                         dailyTour.PackageTours?.PackageTourName,
                         dailyTour.PackageTours?.PackageTourPrice,
                         dailyTour.PackageTours?.PackageTourImgUrl,
+                        dailyTour.PackageTours?.CityId,
                         StatusPackageTour = dailyTour.PackageTours?.Status,
                         dailyTour.PackageTours?.Cities?.CityName,
                         TourSegments = dailyTour.PackageTours?.TourSegments
@@ -625,6 +626,7 @@ namespace Services.Services
                             dailyTour.PackageTours?.PackageTourName,
                             dailyTour.PackageTours?.PackageTourPrice,
                             dailyTour.PackageTours?.PackageTourImgUrl,
+                            dailyTour.PackageTours?.CityId,
                             StatusPackageTour = dailyTour.PackageTours?.Status,
                             dailyTour.PackageTours?.Cities?.CityName,
                             TourSegments = dailyTour.PackageTours?.TourSegments
@@ -764,6 +766,7 @@ namespace Services.Services
                             dailyTour.PackageTours?.PackageTourName,
                             dailyTour.PackageTours?.PackageTourPrice,
                             dailyTour.PackageTours?.PackageTourImgUrl,
+                            dailyTour.PackageTours?.CityId,
                             StatusPackageTour = dailyTour.PackageTours?.Status,
                             dailyTour.PackageTours?.Cities?.CityName,
                             TourSegments = dailyTour.PackageTours?.TourSegments
@@ -901,6 +904,7 @@ namespace Services.Services
                             dailyTour.PackageTours?.PackageTourName,
                             dailyTour.PackageTours?.PackageTourPrice,
                             dailyTour.PackageTours?.PackageTourImgUrl,
+                            dailyTour.PackageTours?.CityId,
                             StatusPackageTour = dailyTour.PackageTours?.Status,
                             dailyTour.PackageTours?.Cities?.CityName,
                             TourSegments = dailyTour.PackageTours?.TourSegments

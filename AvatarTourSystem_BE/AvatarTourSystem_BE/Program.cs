@@ -41,6 +41,15 @@ builder.Services.AddApiWebService(builder);
 var googleApiKey = builder.Configuration.GetSection("GoogleMaps:ApiKey").Value;
 builder.Services.AddSingleton(new GoogleMapsService(googleApiKey));
 
+var SecretKeyZalo = builder.Configuration.GetSection("ZaloAPI:SecretKeyZalo").Value;
+
+builder.Services.AddHttpClient();
+builder.Services.AddSingleton(sp =>
+{
+    var httpClient = sp.GetRequiredService<HttpClient>();
+    return new ZaloServices(SecretKeyZalo, httpClient);
+});
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("app-cors",
