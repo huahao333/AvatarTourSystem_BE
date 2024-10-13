@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Org.BouncyCastle.Asn1.Cms;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,6 +20,8 @@ namespace BusinessObjects.Models
         public string? LocationImgUrl { get; set; }
         public string? LocationHotline { get; set; }
         public string? LocationGoogleMap { get; set; }
+        public DateTime? LocationOpeningHours{ get; set; }
+        public DateTime? LocationClosingHours { get; set; }
         public string? DestinationId { get; set; }
         public DateTime? CreateDate { get; set; }
         public DateTime? UpdateDate { get; set; }
