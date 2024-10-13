@@ -23,6 +23,8 @@ namespace BusinessObjects.ViewModels.Location
         public DateTime? CreateDate { get; set; }
      //   [FromForm(Name = "update-date")]
         public DateTime? UpdateDate { get; set; }
+        public DateTime? LocationOpeningHours { get; set; }
+        public DateTime? LocationClosingHours{get; set;}
       //  [FromForm(Name = "status")]
         public int? Status { get; set; }
 
