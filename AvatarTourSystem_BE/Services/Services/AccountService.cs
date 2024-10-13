@@ -33,15 +33,16 @@ namespace Services.Services
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly SignInManager<Account> _signInManager;
         private readonly IConfiguration _configuration;
-        private readonly string _secretKey = "FAzP8FrOYG8G5IF38MMO";
         private readonly HttpClient _httpClient;
+        private readonly ZaloServices _zaloServices; 
         public AccountService(IUnitOfWork unitOfWork,
                               IMapper mapper,
                               UserManager<Account> userManager,
                               RoleManager<IdentityRole> roleManager,
                               SignInManager<Account> signInManager,
                               IConfiguration configuration,
-                              HttpClient httpClient)
+                              HttpClient httpClient,
+                              ZaloServices zaloServices)
 
         {
             _unitOfWork = unitOfWork;
@@ -51,6 +52,7 @@ namespace Services.Services
             _signInManager = signInManager;
             _configuration = configuration;
             _httpClient = httpClient;
+            _zaloServices = zaloServices;
         }
 
         public async Task<APIResponseModel> CreateAccount(AccountCreateModel createModel)
@@ -501,7 +503,8 @@ namespace Services.Services
 
         public async Task<APIResponseModel> GetPhoneInfoAndSaveAsync(AccountZaloCURLModel accountZaloCURLModel)
         {
-            var phoneInfo = await CallZaloApiAsync(accountZaloCURLModel.AccessToken, accountZaloCURLModel.PhoneToken);
+            var phoneInfo = await _zaloServices.CallZaloApiAsync(accountZaloCURLModel.AccessToken, accountZaloCURLModel.PhoneToken);
+
             if (phoneInfo == null)
             {
                 return new APIResponseModel
@@ -537,45 +540,45 @@ namespace Services.Services
                 Data = phoneInfo
             };
         }
-        private async Task<string> CallZaloApiAsync(string accessToken, string phoneToken)
-        {
+        //private async Task<string> CallZaloApiAsync(string accessToken, string phoneToken)
+        //{
 
-            string url = "https://graph.zalo.me/v2.0/me/info";
+        //    string url = "https://graph.zalo.me/v2.0/me/info";
 
-            _httpClient.DefaultRequestHeaders.Add("access_token", accessToken);
-            _httpClient.DefaultRequestHeaders.Add("code", phoneToken);
-            _httpClient.DefaultRequestHeaders.Add("secret_key", _secretKey);
+        //    _httpClient.DefaultRequestHeaders.Add("access_token", accessToken);
+        //    _httpClient.DefaultRequestHeaders.Add("code", phoneToken);
+        //    _httpClient.DefaultRequestHeaders.Add("secret_key", _secretKey);
 
-            var response = await _httpClient.GetAsync(url);
+        //    var response = await _httpClient.GetAsync(url);
 
-            if (!response.IsSuccessStatusCode)
-            {
-                return null;
-            }
-            var responseBody = await response.Content.ReadAsStringAsync();
+        //    if (!response.IsSuccessStatusCode)
+        //    {
+        //        return null;
+        //    }
+        //    var responseBody = await response.Content.ReadAsStringAsync();
 
-            Console.WriteLine("Response body: " + responseBody);
+        //    Console.WriteLine("Response body: " + responseBody);
 
-            try
-            {
-                var jsonDocument = JsonDocument.Parse(responseBody);
-                if (jsonDocument.RootElement.TryGetProperty("data", out var dataElement) && dataElement.TryGetProperty("number", out var numberElement))
-                {
-                    string phoneNumber = numberElement.GetString();
-                    return phoneNumber;
-                }
-                else
-                {
-                    Console.WriteLine("Không tìm thấy các thuộc tính mong đợi trong phản hồi.");
-                    return null; 
-                }
-            }
-            catch (JsonException jsonEx)
-            {
-                Console.WriteLine("Lỗi phân tích JSON: " + jsonEx.Message);
-                return null; 
-            }
-        }
+        //    try
+        //    {
+        //        var jsonDocument = JsonDocument.Parse(responseBody);
+        //        if (jsonDocument.RootElement.TryGetProperty("data", out var dataElement) && dataElement.TryGetProperty("number", out var numberElement))
+        //        {
+        //            string phoneNumber = numberElement.GetString();
+        //            return phoneNumber;
+        //        }
+        //        else
+        //        {
+        //            Console.WriteLine("Không tìm thấy các thuộc tính mong đợi trong phản hồi.");
+        //            return null; 
+        //        }
+        //    }
+        //    catch (JsonException jsonEx)
+        //    {
+        //        Console.WriteLine("Lỗi phân tích JSON: " + jsonEx.Message);
+        //        return null; 
+        //    }
+        //}
 
        
     }
