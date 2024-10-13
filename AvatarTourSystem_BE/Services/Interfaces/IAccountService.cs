@@ -16,6 +16,7 @@ namespace Services.Interfaces
         Task<APIResponseModel> GetAccountByZaloID(string zaloId);
         Task<APIResponseModel> CreateAccount(AccountCreateModel createModel);
         Task<APIResponseModel> UpdateAccount(AccountUpdateModel updateModel);
+        Task<APIResponseModel> UpdateAccountWithZaloId(AccountUpdateWithZaloIdModel updateModel);
         Task<APIResponseModel> DeleteAccount(string accountId);
         Task<APIResponseModel> SignUpAccountAsync(AccountSignUpModel signUpModel);
         Task<APIResponseModel> SignUpAccountZaloAsync(AccountZaloIdModel accountZaloIdModel);

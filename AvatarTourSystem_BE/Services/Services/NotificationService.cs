@@ -128,6 +128,18 @@ namespace Services.Services
             };
         }
 
+        public async Task<APIResponseModel> GetNotificaitonByZaloID(string zaloId)
+        {
+            var notificaitons = await _unitOfWork.NotificationRepository.GetByConditionAsync(s => s.UserId == zaloId);
+            return new APIResponseModel
+            {
+                Message = "Get Notificaiton Successfully",
+                IsSuccess = true,
+                Data = notificaitons,
+            };
+
+        }
+
         public async Task<APIResponseModel> UpdateNotificaiton(NotificationUpdateModel updateModel)
         {
             var notificaiton = await _unitOfWork.NotificationRepository.GetByIdGuidAsync(updateModel.NotifyId);
