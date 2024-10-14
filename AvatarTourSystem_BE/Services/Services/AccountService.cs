@@ -20,6 +20,8 @@ using System.Threading.Tasks;
 using System.Security.Claims;
 using Microsoft.Extensions.Configuration;
 using System.Security.Cryptography;
+using System.Net.Http;
+using System.Text.Json;
 
 namespace Services.Services
 {
@@ -31,12 +33,17 @@ namespace Services.Services
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly SignInManager<Account> _signInManager;
         private readonly IConfiguration _configuration;
+        private readonly HttpClient _httpClient;
+        private readonly ZaloServices _zaloServices; 
         public AccountService(IUnitOfWork unitOfWork,
                               IMapper mapper,
                               UserManager<Account> userManager,
                               RoleManager<IdentityRole> roleManager,
                               SignInManager<Account> signInManager,
-                              IConfiguration configuration)
+                              IConfiguration configuration,
+                              HttpClient httpClient,
+                              ZaloServices zaloServices)
+
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -44,13 +51,15 @@ namespace Services.Services
             _roleManager = roleManager;
             _signInManager = signInManager;
             _configuration = configuration;
+            _httpClient = httpClient;
+            _zaloServices = zaloServices;
         }
 
         public async Task<APIResponseModel> CreateAccount(AccountCreateModel createModel)
         {
             var account = new Account
             {
-                Id = Guid.NewGuid().ToString(),
+                //UserId = Guid.NewGuid().ToString(),
                 UserName = createModel.UserName,
                 Email = createModel.Email,
                 FullName = createModel.FullName,
@@ -165,10 +174,8 @@ namespace Services.Services
 
         public async Task<APIResponseModel> GetAllAccount()
         {
-            // Fetch all accounts from the repository
             var accounts = await _unitOfWork.AccountRepository.GetAllAsync();
 
-            // Check if accounts exist (optional)
             if (accounts == null || !accounts.Any())
             {
                 return new APIResponseModel
@@ -179,15 +186,13 @@ namespace Services.Services
                 };
             }
 
-            // Map accounts to AccountViewModel
             var accountViewModels = _mapper.Map<List<AccountViewModel>>(accounts);
 
-            // Return success response with mapped view models
             return new APIResponseModel
             {
                 Message = "Get All Account Successfully",
                 IsSuccess = true,
-                Data = accountViewModels // Use the mapped view models here
+                Data = accountViewModels 
             };
         }
 
@@ -231,46 +236,35 @@ namespace Services.Services
                     return new APIResponseModel { IsSuccess = false, Message = "Email cannot be empty or whitespace." };
                 }
 
-                var exsistAccount = await _userManager.FindByNameAsync(signUpModel.AccountEmail);
-                if (exsistAccount == null)
+                var existAccount = await _unitOfWork.AccountRepository.GetByConditionAsync(a => a.Email == signUpModel.AccountEmail);
+                if (existAccount.Any())
                 {
-                    var user = new Account
-                    {
-                        FullName = signUpModel.FullName,
-                        Dob = signUpModel.BirthDate,
-                        Gender = signUpModel.Gender,
-                        Address = signUpModel.Address,
-                        UserName = signUpModel.AccountEmail,
-                        Email = signUpModel.AccountEmail,
-                        PhoneNumber = signUpModel.AccountPhone,
-                        CreateDate = DateTime.Now,
-                        Status = 1,
-                    };
-
-                    var result = await _userManager.CreateAsync(user, signUpModel.AccountPassword);
-
-                    string errorMessage = "Failed to register. Please check your input and try again.";
-
-                    if (result.Succeeded)
-                    {
-                        if (!await _roleManager.RoleExistsAsync(ERole.Admin.ToString()))
-                        {
-                            await _roleManager.CreateAsync(new IdentityRole(ERole.Admin.ToString()));
-                        }
-                        if (await _roleManager.RoleExistsAsync(ERole.Admin.ToString()))
-                        {
-                            await _userManager.AddToRoleAsync(user, ERole.Admin.ToString());
-                        }
-
-                        return new APIResponseModel { IsSuccess = true, Message = "Registration successful." };
-                    }
-                    foreach (var ex in result.Errors)
-                    {
-                        errorMessage = ex.Description;
-                    }
-                    return new APIResponseModel { IsSuccess = false, Message = errorMessage };
+                    return new APIResponseModel { IsSuccess = false, Message = "Account already exists" };
                 }
-                return new APIResponseModel { IsSuccess = false, Message = "Account already exists" };
+
+                var user = new Account
+                {
+                    FullName = signUpModel.FullName,
+                    Dob = signUpModel.BirthDate,
+                    Gender = signUpModel.Gender,
+                    Address = signUpModel.Address,
+                    UserName = signUpModel.AccountEmail,
+                    Email = signUpModel.AccountEmail,
+                    PhoneNumber = signUpModel.AccountPhone,
+                    CreateDate = DateTime.Now,
+                    Status = 1,
+                    Roles= (int)ERole.Admin,
+                //    PasswordHash = signUpModel.AccountPassword 
+                };
+
+                var passwordHasher = new PasswordHasher<Account>();
+                user.PasswordHash = passwordHasher.HashPassword(user, signUpModel.AccountPassword);
+
+                await _unitOfWork.AccountRepository.AddAsync(user);
+                _unitOfWork.Save(); 
+
+
+                return new APIResponseModel { IsSuccess = true, Message = "Registration successful." };
             }
             catch (Exception ex)
             {
@@ -290,7 +284,7 @@ namespace Services.Services
 
         public async Task<APIAuthenticationResponseModel> SignInAccountAsync(AccountSignInModel signInModel)
         {
-            var account = await _userManager.FindByNameAsync(signInModel.AccountEmail);
+            var account = (await _unitOfWork.AccountRepository.GetByConditionAsync(a => a.Email == signInModel.AccountEmail)).FirstOrDefault();
 
             if (account == null)
             {
@@ -300,59 +294,11 @@ namespace Services.Services
                     Message = "Invalid login attempt. Please check your email and password."
                 };
             }
-            var result = await _signInManager.PasswordSignInAsync(signInModel.AccountEmail, signInModel.AccountPassword, false, false);
 
-            if (result.Succeeded)
-            {
-                var user = await _userManager.FindByNameAsync(signInModel.AccountEmail);
-                if (user != null)
-                {
-                    var authClaims = new List<Claim>
-                    {
-                        new Claim(ClaimTypes.Name, signInModel.AccountEmail),
-                        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-                    };
+            var passwordHasher = new PasswordHasher<Account>();
+            var passwordVerificationResult = passwordHasher.VerifyHashedPassword(account, account.PasswordHash, signInModel.AccountPassword);
 
-                    var userRole = await _userManager.GetRolesAsync(user);
-                    foreach (var role in userRole)
-                    {
-                        authClaims.Add(new Claim(ClaimTypes.Role, role.ToString()));
-                    }
-
-                    var authenKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:SecretKey"]));
-
-                    var token = new JwtSecurityToken(
-                        issuer: _configuration["JWT:ValidIssuer"],
-                        audience: _configuration["JWT:ValidAudience"],
-                        expires: DateTime.Now.AddHours(2),
-                        claims: authClaims,
-                        signingCredentials: new SigningCredentials(authenKey, SecurityAlgorithms.HmacSha256)
-                    );
-
-                    var refreshToken = GenerateRefreshToken();
-
-                    _ = int.TryParse(_configuration["JWT:RefreshTokenValidityInDays"], out int refreshTokenValidityInDays);
-
-                    account.RefreshToken = refreshToken;
-                    account.RefreshTokenExpiryTime = DateTime.Now.AddDays(refreshTokenValidityInDays);
-
-                    await _userManager.UpdateAsync(account);
-
-                    return new APIAuthenticationResponseModel
-                    {
-                        Status = true,
-                        Message = "Login successfully!",
-                        JwtToken = new JwtSecurityTokenHandler().WriteToken(token),
-                        //  Expired = token.ValidTo,
-                        //  JwtRefreshToken = refreshToken,
-                    };
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            else
+            if (passwordVerificationResult != PasswordVerificationResult.Success) 
             {
                 return new APIAuthenticationResponseModel
                 {
@@ -360,6 +306,44 @@ namespace Services.Services
                     Message = "Invalid login attempt. Please check your email and password."
                 };
             }
+
+             var authClaims = new List<Claim>
+               {
+                    new Claim(ClaimTypes.Name, account.Email),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                };
+
+            if (!string.IsNullOrEmpty(account.Roles.ToString()))
+            {
+                var roleName = ((ERole)account.Roles.Value).ToString();
+                authClaims.Add(new Claim(ClaimTypes.Role, roleName));
+            }
+
+            var authenKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:SecretKey"]));
+
+            var token = new JwtSecurityToken(
+                issuer: _configuration["JWT:ValidIssuer"],
+                audience: _configuration["JWT:ValidAudience"],
+                expires: DateTime.Now.AddHours(2),
+                claims: authClaims,
+                signingCredentials: new SigningCredentials(authenKey, SecurityAlgorithms.HmacSha256)
+            );
+
+            var refreshToken = GenerateRefreshToken();
+            _ = int.TryParse(_configuration["JWT:RefreshTokenValidityInDays"], out int refreshTokenValidityInDays);
+
+            account.RefreshToken = refreshToken;
+            account.RefreshTokenExpiryTime = DateTime.Now.AddDays(refreshTokenValidityInDays);
+            await _unitOfWork.AccountRepository.UpdateAsync(account); 
+
+            return new APIAuthenticationResponseModel
+            {
+                Status = true,
+                Message = "Login successfully!",
+                JwtToken = new JwtSecurityTokenHandler().WriteToken(token),
+                // Expired = token.ValidTo, 
+                // JwtRefreshToken = refreshToken, 
+            };
         }
 
         public async Task<APIResponseModel> SignUpAccountZaloAsync(AccountZaloIdModel accountZaloIdModel)
@@ -388,45 +372,29 @@ namespace Services.Services
                         Gender = true,
                         Address = "",
                         UserName = accountZaloIdModel.ZaloUser,
-                        Email = "",
+                        Email =  "",
                         PhoneNumber = "",
                         CreateDate = DateTime.Now,
                         Status = 1,
                         ZaloUser = accountZaloIdModel.ZaloUser,
+                        Roles = (int) ERole.Customer
                     };
 
-                    var result = await _userManager.CreateAsync(user);
+                  //  var result = await _userManager.CreateAsync(user);
 
-                    string errorMessage = "Failed to register with Zalo. Please check your input and try again.";
+                 //   string errorMessage = "Failed to register with Zalo. Please check your input and try again.";
 
-                    if (result.Succeeded)
+                    await _unitOfWork.AccountRepository.AddAsync(user);
+                     _unitOfWork.Save(); // Lưu thay đổi vào cơ sở dữ liệu
+
+                    var accessToken = await GenerateAccessTokenForAccount(user);
+
+                    return new APIResponseModel
                     {
-
-                        if (!await _roleManager.RoleExistsAsync(ERole.Customer.ToString()))
-                        {
-                            await _roleManager.CreateAsync(new IdentityRole(ERole.Customer.ToString()));
-                        }
-                        if (await _roleManager.RoleExistsAsync(ERole.Customer.ToString()))
-                        {
-                            await _userManager.AddToRoleAsync(user, ERole.Customer.ToString());
-                        }
-
-
-                        var accessToken = await GenerateAccessTokenForAccount(user);
-
-                        return new APIResponseModel
-                        {
-                            IsSuccess = true,
-                            Message = "Registration successful with Zalo.",
-                            Data = new { AccessToken = accessToken }
-                        };
-                    }
-
-                    foreach (var ex in result.Errors)
-                    {
-                        errorMessage = ex.Description;
-                    }
-                    return new APIResponseModel { IsSuccess = false, Message = errorMessage };
+                        IsSuccess = true,
+                        Message = "Registration successful with Zalo.",
+                        Data = new { AccessToken = accessToken }
+                    };
                 }
             }
             catch (Exception ex)
@@ -446,20 +414,32 @@ namespace Services.Services
                     new Claim(JwtRegisteredClaimNames.Email, account.Email),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                     new Claim(JwtRegisteredClaimNames.Aud, _configuration["JWT:ValidAudience"]),
-                    new Claim(JwtRegisteredClaimNames.Iss, _configuration["JWT:ValidIssuer"])
+                    new Claim(JwtRegisteredClaimNames.Iss, _configuration["JWT:ValidIssuer"]),
+                    new Claim(ClaimTypes.Role, ERole.Customer.ToString())
                   };
 
-            var roles = await _userManager.GetRolesAsync(account);
-            foreach (var role in roles)
-            {
-                claims.Add(new Claim(ClaimTypes.Role, role));
-            }
+            //var roles = await _userManager.GetRolesAsync(account);
+            //foreach (var role in roles)
+            //{
+            //    claims.Add(new Claim(ClaimTypes.Role, role));
+            //}
 
+            //var tokenDescriptor = new SecurityTokenDescriptor
+            //{
+            //    Subject = new ClaimsIdentity(claims),
+            //    Expires = DateTime.UtcNow.AddHours(1),
+            //    SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature) // Đặt khóa và thuật toán mã hóa
+            //};
+
+            //var tokenHandler = new JwtSecurityTokenHandler();
+            //var token = tokenHandler.CreateToken(tokenDescriptor);
+
+            //return tokenHandler.WriteToken(token);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.UtcNow.AddHours(1),
-                SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature) // Đặt khóa và thuật toán mã hóa
+                SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256) // Đặt khóa và thuật toán mã hóa
             };
 
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -480,16 +460,135 @@ namespace Services.Services
                     Data = null
                 };
             }
-            
-                var accountViewModels = _mapper.Map<List<AccountViewModel>>(account);
 
+            var accountViewModels = account.Select(a => new AccountZaloIdViewModel
+            {
+                ZaloUser = a.ZaloUser,
+                UserName = a.UserName,
+                FullName = a.FullName,
+                AvatarUrl = a.AvatarUrl,
+                isHasPhoneNumber = !string.IsNullOrWhiteSpace(a.PhoneNumber) ? "True" : "False"
+            }).ToList();
+
+            return new APIResponseModel
+            {
+                Message = "Account found",
+                IsSuccess = true,
+                Data = accountViewModels
+            };
+
+        }
+
+        public async Task<APIResponseModel> GetPhoneInfoAndSaveAsync(AccountZaloCURLModel accountZaloCURLModel)
+        {
+            var phoneInfo = await _zaloServices.CallZaloApiAsync(accountZaloCURLModel.AccessToken, accountZaloCURLModel.PhoneToken);
+
+            if (phoneInfo == null)
+            {
                 return new APIResponseModel
                 {
-                    Message = "Account found",
-                    IsSuccess = true,
-                    Data = accountViewModels
+                    Message = "Failed to retrieve phone info from Zalo API.",
+                    IsSuccess = false,
+                    Data = null
                 };
-            
+            }
+
+
+            var accountZaloID = (await _unitOfWork.AccountRepository.GetByConditionAsync(z => z.ZaloUser == accountZaloCURLModel.ZaloId)).FirstOrDefault();
+            if (accountZaloID == null || !string.IsNullOrEmpty(accountZaloID.PhoneNumber))
+            {
+                return new APIResponseModel
+                {
+                    Message = "Account not found or Account phone existed.",
+                    IsSuccess = false,
+                    Data = null
+                };
+            }
+            var createdDate = accountZaloID.CreateDate;
+
+            accountZaloID.PhoneNumber = phoneInfo;
+            accountZaloID.UpdateDate = DateTime.Now;
+            accountZaloID.CreateDate = createdDate;
+            await _unitOfWork.AccountRepository.UpdateAsync(accountZaloID);
+            _unitOfWork.Save();
+            return new APIResponseModel
+            {
+                Message = "Phone info retrieved and saved successfully.",
+                IsSuccess = true,
+                Data = phoneInfo
+            };
+        }
+        //private async Task<string> CallZaloApiAsync(string accessToken, string phoneToken)
+        //{
+
+        //    string url = "https://graph.zalo.me/v2.0/me/info";
+
+        //    _httpClient.DefaultRequestHeaders.Add("access_token", accessToken);
+        //    _httpClient.DefaultRequestHeaders.Add("code", phoneToken);
+        //    _httpClient.DefaultRequestHeaders.Add("secret_key", _secretKey);
+
+        //    var response = await _httpClient.GetAsync(url);
+
+        //    if (!response.IsSuccessStatusCode)
+        //    {
+        //        return null;
+        //    }
+        //    var responseBody = await response.Content.ReadAsStringAsync();
+
+        //    Console.WriteLine("Response body: " + responseBody);
+
+        //    try
+        //    {
+        //        var jsonDocument = JsonDocument.Parse(responseBody);
+        //        if (jsonDocument.RootElement.TryGetProperty("data", out var dataElement) && dataElement.TryGetProperty("number", out var numberElement))
+        //        {
+        //            string phoneNumber = numberElement.GetString();
+        //            return phoneNumber;
+        //        }
+        //        else
+        //        {
+        //            Console.WriteLine("Không tìm thấy các thuộc tính mong đợi trong phản hồi.");
+        //            return null; 
+        //        }
+        //    }
+        //    catch (JsonException jsonEx)
+        //    {
+        //        Console.WriteLine("Lỗi phân tích JSON: " + jsonEx.Message);
+        //        return null; 
+        //    }
+        //}
+
+        public async Task<APIResponseModel> UpdateAccountWithZaloId(AccountUpdateWithZaloIdModel updateModel)
+        {
+            var existingAccount = await _unitOfWork.AccountRepository.GetByConditionAsync(s => s.ZaloUser == updateModel.ZaloUser);
+
+            if (existingAccount == null || !existingAccount.Any())
+            {
+                return new APIResponseModel
+                {
+                    Message = "Account not found.",
+                    IsSuccess = false,
+                    Data = null
+                };
+            }
+
+            var accountToUpdate = existingAccount.FirstOrDefault();
+
+
+            _mapper.Map(updateModel, accountToUpdate);
+            accountToUpdate.UpdateDate = DateTime.Now;
+
+            _unitOfWork.Save();
+
+            var accountModel = _mapper.Map<AccountModel>(accountToUpdate);
+
+            return new APIResponseModel
+            {
+                Message = "Account Updated Successfully",
+                IsSuccess = true,
+                Data = accountModel
+            };
+
         }
     }
 }

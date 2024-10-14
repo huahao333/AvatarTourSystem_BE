@@ -31,12 +31,24 @@ builder.Services.AddControllers()
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Register HttpClient
+builder.Services.AddHttpClient();
+
 builder.Services.AddApiWebService(builder);
 //config cors
 
 
 var googleApiKey = builder.Configuration.GetSection("GoogleMaps:ApiKey").Value;
 builder.Services.AddSingleton(new GoogleMapsService(googleApiKey));
+
+var SecretKeyZalo = builder.Configuration.GetSection("ZaloAPI:SecretKeyZalo").Value;
+
+builder.Services.AddHttpClient();
+builder.Services.AddSingleton(sp =>
+{
+    var httpClient = sp.GetRequiredService<HttpClient>();
+    return new ZaloServices(SecretKeyZalo, httpClient);
+});
 
 builder.Services.AddCors(options =>
 {

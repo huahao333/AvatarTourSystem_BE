@@ -81,6 +81,14 @@ namespace Services.Services
                 DestinationName = createModel.DestinationName,
               //  DestinationImgUrl = createModel.DestinationImgUrl,
                 Status = createModel.Status,
+                DestinationHotline = createModel.DestinationHotline,
+                DestinationGoogleMap = createModel.DestinationGoogleMap,
+                DestinationAddress = createModel.DestinationAddress,
+                DestinationOpeningHours = createModel.DestinationOpeningHours,
+                DestinationClosingHours = createModel.DestinationClosingHours,
+                DestinationOpeningDate = createModel.DestinationOpeningDate,
+                DestinationClosingDate = createModel.DestinationClosingDate,
+
                 CreateDate = DateTime.Now
             };
 

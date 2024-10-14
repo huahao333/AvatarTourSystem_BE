@@ -8,11 +8,10 @@ namespace BusinessObjects.Enums
 {
     public enum ERole
     {
-        SuperAdmin,
-        Admin,
-        TourGuide,
-        Staff,
-        Supplier,
-        Customer,
+        SuperAdmin = 0,
+        Admin=1,
+        Staff =2,
+        Supplier=3,
+        Customer=4,
     }
 }

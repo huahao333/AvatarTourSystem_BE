@@ -43,7 +43,7 @@ namespace AvatarTourSystem_BE.Controllers
             }
             else
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
+                return StatusCode(StatusCodes.Status404NotFound, response);
             }
            
         }
@@ -57,7 +57,7 @@ namespace AvatarTourSystem_BE.Controllers
             }
             else
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
+                return StatusCode(StatusCodes.Status404NotFound, response);
             }
 
         }
@@ -77,7 +77,7 @@ namespace AvatarTourSystem_BE.Controllers
             }
             else
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, result);
+                return StatusCode(StatusCodes.Status404NotFound, result);
             }
         }
 
@@ -96,7 +96,25 @@ namespace AvatarTourSystem_BE.Controllers
             }
             else
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, result);
+                return StatusCode(StatusCodes.Status404NotFound, result);
+            }
+        }
+        [HttpPut("account-zalo")]
+        public async Task<IActionResult> UpdateAccountWithZaloId(AccountUpdateWithZaloIdModel updateModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var result = await _accountService.UpdateAccountWithZaloId(updateModel);
+            if (result.IsSuccess)
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return StatusCode(StatusCodes.Status404NotFound, result);
             }
         }
 
@@ -128,5 +146,11 @@ namespace AvatarTourSystem_BE.Controllers
             return Ok(response);
         }
 
+        [HttpPost("phonenumber-zalo")]
+        public async Task<IActionResult> UpdatePhoneNumberByZaloID(AccountZaloCURLModel accountZaloCURLModel)
+        {
+            var response = await _accountService.GetPhoneInfoAndSaveAsync(accountZaloCURLModel);
+            return Ok(response);
+        }
     }
 }

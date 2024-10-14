@@ -1,5 +1,6 @@
 ﻿using AvatarTourSystem_BE.JsonPolicies;
 using BusinessObjects.Models;
+using Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -50,11 +51,12 @@ namespace AvatarTourSystem_BE
             });
 
 
-            builder.Services
-                .AddIdentity<Account, IdentityRole>()
-                .AddEntityFrameworkStores<AvatarTourDBContext>()
-                .AddDefaultTokenProviders();
 
+            builder.Services.AddIdentity<Account, IdentityRole>(options =>
+            {
+            }) .AddEntityFrameworkStores<AvatarTourDBContext>()
+                //  .AddUserStore<MyCustomUserStore>() 
+                  .AddDefaultTokenProviders();
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
@@ -172,18 +174,19 @@ namespace AvatarTourSystem_BE
             builder.Services
                 .AddAuthentication(options =>
                 {
-                    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                  //  options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
                     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                 })
                 .AddJwtBearer(options =>
                 {
-                    options.SaveToken = true;
-                    options.RequireHttpsMetadata = false;
+                   // options.SaveToken = true;
+                   // options.RequireHttpsMetadata = false;
                     options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
                     {
                         ValidateIssuer = true,
                         ValidateAudience = true,
+                        ValidateIssuerSigningKey = true,
                         ValidIssuer = builder.Configuration["JWT:ValidIssuer"],
                         ValidAudience = builder.Configuration["JWT:ValidAudience"],
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:SecretKey"]))

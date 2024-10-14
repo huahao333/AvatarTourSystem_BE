@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace BusinessObjects.Models
 {
-    public partial class AvatarTourDBContext : IdentityDbContext<Account>
+    public partial class AvatarTourDBContext : DbContext
     {
         public AvatarTourDBContext()
         {
@@ -54,6 +54,8 @@ namespace BusinessObjects.Models
             SeedData.Initialize(modelBuilder);
             modelBuilder.Entity<Account>(entity =>
             {
+                //entity.HasKey(e => e.UserId)
+                //    .HasName("PK__Booking__551479477F27DD1");
                 entity.ToTable("Account");
                 entity.Property(e => e.Address).HasMaxLength(250);
                 entity.Property(e => e.FullName).HasMaxLength(150);
@@ -573,7 +575,13 @@ namespace BusinessObjects.Models
             });
 
         }
-
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseSqlServer("Server=DESKTOP-UGDHUNB\\MAVERICK;Database=AvatarTourDB;Integrated Security=True;User ID=sa;Password=12345;trustservercertificate=true");
+            }
+        }
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
     }
 }

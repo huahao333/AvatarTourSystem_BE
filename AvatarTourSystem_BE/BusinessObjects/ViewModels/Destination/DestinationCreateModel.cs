@@ -19,7 +19,10 @@ namespace BusinessObjects.ViewModels.Destination
         public string? DestinationGoogleMap { get; set; }
         public string? DestinationImgUrl { get; set; }
         public string? DestinationAddress { get; set; }
-
+        public DateTime? DestinationOpeningHours { get; set; }
+        public DateTime? DestinationClosingHours { get; set; }
+        public int? DestinationOpeningDate { get; set; }
+        public int? DestinationClosingDate { get; set; }
 
         [JsonIgnore]
         public string? EmbedCode { get; set; }

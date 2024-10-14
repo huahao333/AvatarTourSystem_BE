@@ -487,6 +487,7 @@ namespace Services.Services
                         dailyTour.PackageTours?.PackageTourName,
                         dailyTour.PackageTours?.PackageTourPrice,
                         dailyTour.PackageTours?.PackageTourImgUrl,
+                        dailyTour.PackageTours?.CityId,
                         StatusPackageTour = dailyTour.PackageTours?.Status,
                         dailyTour.PackageTours?.Cities?.CityName,
                         TourSegments = dailyTour.PackageTours?.TourSegments
@@ -500,6 +501,10 @@ namespace Services.Services
                                 ts.Destinations?.DestinationImgUrl,
                                 ts.Destinations?.DestinationHotline,
                                 ts.Destinations?.DestinationGoogleMap,
+                                ts.Destinations?.DestinationOpeningDate,
+                                ts.Destinations?.DestinationClosingDate,
+                                ts.Destinations?.DestinationOpeningHours,
+                                ts.Destinations?.DestinationClosingHours,
                                 StatusDestinations = ts.Destinations?.Status,
                                 Locations = ts.Destinations?.Locations
                                     .Where(c => c.Status == 1 &&
@@ -513,6 +518,8 @@ namespace Services.Services
                                         lo.LocationName,
                                         lo.LocationImgUrl,
                                         lo.LocationHotline,
+                                        lo.LocationOpeningHours,
+                                        lo.LocationClosingHours,
                                         lo.LocationGoogleMap,
                                         //lo.LocationType,
                                         lo.DestinationId,
@@ -625,6 +632,7 @@ namespace Services.Services
                             dailyTour.PackageTours?.PackageTourName,
                             dailyTour.PackageTours?.PackageTourPrice,
                             dailyTour.PackageTours?.PackageTourImgUrl,
+                            dailyTour.PackageTours?.CityId,
                             StatusPackageTour = dailyTour.PackageTours?.Status,
                             dailyTour.PackageTours?.Cities?.CityName,
                             TourSegments = dailyTour.PackageTours?.TourSegments
@@ -638,6 +646,10 @@ namespace Services.Services
                                     ts.Destinations?.DestinationImgUrl,
                                     ts.Destinations?.DestinationHotline,
                                     ts.Destinations?.DestinationGoogleMap,
+                                    ts.Destinations?.DestinationOpeningDate,
+                                    ts.Destinations?.DestinationClosingDate,
+                                    ts.Destinations?.DestinationOpeningHours,
+                                    ts.Destinations?.DestinationClosingHours,
                                     StatusDestinations = ts.Destinations?.Status,
                                     Locations = ts.Destinations?.Locations
                                         .Where(c=>  c.Status==1 &&
@@ -652,6 +664,8 @@ namespace Services.Services
                                             lo.LocationImgUrl,
                                             lo.LocationHotline,
                                             lo.LocationGoogleMap,
+                                            lo.LocationOpeningHours,
+                                            lo.LocationClosingHours,
                                             //lo.LocationType,
                                             lo.DestinationId,
                                             PointOfInterests = pointOfI.Where(poi => poi.LocationId == lo.LocationId).Select(type => new
@@ -764,6 +778,7 @@ namespace Services.Services
                             dailyTour.PackageTours?.PackageTourName,
                             dailyTour.PackageTours?.PackageTourPrice,
                             dailyTour.PackageTours?.PackageTourImgUrl,
+                            dailyTour.PackageTours?.CityId,
                             StatusPackageTour = dailyTour.PackageTours?.Status,
                             dailyTour.PackageTours?.Cities?.CityName,
                             TourSegments = dailyTour.PackageTours?.TourSegments
@@ -777,6 +792,10 @@ namespace Services.Services
                                     ts.Destinations?.DestinationImgUrl,
                                     ts.Destinations?.DestinationHotline,
                                     ts.Destinations?.DestinationGoogleMap,
+                                    ts.Destinations?.DestinationOpeningDate,
+                                    ts.Destinations?.DestinationClosingDate,
+                                    ts.Destinations?.DestinationOpeningHours,
+                                    ts.Destinations?.DestinationClosingHours,
                                     StatusDestinations = ts.Destinations?.Status,
                                     Locations = ts.Destinations?.Locations
                                         .Where(c => c.Status == 1 &&
@@ -791,6 +810,8 @@ namespace Services.Services
                                             lo.LocationImgUrl,
                                             lo.LocationHotline,
                                             lo.LocationGoogleMap,
+                                            lo.LocationOpeningHours,
+                                            lo.LocationClosingHours,
                                             //lo.LocationType,
                                             lo.DestinationId,
                                             PointOfInterests = pointOfI.Where(poi => poi.LocationId == lo.LocationId).Select(type => new
@@ -901,6 +922,7 @@ namespace Services.Services
                             dailyTour.PackageTours?.PackageTourName,
                             dailyTour.PackageTours?.PackageTourPrice,
                             dailyTour.PackageTours?.PackageTourImgUrl,
+                            dailyTour.PackageTours?.CityId,
                             StatusPackageTour = dailyTour.PackageTours?.Status,
                             dailyTour.PackageTours?.Cities?.CityName,
                             TourSegments = dailyTour.PackageTours?.TourSegments
@@ -914,6 +936,10 @@ namespace Services.Services
                                     ts.Destinations?.DestinationImgUrl,
                                     ts.Destinations?.DestinationHotline,
                                     ts.Destinations?.DestinationGoogleMap,
+                                    ts.Destinations?.DestinationOpeningDate,
+                                    ts.Destinations?.DestinationClosingDate,
+                                    ts.Destinations?.DestinationOpeningHours,
+                                    ts.Destinations?.DestinationClosingHours,
                                     StatusDestinations = ts.Destinations?.Status,
                                     Locations = ts.Destinations?.Locations
                                         .Where(c => c.Status == 1 &&
@@ -928,6 +954,8 @@ namespace Services.Services
                                             lo.LocationImgUrl,
                                             lo.LocationHotline,
                                             lo.LocationGoogleMap,
+                                            lo.LocationOpeningHours,
+                                            lo.LocationClosingHours,
                                             //lo.LocationType,
                                             lo.DestinationId,
                                             PointOfInterests = pointOfI.Where(poi => poi.LocationId == lo.LocationId).Select(type => new
