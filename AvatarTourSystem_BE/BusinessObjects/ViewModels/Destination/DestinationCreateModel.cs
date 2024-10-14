@@ -21,8 +21,8 @@ namespace BusinessObjects.ViewModels.Destination
         public string? DestinationAddress { get; set; }
         public DateTime? DestinationOpeningHours { get; set; }
         public DateTime? DestinationClosingHours { get; set; }
-        public DateTime? DestinationOpeningDate { get; set; }
-        public DateTime? DestinationClosingDate { get; set; }
+        public int? DestinationOpeningDate { get; set; }
+        public int? DestinationClosingDate { get; set; }
 
         [JsonIgnore]
         public string? EmbedCode { get; set; }

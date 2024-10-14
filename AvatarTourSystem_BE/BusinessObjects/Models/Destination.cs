@@ -21,8 +21,8 @@ namespace BusinessObjects.Models
         public string? DestinationImgUrl { get; set; }
         public string? DestinationHotline { get; set; }
         public string? DestinationGoogleMap { get; set; }
-        public DateTime? DestinationOpeningDate { get; set; }
-        public DateTime? DestinationClosingDate { get; set; }
+        public int? DestinationOpeningDate { get; set; }
+        public int? DestinationClosingDate { get; set; }
         public DateTime? DestinationOpeningHours { get; set; }
         public DateTime? DestinationClosingHours { get; set; }
         public DateTime? CreateDate { get; set; }

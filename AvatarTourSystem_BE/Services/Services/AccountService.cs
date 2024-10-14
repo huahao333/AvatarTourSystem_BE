@@ -174,10 +174,8 @@ namespace Services.Services
 
         public async Task<APIResponseModel> GetAllAccount()
         {
-            // Fetch all accounts from the repository
             var accounts = await _unitOfWork.AccountRepository.GetAllAsync();
 
-            // Check if accounts exist (optional)
             if (accounts == null || !accounts.Any())
             {
                 return new APIResponseModel
@@ -188,15 +186,13 @@ namespace Services.Services
                 };
             }
 
-            // Map accounts to AccountViewModel
             var accountViewModels = _mapper.Map<List<AccountViewModel>>(accounts);
 
-            // Return success response with mapped view models
             return new APIResponseModel
             {
                 Message = "Get All Account Successfully",
                 IsSuccess = true,
-                Data = accountViewModels // Use the mapped view models here
+                Data = accountViewModels 
             };
         }
 
@@ -240,14 +236,12 @@ namespace Services.Services
                     return new APIResponseModel { IsSuccess = false, Message = "Email cannot be empty or whitespace." };
                 }
 
-                // Kiểm tra xem tài khoản đã tồn tại chưa
                 var existAccount = await _unitOfWork.AccountRepository.GetByConditionAsync(a => a.Email == signUpModel.AccountEmail);
                 if (existAccount.Any())
                 {
                     return new APIResponseModel { IsSuccess = false, Message = "Account already exists" };
                 }
 
-                // Tạo tài khoản mới
                 var user = new Account
                 {
                     FullName = signUpModel.FullName,
@@ -260,10 +254,12 @@ namespace Services.Services
                     CreateDate = DateTime.Now,
                     Status = 1,
                     Roles= (int)ERole.Admin,
-                    Password = signUpModel.AccountPassword 
+                //    PasswordHash = signUpModel.AccountPassword 
                 };
 
-                // Lưu tài khoản mới vào cơ sở dữ liệu
+                var passwordHasher = new PasswordHasher<Account>();
+                user.PasswordHash = passwordHasher.HashPassword(user, signUpModel.AccountPassword);
+
                 await _unitOfWork.AccountRepository.AddAsync(user);
                 _unitOfWork.Save(); 
 
@@ -299,8 +295,10 @@ namespace Services.Services
                 };
             }
 
-            // Kiểm tra mật khẩu
-            if (account.Password != signInModel.AccountPassword) // Thay đổi này để so sánh mật khẩu
+            var passwordHasher = new PasswordHasher<Account>();
+            var passwordVerificationResult = passwordHasher.VerifyHashedPassword(account, account.PasswordHash, signInModel.AccountPassword);
+
+            if (passwordVerificationResult != PasswordVerificationResult.Success) 
             {
                 return new APIAuthenticationResponseModel
                 {
@@ -309,7 +307,6 @@ namespace Services.Services
                 };
             }
 
-            // Tạo các claims cho token
              var authClaims = new List<Claim>
                {
                     new Claim(ClaimTypes.Name, account.Email),
@@ -332,22 +329,20 @@ namespace Services.Services
                 signingCredentials: new SigningCredentials(authenKey, SecurityAlgorithms.HmacSha256)
             );
 
-            // Tạo refresh token nếu cần
             var refreshToken = GenerateRefreshToken();
             _ = int.TryParse(_configuration["JWT:RefreshTokenValidityInDays"], out int refreshTokenValidityInDays);
 
-            // Cập nhật thông tin refresh token vào database
             account.RefreshToken = refreshToken;
             account.RefreshTokenExpiryTime = DateTime.Now.AddDays(refreshTokenValidityInDays);
-            await _unitOfWork.AccountRepository.UpdateAsync(account); // Sử dụng repository để cập nhật
+            await _unitOfWork.AccountRepository.UpdateAsync(account); 
 
             return new APIAuthenticationResponseModel
             {
                 Status = true,
                 Message = "Login successfully!",
                 JwtToken = new JwtSecurityTokenHandler().WriteToken(token),
-                // Expired = token.ValidTo, // Nếu cần thời gian hết hạn
-                // JwtRefreshToken = refreshToken, // Nếu cần refresh token
+                // Expired = token.ValidTo, 
+                // JwtRefreshToken = refreshToken, 
             };
         }
 
@@ -472,7 +467,7 @@ namespace Services.Services
                 UserName = a.UserName,
                 FullName = a.FullName,
                 AvatarUrl = a.AvatarUrl,
-                IsPhoneNumber = a.PhoneNumber != null ? "True":"False"
+                isHasPhoneNumber = !string.IsNullOrWhiteSpace(a.PhoneNumber) ? "True" : "False"
             }).ToList();
 
             return new APIResponseModel
