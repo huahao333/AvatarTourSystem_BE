@@ -164,6 +164,61 @@ namespace Services.Services
             };
         }
 
+        public async Task<APIResponseModel> GetFeedbackByZaloUser(string zalouser)
+        {
+            var feedbacks = await _unitOfWork.FeedbackRepository.GetByConditionAsync(x => x.Accounts.ZaloUser == zalouser);
+            if (feedbacks == null || !feedbacks.Any())
+            {
+                return new APIResponseModel
+                {
+                    Message = "Feedback not found.",
+                    IsSuccess = false,
+                    Data = null
+                };
+            }
+            var feedbackWithPackageTour = new List<object>();
+
+            foreach (var feedback in feedbacks)
+            {
+                string? packageTourId = null;  // Khởi tạo giá trị null cho PackageTourId
+
+                // Tìm Booking liên quan đến Feedback
+                var booking = await _unitOfWork.BookingRepository.GetByIdStringAsync(feedback.BookingId);
+
+                if (booking != null)
+                {
+                    // Tìm DailyTour liên quan đến Booking
+                    var dailyTour = await _unitOfWork.DailyTourRepository.GetByIdStringAsync(booking.DailyTourId);
+
+                    if (dailyTour != null)
+                    {
+                        // Lấy PackageTourId từ DailyTour
+                        packageTourId = dailyTour.PackageTourId;
+                    }
+                }
+
+                // Thêm thông tin feedback cùng với PackageTourId vào kết quả
+                feedbackWithPackageTour.Add(new
+                {
+                    FeedbackId = feedback.FeedbackId,
+                    UserId = feedback.UserId,
+                    BookingId = feedback.BookingId,
+                    FeedbackMsg = feedback.FeedbackMsg,
+                    CreateDate = feedback.CreateDate,
+                    UpdateDate = feedback.UpdateDate,
+                    Status = feedback.Status,
+                    PackageTourId = packageTourId // Chỉ trả về PackageTourId
+                });
+            }
+
+            return new APIResponseModel
+            {
+                Message = "Get Feedbacks by Zalo User Successfully",
+                IsSuccess = true,
+                Data = feedbackWithPackageTour,
+            };
+        }
+
         public async Task<APIResponseModel> UpdateFeedback(FeedbackUpdateModel feedbackUpdateModel)
         {
             var existingFeedback = await _unitOfWork.FeedbackRepository.GetByIdGuidAsync(feedbackUpdateModel.FeedbackId);
