@@ -142,7 +142,6 @@ namespace Services.Services
                     Status = ticket.Status
                 }).ToList()
             };
-            // Return the API response
             return new APIResponseModel
             {
                 Message = "PackageTour created successfully",
@@ -281,7 +280,7 @@ namespace Services.Services
         .ThenInclude(d => d.Locations)
         .ThenInclude(l => l.Services)
         .ThenInclude(sbt => sbt.ServiceByTourSegments)
-    .Include(pt => pt.TicketTypes) // Bao gồm TicketTypes
+    .Include(pt => pt.TicketTypes) 
 );
 
                 if (packageToursRespone == null || !packageToursRespone.Any())
@@ -297,16 +296,13 @@ namespace Services.Services
 
                 foreach (var packageTour in packageToursRespone)
                 {
-                    // Tính tổng giá của tất cả dịch vụ hợp lệ có statusInServiceByTourSegment != -1
                     float totalServicePrice = packageTour.TourSegments
                         .SelectMany(ts => ts.ServiceByTourSegments)
-                        .Where(sbts => sbts.Status != -1 && sbts.Services?.Status == 1) // Chỉ tính dịch vụ có StatusInServiceByTourSegment != -1
-                        .Sum(sbts => sbts.Services?.ServicePrice ?? 0); // Tính tổng giá
+                        .Where(sbts => sbts.Status != -1 && sbts.Services?.Status == 1) 
+                        .Sum(sbts => sbts.Services?.ServicePrice ?? 0); 
 
-                    // Cập nhật PackageTourPrice với tổng giá dịch vụ
                     packageTour.PackageTourPrice = totalServicePrice;
 
-                    // Gọi phương thức cập nhật của repository để lưu thay đổi
                     await _unitOfWork.PackageTourRepository.UpdateAsync(packageTour);
 
                     var result = new
@@ -315,7 +311,7 @@ namespace Services.Services
                         {
                             packageTour.PackageTourId,
                             packageTour.PackageTourName,
-                            packageTour.PackageTourPrice, // Giá đã được cập nhật
+                            packageTour.PackageTourPrice, 
                             packageTour.PackageTourImgUrl,
                             StatusPackageTour = packageTour.Status,
                             packageTour.Cities?.CityName,
@@ -330,6 +326,10 @@ namespace Services.Services
                                     ts.Destinations?.DestinationClosingDate,
                                     ts.Destinations?.DestinationOpeningHours,
                                     ts.Destinations?.DestinationClosingHours,
+                                    ts.Destinations?.DestinationHotline,
+                                    ts.Destinations?.DestinationGoogleMap,
+                                    ts.Destinations?.DestinationImgUrl,
+                                    ts.Destinations?.DestinationAddress,
                                     StatusDestinations = ts.Destinations?.Status,
                                     Locations = ts.Destinations?.Locations
                                         .Where(l => l.Status == 1 &&
@@ -343,6 +343,8 @@ namespace Services.Services
                                             l.LocationImgUrl,
                                             l.LocationOpeningHours,
                                             l.LocationClosingHours,
+                                            l.LocationGoogleMap,
+                                            l.LocationHotline,
                                             l.DestinationId,
                                             Services = ts.ServiceByTourSegments
                                                 .Where(sbts => sbts.Services?.LocationId == l.LocationId)
@@ -356,16 +358,13 @@ namespace Services.Services
                                                     s.Services?.ServiceTypes?.ServiceTypeName,
                                                     StatusServices = s.Services?.Status,
 
-                                                    // Lấy thêm status từ bảng ServiceByTourSegment
                                                     StatusInServiceByTourSegment = s.Status,
 
-                                                    // Cộng giá dịch vụ có StatusInServiceByTourSegment != -1
                                                     CalculatedServicePrice = s.Status != -1 ? s.Services?.ServicePrice ?? 0 : 0
                                                 }).ToList(),
                                         }).ToList(),
                                 }).ToList(),
 
-                            // Thêm thông tin TicketTypes vào kết quả trả về
                             TicketTypes = packageTour.TicketTypes
                                 .Select(tt => new
                                 {
@@ -383,7 +382,6 @@ namespace Services.Services
                     resultList.Add(result);
                 }
 
-                // Lưu thay đổi vào cơ sở dữ liệu sau khi cập nhật giá package tour
                 _unitOfWork.Save();
 
                 // Trả về kết quả
@@ -726,7 +724,6 @@ namespace Services.Services
                 }
             }
 
-            // Update the PackageTour price with the total service price
             existingPackageTour.PackageTourPrice = totalServicePrice;
             var packageTour = await _unitOfWork.PackageTourRepository.GetByIdStringAsync(existingPackageTour.PackageTourId);
             var toursegment = await _unitOfWork.TourSegmentRepository.GetByConditionAsync(i => i.PackageTourId == packageTour.PackageTourId && i.Status != -1);
@@ -772,6 +769,10 @@ namespace Services.Services
                                 ts.Destinations?.DestinationClosingDate,
                                 ts.Destinations?.DestinationOpeningHours,
                                 ts.Destinations?.DestinationClosingHours,
+                                ts.Destinations?.DestinationHotline,
+                                ts.Destinations?.DestinationGoogleMap,
+                                ts.Destinations?.DestinationImgUrl,
+                                ts.Destinations?.DestinationAddress,
                                 StatusDestinations = ts.Destinations?.Status,
                                 Locations = ts.Destinations?.Locations
                                     .Where(l => l.Status == 1 &&
@@ -784,7 +785,9 @@ namespace Services.Services
                                         l.LocationName,
                                         l.LocationImgUrl,
                                         l.LocationOpeningHours,
-                                        l.LocationClosingHours,                                       
+                                        l.LocationClosingHours,
+                                        l.LocationGoogleMap,
+                                        l.LocationHotline,
                                         //l.LocationType,
                                         l.DestinationId,
                                         Services = ts.ServiceByTourSegments
@@ -974,6 +977,10 @@ namespace Services.Services
                                 ts.Destinations?.DestinationClosingDate,
                                 ts.Destinations?.DestinationOpeningHours,
                                 ts.Destinations?.DestinationClosingHours,
+                                ts.Destinations?.DestinationHotline,
+                                ts.Destinations?.DestinationGoogleMap,
+                                ts.Destinations?.DestinationImgUrl,
+                                ts.Destinations?.DestinationAddress,
                                 Locations = ts.Destinations?.Locations
                                     .Where(l => l.Status == 1 &&
                                                 l.DestinationId == ts.DestinationId &&
@@ -986,6 +993,8 @@ namespace Services.Services
                                         l.LocationImgUrl,
                                         l.LocationOpeningHours,
                                         l.LocationClosingHours,
+                                        l.LocationGoogleMap,
+                                        l.LocationHotline,
                                         l.DestinationId,
                                         Services = ts.ServiceByTourSegments
                                             .Where(sbts => sbts.Services?.LocationId == l.LocationId && sbts.Status != -1 && sbts.Services?.Status == 1)
@@ -1029,10 +1038,7 @@ namespace Services.Services
                 Data = resultList
 
             };
-            // Save changes to the database
-            
-
-            
+           
         }
     }
 }
