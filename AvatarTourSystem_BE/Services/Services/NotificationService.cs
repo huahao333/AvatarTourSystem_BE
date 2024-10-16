@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BusinessObjects.Enums;
 using BusinessObjects.Models;
+using BusinessObjects.ViewModels.DailyTour;
 using BusinessObjects.ViewModels.Notification;
 using Repositories.Interfaces;
 using Services.Common;
@@ -163,6 +164,51 @@ namespace Services.Services
                 Message = "Update Notificaiton Successfully",
                 IsSuccess = true,
                 Data = result,
+            };
+        }
+
+        public async Task<APIResponseModel> CreateNotificaitonByZaloId(NotificationCreateByZaloIdModel createModel)
+        {
+            var zaloIdExisting = (await _unitOfWork.AccountRepository.GetByConditionAsync(c=> c.ZaloUser == createModel.ZaloId)).FirstOrDefault();
+            if(zaloIdExisting == null)
+            {
+                return new APIResponseModel
+                {
+                    Message = "ZaloId must exist.",
+                    IsSuccess = false,
+                };
+            }
+
+            if (string.IsNullOrEmpty(createModel.Message))
+            {
+                return new APIResponseModel
+                {
+                    Message = "Message must exist.",
+                    IsSuccess = false,
+                };
+            }
+
+            var newNotiId = Guid.NewGuid();
+            var notification = new Notification
+            {
+                NotifyId = newNotiId.ToString(),
+                UserId = zaloIdExisting.Id,
+                SendDate = DateTime.Now,
+                Message = createModel.Message,
+                Type = createModel.Type,
+                Title = createModel.Title,
+                CreateDate = DateTime.Now,
+                Status = 1
+            };
+
+            await _unitOfWork.NotificationRepository.AddAsync(notification);
+            _unitOfWork.Save();
+
+            return new APIResponseModel
+            {
+                Message = "Notification created successfully",
+                IsSuccess = true,
+               // Data = notification
             };
         }
     }
