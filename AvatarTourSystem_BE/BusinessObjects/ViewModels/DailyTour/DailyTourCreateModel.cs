@@ -12,21 +12,21 @@ namespace BusinessObjects.ViewModels.DailyTour
     {
        
       //  [FromForm(Name = "package-tour-id")]
-        public string? PackageTourId { get; set; }
-     //   [FromForm(Name = "daily-tour-name")]
-        public string? DailyTourName { get; set; }
-      //  [FromForm(Name = "description")]
-        public string? Description { get; set; }
-     //  [FromForm(Name = "daily-tour-price")]
-        public float? DailyTourPrice { get; set; }
+        public string? PackageTourId { get; set; } = "";
+        //   [FromForm(Name = "daily-tour-name")]
+        public string? DailyTourName { get; set; } = "";
+        //  [FromForm(Name = "description")]
+        public string? Description { get; set; } = "";
+        //  [FromForm(Name = "daily-tour-price")]
+        public float? DailyTourPrice { get; set; } = 0;
       //  [FromForm(Name = "img-url")]
-        public string? ImgUrl { get; set; }
-      //  [FromForm(Name = "start-date")]
+        public string? ImgUrl { get; set; } = "";
+        //  [FromForm(Name = "start-date")]
         public DateTime? StartDate { get; set; }
       //  [FromForm(Name = "end-date")]
         public DateTime? EndDate { get; set; }
       //  [FromForm(Name = "discount")]
-        public int? Discount { get; set; }
+        public int? Discount { get; set; } = 0;
       //  [FromForm(Name = "status")]
         public EStatus? Status { get; set; }
     }

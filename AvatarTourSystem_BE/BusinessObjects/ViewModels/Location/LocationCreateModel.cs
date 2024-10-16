@@ -12,12 +12,12 @@ namespace BusinessObjects.ViewModels.Location
     {
         
      //   [FromForm(Name = "location-name")]
-        public string? LocationName { get; set; }
-     //   [FromForm(Name = "location-type")]
-     //   [FromForm(Name = "location-img-url")]
-        public string? LocationImgUrl { get; set; }
-     //   [FromForm(Name = "destination-id")]
-        public string? DestinationId { get; set; }
+        public string? LocationName { get; set; } = "";
+        //   [FromForm(Name = "location-type")]
+        //   [FromForm(Name = "location-img-url")]
+        public string? LocationImgUrl { get; set; } = "";
+        //   [FromForm(Name = "destination-id")]
+        public string? DestinationId { get; set; } = "";
         public DateTime? LocationOpeningHours{ get; set; }
         public DateTime? LocationClosingHours { get; set; }
      //   [FromForm(Name = "status")]

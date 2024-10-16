@@ -374,6 +374,7 @@ namespace Services.Services
                         UserName = accountZaloIdModel.ZaloUser,
                         Email =  "",
                         PhoneNumber = "",
+                        AvatarUrl ="",
                         CreateDate = DateTime.Now,
                         Status = 1,
                         ZaloUser = accountZaloIdModel.ZaloUser,

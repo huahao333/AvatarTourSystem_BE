@@ -11,12 +11,12 @@ namespace BusinessObjects.ViewModels.TourSegment
     public class TourSegmentCreateModel
     {
       //  [FromForm(Name = "destination-id")]
-        public string? DestinationId { get; set; }
+        public string? DestinationId { get; set; } = "";
 
-       // [FromForm(Name = "package-tour-id")]
-        public string? PackageTourId { get; set; }
+        // [FromForm(Name = "package-tour-id")]
+        public string? PackageTourId { get; set; } = "";
 
-       // [FromForm(Name = "status")]
+        // [FromForm(Name = "status")]
         public EStatus? Status { get; set; }
     }
 }

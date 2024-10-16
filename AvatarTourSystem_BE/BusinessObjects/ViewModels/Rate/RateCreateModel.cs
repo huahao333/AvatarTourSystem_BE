@@ -10,9 +10,9 @@ namespace BusinessObjects.ViewModels.Rate
     public class RateCreateModel
     {
        
-        public string? UserId { get; set; }
-        public string? BookingId { get; set; }
-        public int? RateStar { get; set; }
+        public string? UserId { get; set; } = "";
+        public string? BookingId { get; set; } = "";
+        public int? RateStar { get; set; } = 0;
         public EStatus? Status { get; set; }
     }
 }

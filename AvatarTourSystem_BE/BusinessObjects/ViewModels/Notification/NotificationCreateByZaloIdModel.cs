@@ -10,8 +10,8 @@ namespace BusinessObjects.ViewModels.Notification
     public class NotificationCreateByZaloIdModel
     {
         public string? ZaloId { get; set; }
-        public string? Message { get; set; }
-        public string? Type { get; set; }
-        public string? Title { get; set; }
+        public string? Message { get; set; } = "";
+        public string? Type { get; set; } = "";
+        public string? Title { get; set; } = "";
     }
 }

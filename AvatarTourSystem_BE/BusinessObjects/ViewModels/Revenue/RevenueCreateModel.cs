@@ -10,8 +10,8 @@ namespace BusinessObjects.ViewModels.Revenue
 {
     public class RevenueCreateModel
     {
-     //   [FromForm(Name = "total-revenue")]
-        public float? TotalRevenue { get; set; }
+        //   [FromForm(Name = "total-revenue")]
+        public float? TotalRevenue { get; set; } = 0;
 
      //   [FromForm(Name = "status")]
         public EStatus? Status { get; set; }
