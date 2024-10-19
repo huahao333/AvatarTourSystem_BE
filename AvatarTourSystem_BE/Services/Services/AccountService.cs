@@ -483,7 +483,7 @@ namespace Services.Services
 
         public async Task<APIResponseModel> GetPhoneInfoAndSaveAsync(AccountZaloCURLModel accountZaloCURLModel)
         {
-            var phoneInfo = await _zaloServices.CallZaloApiAsync(accountZaloCURLModel.AccessToken, accountZaloCURLModel.PhoneToken);
+            var (phoneInfo, accessToken, phoneToken) = await _zaloServices.CallZaloApiAsync(accountZaloCURLModel.AccessToken, accountZaloCURLModel.PhoneToken);
 
             if (phoneInfo == null)
             {
@@ -491,10 +491,13 @@ namespace Services.Services
                 {
                     Message = "Failed to retrieve phone info from Zalo API.",
                     IsSuccess = false,
-                    Data = null
+                    Data = new
+                    {
+                        AccessToken = accessToken, 
+                        PhoneToken = phoneToken    
+                    }
                 };
             }
-
 
             var accountZaloID = (await _unitOfWork.AccountRepository.GetByConditionAsync(z => z.ZaloUser == accountZaloCURLModel.ZaloId)).FirstOrDefault();
             if (accountZaloID == null || !string.IsNullOrEmpty(accountZaloID.PhoneNumber))
@@ -506,13 +509,14 @@ namespace Services.Services
                     Data = null
                 };
             }
-            var createdDate = accountZaloID.CreateDate;
 
+            var createdDate = accountZaloID.CreateDate;
             accountZaloID.PhoneNumber = phoneInfo;
             accountZaloID.UpdateDate = DateTime.Now;
             accountZaloID.CreateDate = createdDate;
             await _unitOfWork.AccountRepository.UpdateAsync(accountZaloID);
             _unitOfWork.Save();
+
             return new APIResponseModel
             {
                 Message = "Phone info retrieved and saved successfully.",
