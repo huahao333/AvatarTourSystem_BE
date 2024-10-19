@@ -11,12 +11,12 @@ namespace BusinessObjects.ViewModels.ServiceUsedByTicket
     public class ServiceUsedByTicketCreateModel
     {
       //  [FromForm(Name = "ticket-id")]
-        public string? TicketId { get; set; }
+        public string? TicketId { get; set; } = "";
 
-     //   [FromForm(Name = "service-id")]
-        public string? ServiceId { get; set; }
+        //   [FromForm(Name = "service-id")]
+        public string? ServiceId { get; set; } = "";
 
-      //  [FromForm(Name = "status")]
+        //  [FromForm(Name = "status")]
         public EStatus? Status { get; set; }
     }
 }

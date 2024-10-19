@@ -12,16 +12,16 @@ namespace BusinessObjects.ViewModels.Notification
     {
       
     //    [FromForm(Name = "user-id")]
-        public string? UserId { get; set; }
-     //   [FromForm(Name = "send-date")]
+        public string? UserId { get; set; } = "";
+        //   [FromForm(Name = "send-date")]
         public DateTime? SendDate { get; set; }
       //  [FromForm(Name = "message")]
-        public string? Message { get; set; }
-      //  [FromForm(Name = "type")]
-        public string? Type { get; set; }
-      //  [FromForm(Name = "title")]
-        public string? Title { get; set; }
-     //   [FromForm(Name = "status")]
+        public string? Message { get; set; } = "";
+        //  [FromForm(Name = "type")]
+        public string? Type { get; set; } = "";
+        //  [FromForm(Name = "title")]
+        public string? Title { get; set; } = "";
+        //   [FromForm(Name = "status")]
         public EStatus? Status { get; set; }
     }
 }

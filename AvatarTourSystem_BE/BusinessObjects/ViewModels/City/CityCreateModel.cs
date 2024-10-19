@@ -11,8 +11,8 @@ namespace BusinessObjects.ViewModels.City
     public class CityCreateModel
     {
        // [FromForm(Name = "city-name")]
-        public string? CityName { get; set; }
-       // [FromForm(Name = "status")]
+        public string? CityName { get; set; } = "";
+        // [FromForm(Name = "status")]
         public EStatus? Status { get; set; }
     }
 }

@@ -11,7 +11,7 @@ namespace BusinessObjects.ViewModels.Supplier
     public class SupplierCreateModel
     {
         [Required]
-        public string SupplierName { get; set; }
+        public string SupplierName { get; set; } = "";
         public EStatus? Status { get; set; }
     }
 }
