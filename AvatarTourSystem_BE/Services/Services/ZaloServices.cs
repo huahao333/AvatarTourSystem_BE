@@ -21,23 +21,31 @@ namespace Services.Services
 
         public async Task<string> CallZaloApiAsync(string accessToken, string phoneToken)
         {
+            Console.WriteLine("Access Token: " + accessToken);
+            Console.WriteLine("Phone Token: " + phoneToken);
 
-            string url = "https://graph.zalo.me/v2.0/me/info";
+            string url = $"https://graph.zalo.me/v2.0/me/info?access_token={accessToken}&code={phoneToken}&secret_key={_secretKeyZalo}";
 
-            _httpClient.DefaultRequestHeaders.Add("access_token", accessToken);
-            _httpClient.DefaultRequestHeaders.Add("code", phoneToken);
-            _httpClient.DefaultRequestHeaders.Add("secret_key", _secretKeyZalo);
+            //string url = "https://graph.zalo.me/v2.0/me/info";
+
+            //_httpClient.DefaultRequestHeaders.Add("access_token", accessToken);
+            //_httpClient.DefaultRequestHeaders.Add("code", phoneToken);
+            //_httpClient.DefaultRequestHeaders.Add("secret_key", _secretKeyZalo);
 
             var response = await _httpClient.GetAsync(url);
 
             if (!response.IsSuccessStatusCode)
             {
+                Console.WriteLine("Access Token sau khi gọi API (thất bại): " + accessToken);
+                Console.WriteLine("Phone Token sau khi gọi API (thất bại): " + phoneToken);
                 return null;
             }
             var responseBody = await response.Content.ReadAsStringAsync();
 
+            Console.WriteLine("Access Token sau khi gọi API (thành công): " + accessToken);
+            Console.WriteLine("Phone Token sau khi gọi API (thành công): " + phoneToken);
             Console.WriteLine("Response body: " + responseBody);
-
+            
             try
             {
                 var jsonDocument = JsonDocument.Parse(responseBody);
