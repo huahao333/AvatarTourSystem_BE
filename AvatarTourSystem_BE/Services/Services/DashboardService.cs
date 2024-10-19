@@ -27,9 +27,9 @@ namespace Services.Services
         public async Task<APIGenericResponseModel<decimal>> GetMonthlyBookings(int month, int year)
         {
             var allBookings = await _unitOfWork.BookingRepository.GetAllAsync();
-            var bookingFlowLists = _mapper.Map<List<BookingFlowModel>>(allBookings);
-            var monthlyBookings = bookingFlowLists.Where(b => b.BookingDate.Month == month
-                                            && b.BookingDate.Year == year)
+            var bookingFlowLists = _mapper.Map<List<BookingModel>>(allBookings);
+            var monthlyBookings = bookingFlowLists.Where(b => b.BookingDate.Value.Month == month
+                                            && b.BookingDate.Value.Year == year)
                                     .Sum(b => b.TotalPrice);
             if (monthlyBookings > 0)
             {
