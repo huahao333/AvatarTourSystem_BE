@@ -134,15 +134,15 @@ namespace Services.Services
                     Data = null
                 };
             }
-           
-                var accountViewModels = _mapper.Map<List<AccountViewModel>>(account);
 
-                return new APIResponseModel
+            var accountViewModel = _mapper.Map<AccountViewModel>(account);
+
+            return new APIResponseModel
                 {
                     Message = "Account found",
                     IsSuccess = true,
-                    Data = accountViewModels
-                };
+                    Data = accountViewModel
+            };
 
             
 
@@ -374,6 +374,7 @@ namespace Services.Services
                         UserName = accountZaloIdModel.ZaloUser,
                         Email =  "",
                         PhoneNumber = "",
+                        AvatarUrl ="",
                         CreateDate = DateTime.Now,
                         Status = 1,
                         ZaloUser = accountZaloIdModel.ZaloUser,
@@ -451,6 +452,7 @@ namespace Services.Services
         public async Task<APIResponseModel> GetAccountByZaloID(string zaloId)
         {
             var account = await _unitOfWork.AccountRepository.GetByConditionAsync(z => z.ZaloUser == zaloId);
+            var accountZalo = account.FirstOrDefault();
             if (account == null || !account.Any())
             {
                 return new APIResponseModel
@@ -461,20 +463,20 @@ namespace Services.Services
                 };
             }
 
-            var accountViewModels = account.Select(a => new AccountZaloIdViewModel
+            var accountViewModel = new AccountZaloIdViewModel
             {
-                ZaloUser = a.ZaloUser,
-                UserName = a.UserName,
-                FullName = a.FullName,
-                AvatarUrl = a.AvatarUrl,
-                isHasPhoneNumber = !string.IsNullOrWhiteSpace(a.PhoneNumber) ? "True" : "False"
-            }).ToList();
+                ZaloUser = !string.IsNullOrWhiteSpace(accountZalo.ZaloUser) ? accountZalo.ZaloUser : "",
+                UserName = !string.IsNullOrWhiteSpace(accountZalo.UserName) ? accountZalo.UserName : "",
+                FullName = !string.IsNullOrWhiteSpace(accountZalo.FullName) ? accountZalo.FullName : "",
+                AvatarUrl = !string.IsNullOrWhiteSpace(accountZalo.AvatarUrl) ? accountZalo.AvatarUrl : "",
+                isHasPhoneNumber = !string.IsNullOrWhiteSpace(accountZalo.PhoneNumber) ? "True" : "False"
+            };
 
             return new APIResponseModel
             {
                 Message = "Account found",
                 IsSuccess = true,
-                Data = accountViewModels
+                Data = accountViewModel
             };
 
         }

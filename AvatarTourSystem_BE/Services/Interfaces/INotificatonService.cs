@@ -16,6 +16,7 @@ namespace Services.Interfaces
         Task<APIResponseModel> GetNotificaitonByUserId(string userId);
         Task<APIResponseModel> GetNotificaitonByZaloID(string zaloId);
         Task<APIResponseModel> CreateNotificaiton(NotificationCreateModel createModel);
+        Task<APIResponseModel> CreateNotificaitonByZaloId(NotificationCreateByZaloIdModel createModel);
         Task<APIResponseModel> UpdateNotificaiton(NotificationUpdateModel updateModel);
         Task<APIResponseModel> DeleteNotificaiton(string notificaitonId);
 

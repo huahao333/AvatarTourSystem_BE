@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Services.Interfaces;
+using Services.Services;
 
 namespace AvatarTourSystem_BE.Controllers
 {
@@ -98,5 +99,11 @@ namespace AvatarTourSystem_BE.Controllers
             }
         }
 
+        [HttpPost("notification-zalo")]
+        public async Task<IActionResult> CreateNotificationByZaloId(NotificationCreateByZaloIdModel createModel)
+        {
+            var result = await _notuService.CreateNotificaitonByZaloId(createModel);
+            return Ok(result);
+        }
     }
 }

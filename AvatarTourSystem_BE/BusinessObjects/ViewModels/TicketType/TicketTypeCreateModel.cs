@@ -11,11 +11,11 @@ namespace BusinessObjects.ViewModels.TicketType
     public class TicketTypeCreateModel
     {
       //  [FromForm(Name = "package-tour-id")]
-        public string? PackageTourId { get; set; }
+        public string? PackageTourId { get; set; } = "";
 
-      //  [FromForm(Name = "ticket-type-name")]
-        public string? TicketTypeName { get; set; }
-        public int? MinBuyTicket { get; set; }
+        //  [FromForm(Name = "ticket-type-name")]
+        public string? TicketTypeName { get; set; } = "";
+        public int? MinBuyTicket { get; set; } = 0;
 
         //  [FromForm(Name = "status")]
         public EStatus? Status { get; set; }

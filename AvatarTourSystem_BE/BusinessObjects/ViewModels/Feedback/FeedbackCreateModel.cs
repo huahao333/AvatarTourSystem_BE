@@ -12,12 +12,12 @@ namespace BusinessObjects.ViewModels.Feedback
     {
        
       //  [FromForm(Name = "user-id")]
-        public string? UserId { get; set; }
+        public string? UserId { get; set; } = "";
      //   [FromForm(Name = "booking-id")]
-        public string? BookingId { get; set; }
-      //  [FromForm(Name = "feedback-msg")]
-        public string? FeedbackMsg { get; set; }
-     //   [FromForm(Name = "status")]
+        public string? BookingId { get; set; } = "";
+        //  [FromForm(Name = "feedback-msg")]
+        public string? FeedbackMsg { get; set; } = "";
+        //   [FromForm(Name = "status")]
         public EStatus? Status { get; set; }
     }
 }

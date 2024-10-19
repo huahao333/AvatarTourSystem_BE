@@ -36,6 +36,12 @@ namespace AvatarTourSystem_BE.Controllers
             var response = await _feedbakService.GetFeedbackById(id);
             return Ok(response);
         }
+        [HttpGet("feedbacks-zalo/{zalouser}")]
+        public async Task<IActionResult> GetFeedbackByZaloUserAsync(string zalouser)
+        {
+            var response = await _feedbakService.GetFeedbackByZaloUser(zalouser);
+            return Ok(response);
+        }
 
         [HttpGet("feedbacks-user/{userId}")]
         public async Task<IActionResult> GetFeedbackByUserIdAsync(string userId)

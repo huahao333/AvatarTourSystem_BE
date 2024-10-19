@@ -12,12 +12,12 @@ namespace BusinessObjects.ViewModels.CustomerSupport
     {
         
       //  [FromForm(Name = "user-id")]
-        public string? UserId { get; set; }
-     //   [FromForm(Name = "request-type-id")]
-        public string? RequestTypeId { get; set; }
-      //  [FromForm(Name = "description")]
-        public string? Description { get; set; }
-      //  [FromForm(Name = "date-resolved")]
+        public string? UserId { get; set; } = "";
+        //   [FromForm(Name = "request-type-id")]
+        public string? RequestTypeId { get; set; } = "";
+        //  [FromForm(Name = "description")]
+        public string? Description { get; set; } = "";
+        //  [FromForm(Name = "date-resolved")]
         public DateTime? DateResolved { get; set; }      
      //   [FromForm(Name = "status")]
         public EStatus? Status { get; set; }

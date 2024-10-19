@@ -4,11 +4,13 @@ using Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Repositories;
 using Repositories.Interfaces;
 using Repositories.Repositories;
+using Services.Common;
 using Services.Interfaces;
 using Services.Services;
 using System;
@@ -148,6 +150,10 @@ namespace AvatarTourSystem_BE
 
             services.AddScoped<IDashboardService, DashboardService>();
 
+            services.AddScoped<IBookingFlowService, BookingFlowService>();
+            services.AddScoped<IVNPayService, VNPayService>();
+            services.AddSingleton<VNPayHelper>();
+            services.Configure<VNPaySettings>(builder.Configuration.GetSection("VNPay"));
             //auto mapper
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 

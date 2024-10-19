@@ -7,22 +7,22 @@ namespace BusinessObjects.ViewModels.Destination
     public class DestinationCreateModel
     {
      //   [FromForm(Name = "city-id")]
-        public string? CityId { get; set; }
+        public string? CityId { get; set; } = "";
       //  [FromForm(Name = "destination-name")]
-        public string? DestinationName { get; set; }
+        public string? DestinationName { get; set; } = "";
 
-      //  [FromForm(Name = "destination-img-url")]
-      //  public string? DestinationImgUrl { get; set; }
-      //  [FromForm(Name = "status")]
-        public int? Status { get; set; }
-        public string? DestinationHotline { get; set; }
-        public string? DestinationGoogleMap { get; set; }
-        public string? DestinationImgUrl { get; set; }
-        public string? DestinationAddress { get; set; }
+        //  [FromForm(Name = "destination-img-url")]
+        //  public string? DestinationImgUrl { get; set; }
+        //  [FromForm(Name = "status")]
+        public int? Status { get; set; } = 0;
+        public string? DestinationHotline { get; set; } = "";
+        public string? DestinationGoogleMap { get; set; } = "";
+        public string? DestinationImgUrl { get; set; } = "";
+        public string? DestinationAddress { get; set; } = "";
         public DateTime? DestinationOpeningHours { get; set; }
         public DateTime? DestinationClosingHours { get; set; }
-        public int? DestinationOpeningDate { get; set; }
-        public int? DestinationClosingDate { get; set; }
+        public int? DestinationOpeningDate { get; set; } = 0;
+        public int? DestinationClosingDate { get; set; } = 0;
 
         [JsonIgnore]
         public string? EmbedCode { get; set; }

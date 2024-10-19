@@ -47,7 +47,7 @@ namespace BusinessObjects.ViewModels.Account
         [Required(ErrorMessage = "Birth date is required!")]
         public DateTime BirthDate { get; set; }
 
-        public string Address { get; set; } = string.Empty;
+        public string Address { get; set; } = "";
 
         [Required(ErrorMessage = "Email is required!")]
         [EmailAddress(ErrorMessage = "Please enter valid email!")]
