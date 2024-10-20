@@ -11,6 +11,6 @@ namespace Services.Interfaces
     public interface IVNPayService
     {
         Task<APIGenericResponseModel<string>> CreatePaymentRequestAsync(string bookingId);
-        Task<APIResponseModel> ConfirmPaymentAsync(IQueryCollection queryString);
+        Task<VnPayResponseModel> ConfirmPaymentAsync(IQueryCollection queryString);
     }
 }

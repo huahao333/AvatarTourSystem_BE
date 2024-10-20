@@ -106,7 +106,7 @@ namespace Services.Services
                 };
             }
             var booking = await _unitOfWork.BookingRepository.GetFirstOrDefaultAsync(query => query
-                    .Where(b => b.UserId == zaloAccount.ZaloUser && b.Status == 1));
+                    .Where(b => b.UserId == zaloAccount.Id && b.Status == 1));
             if (booking == null)
             {
                 return new APIResponseModel

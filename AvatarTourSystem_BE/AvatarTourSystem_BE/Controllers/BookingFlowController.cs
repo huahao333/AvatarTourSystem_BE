@@ -56,36 +56,12 @@ namespace AvatarTourSystem_BE.Controllers
         }
 
         [HttpGet("vnpay-callback")]
-        public async Task<IActionResult> PaymentConfirm()
+        public async Task<IActionResult> PaymentCallback()
         {
             if (Request.QueryString.HasValue)
             {
-                try
-                {
-                    var result = await _vnPayService.ConfirmPaymentAsync(Request.Query);
-                    if (result.IsSuccess && result.Message.StartsWith("https"))
-                    {
-                        return Redirect(result.Message);
-                    }
-                    else if (!result.IsSuccess && result.Message.StartsWith("https"))
-                    {
-                        return Redirect(result.Message);
-                    }
-                    else
-                    {
-                        return BadRequest(result.Message);
-                    }
-                }
-                catch (ArgumentException ex)
-                {
-                    return BadRequest(ex.Message);
-                }
-                catch (Exception ex)
-                {
-                    // Log the exception
-                    Console.WriteLine(ex);
-                    return StatusCode(500, "An error occurred while processing the payment confirmation.");
-                }
+                var result = await _vnPayService.ConfirmPaymentAsync(Request.Query);
+                return Ok(result);
             }
             return StatusCode(500, "No query data");
         }
@@ -97,6 +73,7 @@ namespace AvatarTourSystem_BE.Controllers
             {
                 var paymentUrl = await _vnPayService.CreatePaymentRequestAsync(model.BookingId);
                 return Ok(new { url = paymentUrl });
+                //return Redirect(paymentUrl.Data);
             }
             catch (ArgumentException ex)
             {
@@ -104,7 +81,6 @@ namespace AvatarTourSystem_BE.Controllers
             }
             catch (Exception ex)
             {
-                // Log the exception
                 Console.WriteLine(ex);
                 return StatusCode(500, "An error occurred while processing the payment request.");
             }
