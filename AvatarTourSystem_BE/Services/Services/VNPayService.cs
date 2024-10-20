@@ -35,7 +35,7 @@ namespace Services.Services
             _mapper = mapper;
         }
 
-        public async Task<APIResponseModel> ConfirmPaymentAsync(IQueryCollection queryString)
+        public async Task<VnPayResponseModel> ConfirmPaymentAsync(IQueryCollection queryString)
         {
             var queryParameters = new Dictionary<string, string>();
             foreach (var key in queryString.Keys)
@@ -70,29 +70,27 @@ namespace Services.Services
                 var booking = await _unitOfWork.BookingRepository.GetByIdStringAsync(id);
                 if (booking == null)
                 {
-                    return new APIResponseModel
+                    return new VnPayResponseModel
                     {
-                        Message = "No booking found",
                         IsSuccess = false,
+                        Message = "No booking found",
                     };
                 }
 
                 if (vnp_ResponseCode == "00")
                 {
                     // Payment successful
-                    booking.Status = (int?)EStatus.IsCompleted;
-                    _unitOfWork.Save();
-                    return new APIResponseModel
+                    //booking.Status = (int?)EStatus.IsCompleted;
+                    //_unitOfWork.Save();
+                    return new VnPayResponseModel
                     {
-                        Message = $"https://localhost:7146/vnpaycallback?vnp_Amount=" +
-                        $"{queryParameters["vnp_Amount"]}&vnp_BankCode={queryParameters["vnp_BankCode"]}" +
-                        $"&vnp_BankTranNo={queryParameters["vnp_BankTranNo"]}&vnp_CardType={queryParameters["vnp_CardType"]}" +
-                        $"&vnp_OrderInfo={queryParameters["vnp_OrderInfo"]}&vnp_PayDate={queryParameters["vnp_PayDate"]}" +
-                        $"&vnp_ResponseCode={queryParameters["vnp_ResponseCode"]}&vnp_TmnCode={queryParameters["vnp_TmnCode"]}" +
-                        $"&vnp_TransactionNo={queryParameters["vnp_TransactionNo"]}&vnp_TransactionStatus={queryParameters["vnp_TransactionStatus"]}" +
-                        $"&vnp_TxnRef={queryParameters["vnp_TxnRef"]}&vnp_SecureHash={queryParameters["vnp_SecureHash"]}",
                         IsSuccess = true,
-                        Data = booking
+                        PaymentMethod = "VnPay",
+                        OrderDescription = orderInfor,
+                        OrderId = orderId.ToString(),
+                        TransactionId = vnpayTranId.ToString(),
+                        Token = vnp_SecureHash,
+                        VnPayResponseCode = vnp_ResponseCode.ToString(),
                     };
                 }
                 else
@@ -100,7 +98,7 @@ namespace Services.Services
                     // Payment failed
                     booking.Status = (int?)EStatus.IsPending;
                     _unitOfWork.Save();
-                    return new APIResponseModel
+                    return new VnPayResponseModel
                     {
                         Message = $"Payment Failed",
                         IsSuccess = false,
@@ -109,7 +107,7 @@ namespace Services.Services
             }
             else
             {
-                return new APIResponseModel
+                return new VnPayResponseModel
                 {
                     Message = "Invalid response",
                     IsSuccess = false,
