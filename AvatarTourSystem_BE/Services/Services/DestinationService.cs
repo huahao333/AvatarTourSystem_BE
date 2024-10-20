@@ -73,16 +73,16 @@ namespace Services.Services
             //var destination = _mapper.Map<Destination>(createModel);
             //destination.DestinationId = Guid.NewGuid().ToString();
             //destination.CreateDate = DateTime.Now;
-
+            
             var destination = new Destination
             {
                 DestinationId = Guid.NewGuid().ToString(),
                 CityId = createModel.CityId,
                 DestinationName = createModel.DestinationName,
-              //  DestinationImgUrl = createModel.DestinationImgUrl,
+                DestinationImgUrl = createModel.DestinationImgUrl,
                 Status = createModel.Status,
                 DestinationHotline = createModel.DestinationHotline,
-                DestinationGoogleMap = createModel.DestinationGoogleMap,
+                //DestinationGoogleMap = createModel.DestinationGoogleMap,
                 DestinationAddress = createModel.DestinationAddress,
                 DestinationOpeningHours = createModel.DestinationOpeningHours,
                 DestinationClosingHours = createModel.DestinationClosingHours,
@@ -92,10 +92,10 @@ namespace Services.Services
                 CreateDate = DateTime.Now
             };
 
-            if (!string.IsNullOrEmpty(createModel.DestinationName))
+            if (!string.IsNullOrEmpty(createModel.DestinationAddress))
             {
-                var embedCode = await _googleMapsService.GetEmbedCodesAsync(createModel.DestinationName);
-                destination.DestinationImgUrl = embedCode;
+                var embedCode = await _googleMapsService.GetEmbedCodesAsync(createModel.DestinationAddress);
+                destination.DestinationGoogleMap = embedCode;
             }
 
             await _unitOfWork.DestinationRepository.AddAsync(destination);

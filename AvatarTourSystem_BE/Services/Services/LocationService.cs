@@ -17,10 +17,12 @@ namespace Services.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        public LocationService(IUnitOfWork unitOfWork, IMapper mapper)
+        private readonly GoogleMapsService _googleMapsService;
+        public LocationService(IUnitOfWork unitOfWork, IMapper mapper, GoogleMapsService googleMapsService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _googleMapsService = googleMapsService;
         }
 
         public async Task<APIResponseModel> GetLocationsAsync()
@@ -66,17 +68,47 @@ namespace Services.Services
 
         public async Task<APIResponseModel> CreateLocationAsync(LocationCreateModel createModel)
         {
-            var location = _mapper.Map<Location>(createModel);
-            location.LocationId = Guid.NewGuid().ToString();
-            location.CreateDate = DateTime.Now;
-            var result = await _unitOfWork.LocationRepository.AddAsync(location);
-            _unitOfWork.Save();
-            return new APIResponseModel
+            //var location = _mapper.Map<Location>(createModel);
+            //location.LocationId = Guid.NewGuid().ToString();
+            //location.CreateDate = DateTime.Now;
+            //var result = await _unitOfWork.LocationRepository.AddAsync(location);
+            //_unitOfWork.Save();
+            //return new APIResponseModel
+            //{
+            //    Message = " Location Created Successfully",
+            //    IsSuccess = true,
+            //    Data = location,
+            //};
+            if (!string.IsNullOrEmpty(createModel.LocationAddress))
             {
-                Message = " Location Created Successfully",
-                IsSuccess = true,
-                Data = location,
-            };
+                var embedCode = await _googleMapsService.GetEmbedCodesAsync(createModel.LocationAddress);
+
+                var locationGGMap = embedCode;
+                var location = new Location
+                {
+                    LocationId = Guid.NewGuid().ToString(),
+                    LocationName = createModel.LocationName,
+                    LocationGoogleMap = locationGGMap,
+                    Status = (int)EStatus.Active,
+                    CreateDate = DateTime.Now,
+                    UpdateDate = DateTime.Now
+                };
+                await _unitOfWork.LocationRepository.AddAsync(location);
+                _unitOfWork.Save();
+                return new APIResponseModel
+                {
+                    Message = " Location Created Successfully",
+                    IsSuccess = true,
+                    Data = location,
+                };
+            }
+           return new APIResponseModel
+           {
+               Message = "Location Google Map is required",
+               IsSuccess = false
+           };
+
+
         }
         public async Task<APIResponseModel> UpdateLocationAsync(LocationUpdateModel updateModel)
         {
