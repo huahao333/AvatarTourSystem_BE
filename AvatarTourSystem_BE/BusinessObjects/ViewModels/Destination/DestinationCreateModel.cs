@@ -16,7 +16,7 @@ namespace BusinessObjects.ViewModels.Destination
         //  [FromForm(Name = "status")]
         public int? Status { get; set; } = 0;
         public string? DestinationHotline { get; set; } = "";
-        public string? DestinationGoogleMap { get; set; } = "";
+        //public string? DestinationGoogleMap { get; set; } = "";
         public string? DestinationImgUrl { get; set; } = "";
         public string? DestinationAddress { get; set; } = "";
         public DateTime? DestinationOpeningHours { get; set; }
