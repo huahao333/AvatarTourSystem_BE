@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Services.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
@@ -19,44 +21,48 @@ namespace Services.Services
 
         }
 
-        public async Task<string> CallZaloApiAsync(string accessToken, string phoneToken)
+        public async Task<(string PhoneNumber, string AccessToken, string PhoneToken)> CallZaloApiAsync(string accessToken, string phoneToken)
         {
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+            Console.WriteLine("Access Token: " + accessToken);
+            Console.WriteLine("Phone Token: " + phoneToken);
 
-            string url = "https://graph.zalo.me/v2.0/me/info";
-
-            _httpClient.DefaultRequestHeaders.Add("access_token", accessToken);
-            _httpClient.DefaultRequestHeaders.Add("code", phoneToken);
-            _httpClient.DefaultRequestHeaders.Add("secret_key", _secretKeyZalo);
+            string url = $"https://graph.zalo.me/v2.0/me/info?access_token={accessToken}&code={phoneToken}&secret_key={_secretKeyZalo}";
 
             var response = await _httpClient.GetAsync(url);
 
-            if (!response.IsSuccessStatusCode)
-            {
-                return null;
-            }
-            var responseBody = await response.Content.ReadAsStringAsync();
-
-            Console.WriteLine("Response body: " + responseBody);
-
-            try
-            {
-                var jsonDocument = JsonDocument.Parse(responseBody);
-                if (jsonDocument.RootElement.TryGetProperty("data", out var dataElement) && dataElement.TryGetProperty("number", out var numberElement))
+                if (!response.IsSuccessStatusCode)
                 {
-                    string phoneNumber = numberElement.GetString();
-                    return phoneNumber;
+                Console.WriteLine("Access Token sau khi gọi API (thất bại): " + accessToken);
+                Console.WriteLine("Phone Token sau khi gọi API (thất bại): " + phoneToken);
+                    return (null, accessToken, phoneToken);
                 }
-                else
+
+                var responseBody = await response.Content.ReadAsStringAsync();
+
+                Console.WriteLine("Access Token sau khi gọi API (thành công): " + accessToken);
+                Console.WriteLine("Phone Token sau khi gọi API (thành công): " + phoneToken);
+                Console.WriteLine("Response body: " + responseBody);
+
+                try
                 {
-                    Console.WriteLine("Không tìm thấy các thuộc tính mong đợi trong phản hồi.");
-                    return null;
+                    var jsonDocument = JsonDocument.Parse(responseBody);
+                    if (jsonDocument.RootElement.TryGetProperty("data", out var dataElement) && dataElement.TryGetProperty("number", out var numberElement))
+                    {
+                        string phoneNumber = numberElement.GetString();
+                        return (phoneNumber, accessToken, phoneToken);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Không tìm thấy các thuộc tính mong đợi trong phản hồi.");
+                        return (null, accessToken, phoneToken);
+                    }
                 }
-            }
-            catch (JsonException jsonEx)
-            {
-                Console.WriteLine("Lỗi phân tích JSON: " + jsonEx.Message);
-                return null;
+                catch (JsonException jsonEx)
+                {
+                    Console.WriteLine("Lỗi phân tích JSON: " + jsonEx.Message);
+                    return (null, accessToken, phoneToken);
+                }
             }
         }
     }
-}
