@@ -85,6 +85,7 @@ namespace Services.Services
                     return new VnPayResponseModel
                     {
                         IsSuccess = true,
+                        Message = "Payment_successful",
                         PaymentMethod = "VnPay",
                         OrderDescription = orderInfor,
                         OrderId = orderId.ToString(),
