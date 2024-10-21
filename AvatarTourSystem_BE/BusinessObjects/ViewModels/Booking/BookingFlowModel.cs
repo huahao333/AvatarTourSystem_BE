@@ -9,6 +9,6 @@ namespace BusinessObjects.ViewModels.Booking
     public class BookingFlowModel
     {
         public string? BookingId { get; set; }
-        public string? UserId { get; set; }
+       // public string? UserId { get; set; }
     }
 }
