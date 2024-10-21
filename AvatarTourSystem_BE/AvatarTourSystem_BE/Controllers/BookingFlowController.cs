@@ -20,21 +20,10 @@ namespace AvatarTourSystem_BE.Controllers
         }
 
         [HttpPost("create-booking")]
-        public async Task<IActionResult> CreateBookingFlowAsync(BookingCreateModel createModel)
+        public async Task<IActionResult> CreateBookingFlowAsync(BookingFlowCreateModel createModel)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            try
-            {
-                var result = await _bookingFlowService.CreateBookingFlowAsync(createModel);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            var result = await _bookingFlowService.CreateBookingFlowAsync(createModel);
+            return Ok(result);
         }
 
         [HttpPut("update-booking-by-zalo")]

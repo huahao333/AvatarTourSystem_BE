@@ -21,7 +21,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
-       // options.JsonSerializerOptions.MaxDepth = 64;
+       // options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+      //  options.JsonSerializerOptions.MaxDepth = 64;
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
         options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
         options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
@@ -38,10 +39,14 @@ builder.Services.AddApiWebService(builder);
 //config cors
 
 
+
 var googleApiKey = builder.Configuration.GetSection("GoogleMaps:ApiKey").Value;
 builder.Services.AddSingleton(new GoogleMapsService(googleApiKey));
 
 var SecretKeyZalo = builder.Configuration.GetSection("ZaloAPI:SecretKeyZalo").Value;
+
+builder.Services.Configure<CloudinaryOptions>(builder.Configuration.GetSection("Cloudinary"));
+builder.Services.AddScoped<CloudinaryService>();
 
 builder.Services.AddHttpClient();
 builder.Services.AddSingleton(sp =>

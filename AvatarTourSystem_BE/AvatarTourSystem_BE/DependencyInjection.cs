@@ -116,6 +116,9 @@ namespace AvatarTourSystem_BE
             services.AddScoped<IBookingRepository, BookingRepository>();
             services.AddScoped<IBookingService, BookingService>();
 
+            services.AddScoped<IBookingFlowRepository, BookingFlowRepository>();
+            services.AddScoped<IBookingFlowService, BookingFlowService>();
+
             services.AddScoped<IRevenueRepository, RevenueRepository>();
             services.AddScoped<IRevenueService, RevenueService>();
 
@@ -150,7 +153,7 @@ namespace AvatarTourSystem_BE
 
             services.AddScoped<IDashboardService, DashboardService>();
 
-            services.AddScoped<IBookingFlowService, BookingFlowService>();
+         //   services.AddScoped<IBookingFlowService, BookingFlowService>();
             services.AddScoped<IVNPayService, VNPayService>();
             services.AddSingleton<VNPayHelper>();
             services.Configure<VNPaySettings>(builder.Configuration.GetSection("VNPay"));
