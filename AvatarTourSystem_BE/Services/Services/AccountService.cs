@@ -59,7 +59,6 @@ namespace Services.Services
         {
             var account = new Account
             {
-                //UserId = Guid.NewGuid().ToString(),
                 UserName = createModel.UserName,
                 Email = createModel.Email,
                 FullName = createModel.FullName,
@@ -70,15 +69,13 @@ namespace Services.Services
                 AvatarUrl = createModel.AvatarUrl,
                 ZaloUser = createModel.ZaloUser,
                 CreateDate = DateTime.Now,
-                Status = (int)createModel.Status // Example status (Active)
+                Status = (int)createModel.Status 
             };
 
-            // Save to the database
             var result = await _unitOfWork.AccountRepository.AddAsync(account);
             _unitOfWork.Save();
             var accountModel = _mapper.Map<AccountModel>(result);
 
-            // Return response
             return new APIResponseModel
             {
                 Message = "Account Created Successfully",
@@ -360,7 +357,11 @@ namespace Services.Services
                     {
                         IsSuccess = true,
                         Message = "Zalo account already exists. Returning access token.",
-                        Data = new { AccessToken = accessToken }
+                        Data = new 
+                        { 
+                            AccessToken = accessToken ,
+                            isFirstLogin = false
+                        }
                     };
                 }
                 else
@@ -386,7 +387,7 @@ namespace Services.Services
                  //   string errorMessage = "Failed to register with Zalo. Please check your input and try again.";
 
                     await _unitOfWork.AccountRepository.AddAsync(user);
-                     _unitOfWork.Save(); // Lưu thay đổi vào cơ sở dữ liệu
+                     _unitOfWork.Save(); 
 
                     var accessToken = await GenerateAccessTokenForAccount(user);
 
@@ -394,7 +395,11 @@ namespace Services.Services
                     {
                         IsSuccess = true,
                         Message = "Registration successful with Zalo.",
-                        Data = new { AccessToken = accessToken }
+                        Data = new
+                        {
+                            AccessToken = accessToken,
+                            isFirstLogin = true
+                        }
                     };
                 }
             }
@@ -440,7 +445,7 @@ namespace Services.Services
             {
                 Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.UtcNow.AddHours(1),
-                SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256) // Đặt khóa và thuật toán mã hóa
+                SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256)
             };
 
             var tokenHandler = new JwtSecurityTokenHandler();
