@@ -146,10 +146,17 @@ namespace AvatarTourSystem_BE.Controllers
             return Ok(response);
         }
 
-        [HttpPost("phonenumber-zalo")]
+        [HttpPost("phonenumber-token")]
         public async Task<IActionResult> UpdatePhoneNumberByZaloID(AccountZaloCURLModel accountZaloCURLModel)
         {
             var response = await _accountService.GetPhoneInfoAndSaveAsync(accountZaloCURLModel);
+            return Ok(response);
+        }
+
+        [HttpPost("phonenumber-zalo")]
+        public async Task<IActionResult> AccountUpdatePhoneNumberByZaloID(AccountUpdatePhoneWithZaloIdModel updatePhoneWithZaloIdModel)
+        {
+            var response = await _accountService.UpdatePhoneNumberByZaloId(updatePhoneWithZaloIdModel);
             return Ok(response);
         }
     }

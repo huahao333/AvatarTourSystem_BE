@@ -25,12 +25,12 @@ namespace AvatarTourSystem_BE.Controllers
             var response = await _dashboardService.GetActiveZaloUser();
             return Ok(response);
         }
-        [HttpGet("monthly-revenue")]
-        public async Task<IActionResult> GetMonthlyRevenue(int month, int year)
-        {
-            var monthlyRevenue = await _dashboardService.GetMonthlyRevenue(month, year);
-            return Ok(monthlyRevenue);
-        }
+        //[HttpGet("monthly-revenue")]
+        //public async Task<IActionResult> GetMonthlyRevenue(int month, int year)
+        //{
+        //    var monthlyRevenue = await _dashboardService.GetMonthlyRevenue(month, year);
+        //    return Ok(monthlyRevenue);
+        //}
         [HttpGet("monthly-bookings")]
         public async Task<IActionResult> GetMonthlyBookings(int month, int year)
         {

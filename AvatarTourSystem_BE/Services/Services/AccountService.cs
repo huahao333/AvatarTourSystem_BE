@@ -601,5 +601,40 @@ namespace Services.Services
             };
 
         }
+
+        public async Task<APIResponseModel> UpdatePhoneNumberByZaloId(AccountUpdatePhoneWithZaloIdModel updatePhoneWithZaloIdModel)
+        {
+            try
+            {
+                var accountZaloExisting = (await _unitOfWork.AccountRepository.GetByConditionAsync(s => s.ZaloUser.ToString() == updatePhoneWithZaloIdModel.ZaloUser))
+                                          .FirstOrDefault();
+                if (accountZaloExisting == null)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Account not found.",
+                        IsSuccess = false
+                    };
+                }
+
+                var createDate = accountZaloExisting.CreateDate;
+                accountZaloExisting.PhoneNumber = updatePhoneWithZaloIdModel.PhoneNumber;
+                accountZaloExisting.UpdateDate = DateTime.Now;
+                accountZaloExisting.CreateDate = createDate;
+                var result = await _unitOfWork.AccountRepository.UpdateAsync(accountZaloExisting);
+                _unitOfWork.Save();
+
+                return new APIResponseModel
+                {
+                    Message = "Phone Updated Successfully",
+                    IsSuccess = true
+                };
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception: {ex.Message}");
+                return new APIResponseModel { IsSuccess = false, Message = "An error occurred while checking if the account exists." };
+            }
+        }
     }
 }

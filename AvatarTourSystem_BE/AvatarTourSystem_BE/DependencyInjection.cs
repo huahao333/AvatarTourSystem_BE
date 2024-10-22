@@ -119,11 +119,11 @@ namespace AvatarTourSystem_BE
             services.AddScoped<IBookingFlowRepository, BookingFlowRepository>();
             services.AddScoped<IBookingFlowService, BookingFlowService>();
 
-            services.AddScoped<IRevenueRepository, RevenueRepository>();
-            services.AddScoped<IRevenueService, RevenueService>();
+            //services.AddScoped<IRevenueRepository, RevenueRepository>();
+            //services.AddScoped<IRevenueService, RevenueService>();
 
-            services.AddScoped<IBookingByRevenueRepository, BookingByRevenueRepository>();
-            services.AddScoped<IBookingByRevenueService, BookingByRevenueService>();
+            //services.AddScoped<IBookingByRevenueRepository, BookingByRevenueRepository>();
+            //services.AddScoped<IBookingByRevenueService, BookingByRevenueService>();
 
             services.AddScoped<IFeedbackService, FeedbackService>();
             services.AddScoped<IFeedbackRepository, FeedbackRepository>();

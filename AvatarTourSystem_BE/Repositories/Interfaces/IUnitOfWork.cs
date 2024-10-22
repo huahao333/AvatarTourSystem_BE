@@ -25,8 +25,8 @@ namespace Repositories.Interfaces
         GenericRepository<ServiceByTourSegment> ServiceByTourSegmentRepository { get; }
         GenericRepository<ServiceUsedByTicket> ServiceUsedByTicketRepository { get; }
         GenericRepository<Booking> BookingRepository { get; }
-        GenericRepository<Revenue> RevenueRepository { get; }
-        GenericRepository<BookingByRevenue> BookingByRevenueRepository { get; }
+        //GenericRepository<Revenue> RevenueRepository { get; }
+        //GenericRepository<BookingByRevenue> BookingByRevenueRepository { get; }
         GenericRepository<Feedback> FeedbackRepository { get; }
         GenericRepository<Rate> RateRepository { get; }
         GenericRepository<Account> AccountRepository { get; }

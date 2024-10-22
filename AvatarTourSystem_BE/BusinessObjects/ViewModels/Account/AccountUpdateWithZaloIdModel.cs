@@ -17,4 +17,9 @@ namespace BusinessObjects.ViewModels.Account
         public string? ZaloUser { get; set; }
       
     }
+    public class AccountUpdatePhoneWithZaloIdModel
+    {
+        public string? ZaloUser { get; set; }
+        public string? PhoneNumber { get; set; }
+    }
 }
