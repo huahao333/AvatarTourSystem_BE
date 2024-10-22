@@ -16,7 +16,6 @@ namespace BusinessObjects.Models
             Rates = new HashSet<Rate>();
             Tickets = new HashSet<Ticket>();
             TransactionsHistories = new HashSet<TransactionsHistory>();
-            BookingByRevenues = new HashSet<BookingByRevenue>();
         }
         public string? BookingId { get; set; }
         public string? UserId { get; set; }
@@ -37,6 +36,6 @@ namespace BusinessObjects.Models
         public virtual ICollection<Rate> Rates { get; set; }
         public virtual ICollection<Ticket> Tickets { get; set; }
         public virtual ICollection<TransactionsHistory> TransactionsHistories { get; set; }
-        public virtual ICollection<BookingByRevenue> BookingByRevenues { get; set; }
+      //  public virtual ICollection<BookingByRevenue> BookingByRevenues { get; set; }
     }
 }

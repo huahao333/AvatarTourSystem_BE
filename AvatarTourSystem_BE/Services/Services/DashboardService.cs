@@ -2,7 +2,6 @@
 using Azure;
 using BusinessObjects.Models;
 using BusinessObjects.ViewModels.Booking;
-using BusinessObjects.ViewModels.Revenue;
 using Repositories.Interfaces;
 using Services.Common;
 using Services.Interfaces;
@@ -94,31 +93,31 @@ namespace Services.Services
             }
         }
 
-        public async Task<APIGenericResponseModel<decimal>> GetMonthlyRevenue(int month, int year)
-        {
-            var revenue = await _unitOfWork.RevenueRepository.GetByConditionAsync(s => s.Status != -1);
-            var revenueLists = _mapper.Map<List<RevenueModel>>(revenue);
-            var totalRevenue = revenueLists
-                .Where(r => r.RevenueDate.Value.Month == month && r.RevenueDate.Value.Year == year)
-                .Sum(b => b.TotalRevenue);
-            if (totalRevenue > 0)
-            {
-                return new APIGenericResponseModel<decimal>
-                {
-                    Message = "Found revenue!",
-                    IsSuccess = true,
-                    Data = (decimal)totalRevenue
-                };
-            }
-            else
-            {
-                return new APIGenericResponseModel<decimal>
-                {
-                    Message = "Invalid revenue data!",
-                    IsSuccess = false,
-                };
-            }
-        }
+        //public async Task<APIGenericResponseModel<decimal>> GetMonthlyRevenue(int month, int year)
+        //{
+        //    var revenue = await _unitOfWork.RevenueRepository.GetByConditionAsync(s => s.Status != -1);
+        //    var revenueLists = _mapper.Map<List<RevenueModel>>(revenue);
+        //    var totalRevenue = revenueLists
+        //        .Where(r => r.RevenueDate.Value.Month == month && r.RevenueDate.Value.Year == year)
+        //        .Sum(b => b.TotalRevenue);
+        //    if (totalRevenue > 0)
+        //    {
+        //        return new APIGenericResponseModel<decimal>
+        //        {
+        //            Message = "Found revenue!",
+        //            IsSuccess = true,
+        //            Data = (decimal)totalRevenue
+        //        };
+        //    }
+        //    else
+        //    {
+        //        return new APIGenericResponseModel<decimal>
+        //        {
+        //            Message = "Invalid revenue data!",
+        //            IsSuccess = false,
+        //        };
+        //    }
+        //}
 
         public async Task<APIGenericResponseModel<int>> GetMonthlyTours(int month, int year)
         {

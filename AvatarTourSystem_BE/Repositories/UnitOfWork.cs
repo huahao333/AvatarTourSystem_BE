@@ -17,7 +17,7 @@ namespace Repositories
         private readonly IMapper _mapper;
         private GenericRepository<Account> _accountRepository;
         private GenericRepository<Booking> _bookingtRepository;
-        private GenericRepository<BookingByRevenue> _bookingByRevenueRepository;
+     //   private GenericRepository<BookingByRevenue> _bookingByRevenueRepository;
         private GenericRepository<City> _cityRepository;
         private GenericRepository<CustomerSupport> _customerSupportRepository;
         private GenericRepository<DailyTicket> _dailyTicketRepository;
@@ -32,7 +32,7 @@ namespace Repositories
         //private GenericRepository<POIType> _poiTypeRepository;
         private GenericRepository<Rate> _rateRepository;
         private GenericRepository<RequestType> _requestTypeRepository;
-        private GenericRepository<Revenue> _revenueRepository;
+     //   private GenericRepository<Revenue> _revenueRepository;
         private GenericRepository<Service> _serviceRepository;
         private GenericRepository<ServiceByTourSegment> _serviceByTourSegmentRepository;
         private GenericRepository<ServiceType> _serviceTypeRepository;
@@ -72,17 +72,17 @@ namespace Repositories
             }
         }
 
-        public GenericRepository<BookingByRevenue> BookingByRevenueRepository
-        {
-            get
-            {
-                if (this._bookingByRevenueRepository == null)
-                {
-                    this._bookingByRevenueRepository = new GenericRepository<BookingByRevenue>(_context);
-                }
-                return _bookingByRevenueRepository;
-            }
-        }
+        //public GenericRepository<BookingByRevenue> BookingByRevenueRepository
+        //{
+        //    get
+        //    {
+        //        if (this._bookingByRevenueRepository == null)
+        //        {
+        //            this._bookingByRevenueRepository = new GenericRepository<BookingByRevenue>(_context);
+        //        }
+        //        return _bookingByRevenueRepository;
+        //    }
+        //}
 
         public GenericRepository<City> CityRepository
         {
@@ -252,17 +252,17 @@ namespace Repositories
             }
         }
 
-        public GenericRepository<Revenue> RevenueRepository
-        {
-            get
-            {
-                if (this._revenueRepository == null)
-                {
-                    this._revenueRepository = new GenericRepository<Revenue>(_context);
-                }
-                return _revenueRepository;
-            }
-        }
+        //public GenericRepository<Revenue> RevenueRepository
+        //{
+        //    get
+        //    {
+        //        if (this._revenueRepository == null)
+        //        {
+        //            this._revenueRepository = new GenericRepository<Revenue>(_context);
+        //        }
+        //        return _revenueRepository;
+        //    }
+        //}
 
         public GenericRepository<Service> ServiceRepository
         {

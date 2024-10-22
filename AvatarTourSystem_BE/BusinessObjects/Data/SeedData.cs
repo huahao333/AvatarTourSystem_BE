@@ -112,12 +112,12 @@ namespace BusinessObjects.Data
                 new ServiceUsedByTicket { SUBTId = "2", ServiceId = "2", TicketId = "2", CreateDate = DateTime.Now, Status = 1 }
             );
           
-            modelBuilder.Entity<BookingByRevenue>().HasData(
-                new BookingByRevenue { BookingByRevenueId = "1", BookingId = "1", RevenueId = "1", CreateDate = DateTime.Now, Status = 0 }
-            );
-            modelBuilder.Entity<Revenue>().HasData(
-                new Revenue { RevenueId = "1", TotalRevenue = 900000, RevenueDate = DateTime.Now, CreateDate = DateTime.Now, Status = 0 }
-            );
+            //modelBuilder.Entity<BookingByRevenue>().HasData(
+            //    new BookingByRevenue { BookingByRevenueId = "1", BookingId = "1", RevenueId = "1", CreateDate = DateTime.Now, Status = 0 }
+            //);
+            //modelBuilder.Entity<Revenue>().HasData(
+            //    new Revenue { RevenueId = "1", TotalRevenue = 900000, RevenueDate = DateTime.Now, CreateDate = DateTime.Now, Status = 0 }
+            //);
             modelBuilder.Entity<PaymentMethod>().HasData(
                 new PaymentMethod { PaymentId = "1", PaymentType = "Momo", CreateDate = DateTime.Now, Status = 0 }
             );

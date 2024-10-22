@@ -19,6 +19,7 @@ namespace BusinessObjects.Models
         public string? Description { get; set; }
         public float? DailyTourPrice { get; set; }
         public string? ImgUrl { get; set; }
+        public DateTime? ExpirationDate { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? CreateDate { get; set; }
         public DateTime? EndDate { get; set; }

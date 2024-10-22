@@ -21,7 +21,7 @@ namespace BusinessObjects.Models
         }
         public virtual DbSet<Account> Accounts { get; set; } = null!;
         public virtual DbSet<Booking> Bookings { get; set; } = null!;
-        public virtual DbSet<BookingByRevenue> BookingByRevenues { get; set; } = null!;
+      //  public virtual DbSet<BookingByRevenue> BookingByRevenues { get; set; } = null!;
         public virtual DbSet<City> Cities { get; set; } = null!;
         public virtual DbSet<CustomerSupport> CustomerSupports { get; set; } = null!;
         public virtual DbSet<DailyTour> DailyTours { get; set; } = null!;
@@ -36,7 +36,7 @@ namespace BusinessObjects.Models
         //public virtual DbSet<POIType> POITypes { get; set; } = null!;
         public virtual DbSet<Rate> Rates { get; set; } = null!;
         public virtual DbSet<RequestType> RequestTypes { get; set; } = null!;
-        public virtual DbSet<Revenue> Revenues { get; set; } = null!;
+     //   public virtual DbSet<Revenue> Revenues { get; set; } = null!;
         public virtual DbSet<Service> Services { get; set; } = null!;
         public virtual DbSet<ServiceByTourSegment> ServiceByTourSegments { get; set; } = null!;
         public virtual DbSet<ServiceType> ServiceTypes { get; set; } = null!;
@@ -92,27 +92,27 @@ namespace BusinessObjects.Models
 
             });
 
-            modelBuilder.Entity<BookingByRevenue>(entity =>
-            {
-                entity.HasKey(e => e.BookingByRevenueId)
-                    .HasName("PK__BookingByRevenue__551479477F27FEF9");
-                entity.ToTable("BookingByRevenue");
+            //modelBuilder.Entity<BookingByRevenue>(entity =>
+            //{
+            //    entity.HasKey(e => e.BookingByRevenueId)
+            //        .HasName("PK__BookingByRevenue__551479477F27FEF9");
+            //    entity.ToTable("BookingByRevenue");
 
-                entity.Property(e => e.CreateDate)
-                    .HasColumnType("date");
-                entity.Property(e => e.UpdateDate)
-                    .HasColumnType("date");
+            //    entity.Property(e => e.CreateDate)
+            //        .HasColumnType("date");
+            //    entity.Property(e => e.UpdateDate)
+            //        .HasColumnType("date");
 
-                entity.HasOne(d => d.Revenues)
-                  .WithMany(p => p.BookingByRevenues)
-                  .HasForeignKey(d => d.RevenueId)
-                  .HasConstraintName("FK__BookingByRevenue__RevenueId__3A81C227");
+            //    entity.HasOne(d => d.Revenues)
+            //      .WithMany(p => p.BookingByRevenues)
+            //      .HasForeignKey(d => d.RevenueId)
+            //      .HasConstraintName("FK__BookingByRevenue__RevenueId__3A81C227");
 
-                entity.HasOne(d => d.Bookings)
-                  .WithMany(p => p.BookingByRevenues)
-                  .HasForeignKey(d => d.BookingId)
-                  .HasConstraintName("FK__BookingByRevenue__BookingId__3A81D227");
-            });
+            //    entity.HasOne(d => d.Bookings)
+            //      .WithMany(p => p.BookingByRevenues)
+            //      .HasForeignKey(d => d.BookingId)
+            //      .HasConstraintName("FK__BookingByRevenue__BookingId__3A81D227");
+            //});
 
             modelBuilder.Entity<City>(entity =>
             {
@@ -377,17 +377,17 @@ namespace BusinessObjects.Models
                     .HasColumnType("date");
             });
 
-            modelBuilder.Entity<Revenue>(entity =>
-            {
-                entity.HasKey(e => e.RevenueId)
-                   .HasName("PK__Revenue__511311221B17FEC3");
-                entity.ToTable("Revenue");
+            //modelBuilder.Entity<Revenue>(entity =>
+            //{
+            //    entity.HasKey(e => e.RevenueId)
+            //       .HasName("PK__Revenue__511311221B17FEC3");
+            //    entity.ToTable("Revenue");
 
-                entity.Property(e => e.CreateDate)
-                    .HasColumnType("date");
-                entity.Property(e => e.UpdateDate)
-                    .HasColumnType("date");
-            });
+            //    entity.Property(e => e.CreateDate)
+            //        .HasColumnType("date");
+            //    entity.Property(e => e.UpdateDate)
+            //        .HasColumnType("date");
+            //});
 
             modelBuilder.Entity<Service>(entity =>
             {

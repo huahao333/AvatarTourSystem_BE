@@ -14,7 +14,7 @@ namespace Services.Interfaces
         public Task<APIGenericResponseModel<int>> GetActiveZaloUserCount();
         public Task<APIGenericResponseModel<decimal>> GetMonthlyBookings(int month, int year);
         public Task<APIGenericResponseModel<int>> GetMonthlyTours(int month, int year);
-        public Task<APIGenericResponseModel<decimal>> GetMonthlyRevenue(int month, int year);
+      //  public Task<APIGenericResponseModel<decimal>> GetMonthlyRevenue(int month, int year);
         public Task<APIGenericResponseModel<int>> GetMonthlyTicketsByType(string typeId, int month, int year);
     }
 }
