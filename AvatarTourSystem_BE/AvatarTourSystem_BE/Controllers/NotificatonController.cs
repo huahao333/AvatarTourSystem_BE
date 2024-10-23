@@ -86,10 +86,10 @@ namespace AvatarTourSystem_BE.Controllers
             return Ok(response);
         }
 
-        [HttpGet("notifications-zalo/{zaloId}")]
-        public async Task<IActionResult> GetNotificationsByZaloID(string zaloId)
+        [HttpPost("get-notifications-zalo")]
+        public async Task<IActionResult> GetNotificationsByZaloID(NotificationGetByZaloUserModel zaloUser)
         {
-            var response = await _notuService.GetNotificaitonByZaloID(zaloId);
+            var response = await _notuService.GetNotificaitonByZaloID(zaloUser);
             if (response.IsSuccess) {
                 return Ok(response);
             }

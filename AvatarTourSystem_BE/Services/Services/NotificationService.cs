@@ -3,6 +3,8 @@ using BusinessObjects.Enums;
 using BusinessObjects.Models;
 using BusinessObjects.ViewModels.DailyTour;
 using BusinessObjects.ViewModels.Notification;
+
+using Google.Apis.Storage.v1.Data;
 using Repositories.Interfaces;
 using Services.Common;
 using Services.Interfaces;
@@ -26,7 +28,7 @@ namespace Services.Services
 
         public async Task<APIResponseModel> CreateNotificaiton(NotificationCreateModel createModel)
         {
-            var newNotificaiton = _mapper.Map<Notification>(createModel);
+            var newNotificaiton = _mapper.Map<BusinessObjects.Models.Notification>(createModel);
             newNotificaiton.NotifyId = Guid.NewGuid().ToString();
             newNotificaiton.CreateDate = DateTime.Now;
             await _unitOfWork.NotificationRepository.AddAsync(newNotificaiton);
@@ -129,14 +131,34 @@ namespace Services.Services
             };
         }
 
-        public async Task<APIResponseModel> GetNotificaitonByZaloID(string zaloId)
+        public async Task<APIResponseModel> GetNotificaitonByZaloID(NotificationGetByZaloUserModel zaloUser)
         {
-            var notificaitons = await _unitOfWork.NotificationRepository.GetByConditionAsync(s => s.UserId == zaloId);
+            var notificaitons = await _unitOfWork.NotificationRepository.GetByConditionAsync(s => s.Accounts.ZaloUser == zaloUser.ZaloUser);
+            if(notificaitons == null || !notificaitons.Any())
+            {
+                return new APIResponseModel
+                {
+                    Message = "Notificaiton not found.",
+                    IsSuccess = false,
+                    Data = null
+                };
+            }
+            var notificationRespone  = notificaitons.Select(n => new
+            {
+                zaloUser.ZaloUser,
+                n.UserId,
+                n.NotifyId,    
+                n.Message,
+                n.SendDate,
+                n.Title,
+                n.Type,
+                n.Status
+            }).ToList();
             return new APIResponseModel
             {
                 Message = "Get Notificaiton Successfully",
                 IsSuccess = true,
-                Data = notificaitons,
+                Data = notificationRespone
             };
 
         }
@@ -189,7 +211,7 @@ namespace Services.Services
             }
 
             var newNotiId = Guid.NewGuid();
-            var notification = new Notification
+            var notification = new BusinessObjects.Models.Notification
             {
                 NotifyId = newNotiId.ToString(),
                 UserId = zaloIdExisting.Id,
@@ -208,7 +230,7 @@ namespace Services.Services
             {
                 Message = "Notification created successfully",
                 IsSuccess = true,
-               // Data = notification
+                //Data = notification
             };
         }
     }
