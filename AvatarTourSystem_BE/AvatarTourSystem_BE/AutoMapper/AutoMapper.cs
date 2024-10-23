@@ -129,11 +129,22 @@ namespace AvatarTourSystem_BE.AutoMapper
             CreateMap<Feedback, FeedbackModel>().ReverseMap();
             CreateMap<Feedback, FeedbackCreateModel>().ReverseMap();
             CreateMap<Feedback, FeedbackUpdateModel>().ReverseMap();
+            CreateMap<FeedbackCreateWithZaloModel, Feedback>()
+           .ForMember(dest => dest.FeedbackMsg, opt => opt.MapFrom(src => src.FeedbackMsg))
+           .ForMember(dest => dest.BookingId, opt => opt.MapFrom(src => src.BookingId))
+           .ForMember(dest => dest.UserId, opt => opt.Ignore())  
+           .ForMember(dest => dest.FeedbackId, opt => opt.Ignore())  
+           .ForMember(dest => dest.CreateDate, opt => opt.Ignore())  
+           .ForMember(dest => dest.UpdateDate, opt => opt.Ignore()) 
+           .ForMember(dest => dest.Status, opt => opt.Ignore())    
+           .ForMember(dest => dest.Accounts, opt => opt.Ignore())   
+           .ForMember(dest => dest.Bookings, opt => opt.Ignore());  
 
             //Rate
             CreateMap<Rate, RateModel>().ReverseMap();
             CreateMap<Rate, RateCreateModel>().ReverseMap();
             CreateMap<Rate, RateUpdateModel>().ReverseMap();
+            CreateMap<Rate, RateCreateWithZaloModel>().ReverseMap();
 
             //Account
             CreateMap<Account, AccountModel>().ReverseMap();

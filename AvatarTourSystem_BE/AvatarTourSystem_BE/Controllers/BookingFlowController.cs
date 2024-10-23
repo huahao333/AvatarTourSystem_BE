@@ -1,4 +1,5 @@
 ﻿using BusinessObjects.Models;
+using BusinessObjects.ViewModels.Account;
 using BusinessObjects.ViewModels.Booking;
 using Microsoft.AspNetCore.Mvc;
 using Services.Interfaces;
@@ -17,6 +18,13 @@ namespace AvatarTourSystem_BE.Controllers
         {
             _bookingFlowService = bookingFlowService;
             _vnPayService = vnPayService;
+        }
+
+        [HttpPost("booking-zaloId")]
+        public async Task<IActionResult> GetBookingFlowByZaloIdAsync(AccountZaloIdModel accountZaloIdModel)
+        {
+            var result = await _bookingFlowService.GetBookingFlowByZaloIdAsync(accountZaloIdModel);
+            return Ok(result);
         }
 
         [HttpPost("create-booking")]

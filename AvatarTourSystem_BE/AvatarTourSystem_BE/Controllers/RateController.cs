@@ -63,7 +63,24 @@ namespace AvatarTourSystem_BE.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                return StatusCode(StatusCodes.Status404NotFound, ex.Message);
+            }
+        }
+        [HttpPost("create-rate-zalouser-booking")]
+        public async Task<IActionResult> CreateRateWithZaloAndBooking(RateCreateWithZaloModel rate)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            try
+            {
+                var result = await _rateService.CreaateRateWithZaloAndBooking(rate);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status404NotFound, ex.Message);
             }
         }
 
