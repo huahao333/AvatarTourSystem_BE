@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BusinessObjects.Enums;
 using BusinessObjects.Models;
+using BusinessObjects.ViewModels.Feedback;
 using BusinessObjects.ViewModels.Rate;
 using Repositories.Interfaces;
 using Services.Common;
@@ -22,6 +23,43 @@ namespace Services.Services
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
+
+        public async Task<APIResponseModel> CreaateRateWithZaloAndBooking(RateCreateWithZaloModel rateCreateModel)
+        {
+            var rate = _mapper.Map<Rate>(rateCreateModel);
+            rate.RateId = Guid.NewGuid().ToString();
+            rate.CreateDate = DateTime.Now;
+            rate.RateStar = rateCreateModel.RateStar;
+            rate.Status = (int)EStatus.Active;
+
+            var user = await _unitOfWork.AccountRepository.GetByConditionAsync(x => x.ZaloUser == rateCreateModel.ZaloUser);
+            if (user == null || !user.Any())
+            {
+                return new APIResponseModel
+                {
+                    Message = "Zalo User not found.",
+                    IsSuccess = false,
+                    Data = null
+                };
+            }
+            rate.UserId = user.FirstOrDefault().Id;
+            await _unitOfWork.RateRepository.AddAsync(rate);
+            _unitOfWork.Save();
+            return new APIResponseModel
+            {
+                Message = "Create Rate Successfully",
+                IsSuccess = true,
+                Data = new
+                {
+                    rate.RateId,
+                    rate.RateStar,
+                    rate.BookingId,
+                    rate.CreateDate,
+                    rate.Status
+                }
+            };
+        }
+
         public async Task<APIResponseModel> CreateRate(RateCreateModel rate)
         {
             var newRate = _mapper.Map<Rate>(rate);
@@ -135,6 +173,11 @@ namespace Services.Services
                 IsSuccess = true,
                 Data = rate,
             };
+        }
+
+        public Task<APIResponseModel> GetRateByZaloUser(string zalouser)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task<APIResponseModel> UpdateRate(RateUpdateModel rate)

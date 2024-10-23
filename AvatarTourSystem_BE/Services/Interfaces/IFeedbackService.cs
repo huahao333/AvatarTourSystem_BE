@@ -15,8 +15,10 @@ namespace Services.Interfaces
         Task<APIResponseModel> GetFeedbackByUserId(string userId);
         Task<APIResponseModel> GetFeedbackByBookingId(string bookingId);
         Task<APIResponseModel> GetFeedbackByZaloUser(string zalouser);
+        Task<APIResponseModel> GetFeedbackByZaloUserAndBookingID(FeedbackGetModel feedbackGetModel);
         Task<APIResponseModel> GetFeedbackByStatus();
         Task<APIResponseModel> CreateFeedback(FeedbackCreateModel feedbackCreateModel);
+        Task<APIResponseModel> CreateFeedbackByZaloUser(FeedbackCreateWithZaloModel feedbackCreateModel);
         Task<APIResponseModel> UpdateFeedback(FeedbackUpdateModel feedbackUpdateModel);
         Task<APIResponseModel> DeleteFeedback(string id);       
     }
