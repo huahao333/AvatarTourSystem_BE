@@ -37,6 +37,39 @@ namespace Services.Services
             };
         }
 
+        public async Task<APIResponseModel> CreateFeedbackByZaloUser(FeedbackCreateWithZaloModel feedbackCreateModel)
+        {
+            var feedback = _mapper.Map<Feedback>(feedbackCreateModel);
+            feedback.FeedbackId = Guid.NewGuid().ToString();
+            feedback.CreateDate = DateTime.Now;
+            var user = await _unitOfWork.AccountRepository.GetByConditionAsync(x => x.ZaloUser == feedbackCreateModel.ZaloUser);
+            if (user == null || !user.Any())
+            {
+                return new APIResponseModel
+                {
+                    Message = "Zalo User not found.",
+                    IsSuccess = false,
+                    Data = null
+                };
+            }
+            feedback.UserId = user.FirstOrDefault().Id;
+            await _unitOfWork.FeedbackRepository.AddAsync(feedback);
+            _unitOfWork.Save();
+            return new APIResponseModel
+            {
+                Message = "Create Feedback Successfully",
+                IsSuccess = true,
+                Data = new
+                {
+                    feedback.FeedbackId,
+                    feedback.FeedbackMsg,
+                    feedback.BookingId,
+                    feedback.CreateDate,
+                    feedback.Status
+                }
+            };
+        }
+
         public async Task<APIResponseModel> DeleteFeedback(string id)
         {
             var feedback = await _unitOfWork.FeedbackRepository.GetByIdStringAsync(id);
@@ -216,6 +249,27 @@ namespace Services.Services
                 Message = "Get Feedbacks by Zalo User Successfully",
                 IsSuccess = true,
                 Data = feedbackWithPackageTour,
+            };
+        }
+
+        public async Task<APIResponseModel> GetFeedbackByZaloUserAndBookingID(FeedbackGetModel feedbackGetModel)
+        {
+            var feedbacks = await _unitOfWork.FeedbackRepository.GetByConditionAsync(x => x.Accounts.ZaloUser == feedbackGetModel.ZaloUser && x.BookingId == feedbackGetModel.BookingId);
+            var feedbackByZaloAndBooking = feedbacks.FirstOrDefault();
+            if (feedbackByZaloAndBooking == null)
+            {
+                return new APIResponseModel
+                {
+                    Message = "Feedback not found.",
+                    IsSuccess = false,
+                    Data = null
+                };
+            }
+            return new APIResponseModel
+            {
+                Message = "Get Feedbacks by Zalo User and Booking Id Successfully",
+                IsSuccess = true,
+                Data = feedbackByZaloAndBooking,
             };
         }
 

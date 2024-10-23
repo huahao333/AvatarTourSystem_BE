@@ -56,7 +56,12 @@ namespace AvatarTourSystem_BE.Controllers
             var response = await _feedbakService.GetFeedbackByBookingId(bookingId);
             return Ok(response);
         }
-
+        [HttpPost("get-feedbacks-zalouser-bookingid")]
+        public async Task<IActionResult> GetFeedbackByZaloUserAndBookingIDAsync(FeedbackGetModel feedbackGetModel)
+        {
+            var response = await _feedbakService.GetFeedbackByZaloUserAndBookingID(feedbackGetModel);
+            return Ok(response);
+        }
         [HttpPost("feedback")]
         public async Task<IActionResult> CreateFeedbackAsync( FeedbackCreateModel feedbackCreateModel)
         {
@@ -67,7 +72,16 @@ namespace AvatarTourSystem_BE.Controllers
             var response = await _feedbakService.CreateFeedback(feedbackCreateModel);
             return Ok(response);
         }
-
+        [HttpPost("feedback-zalouser")]
+        public async Task<IActionResult> CreateFeedbackByZaloUserAsync(FeedbackCreateWithZaloModel feedbackCreateModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var response = await _feedbakService.CreateFeedbackByZaloUser(feedbackCreateModel);
+            return Ok(response);
+        }
         [HttpPut("feedback")]
         public async Task<IActionResult> UpdateFeedbackAsync(FeedbackUpdateModel feedbackUpdateModel)
         {

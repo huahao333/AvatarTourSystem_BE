@@ -15,6 +15,8 @@ namespace Services.Interfaces
         Task<APIResponseModel> GetRateById(string id);
         Task<APIResponseModel> GetRateByBookingId(string id);
         Task<APIResponseModel> GetRateByUserId(string id);
+        Task<APIResponseModel> GetRateByZaloUser(string zalouser);
+        Task<APIResponseModel> CreaateRateWithZaloAndBooking(RateCreateWithZaloModel rateCreateModel);
         Task<APIResponseModel> CreateRate(RateCreateModel rate);
         Task<APIResponseModel> UpdateRate(RateUpdateModel rate);
         Task<APIResponseModel> DeleteRate(string id);
