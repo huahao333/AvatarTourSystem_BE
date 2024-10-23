@@ -19,6 +19,9 @@ using ZXing.QrCode.Internal;
 using ZXing;
 using ZXing.QrCode;
 using ZXing.Common;
+using BusinessObjects.ViewModels.Rate;
+using BusinessObjects.ViewModels.Account;
+using Google.Apis.Storage.v1.Data;
 
 namespace Services.Services
 {
@@ -95,7 +98,6 @@ namespace Services.Services
         {
             try
             {
-                // Lấy DailyTour dựa trên dailyTourId
                 var dailyTour = await _unitOfWork.DailyTourRepository.GetFirstOrDefaultAsync(query => query
                     .Where(dt => dt.DailyTourId == dailyTourId && dt.Status == 1)
                     .Include(dt => dt.PackageTours)
@@ -108,23 +110,21 @@ namespace Services.Services
 
                 if (dailyTour == null)
                 {
-                    return new List<string>(); // Hoặc throw một exception nếu bạn muốn
+                    return new List<string>(); 
                 }
 
-                // Lấy danh sách ServiceId
                 var serviceIds = dailyTour.PackageTours?.TourSegments
                     .SelectMany(ts => ts.ServiceByTourSegments)
                     .Where(sbts => sbts.Services?.Status == 1)
                     .Select(se => se.Services?.ServiceId)
-                    .Distinct() // Lấy các ServiceId duy nhất
+                    .Distinct() 
                     .ToList();
 
                 return serviceIds;
             }
             catch (Exception ex)
             {
-                // Xử lý ngoại lệ nếu cần
-                return new List<string>(); // Hoặc throw một exception nếu bạn muốn
+                return new List<string>(); 
             }
         }
 
@@ -164,15 +164,17 @@ namespace Services.Services
                     BookingDate = DateTime.Now,
                     ExpirationDate = DateTime.UtcNow.AddDays(2), 
                     TotalPrice = createModel.TotalPrice,
-                    Status = 1,  
+                    Status = 9,  
                     CreateDate = DateTime.UtcNow,
                 };
                 await _unitOfWork.BookingRepository.AddAsync(newBooking);
 
+                List<string> ticketIds = new List<string>();
+
                 foreach (var ticket in createModel.Tickets)
                 {
-                    var qrContent = $"đây là id booking nè {newBooking.BookingId}: còn đây là ticketid{ticket.TicketTypeId}";
-                    var qrImageUrl = await GenerateQRCode(qrContent);
+                    //var qrContent = $"đây là id booking nè {newBooking.BookingId}: còn đây là ticketid{ticket.TicketTypeId}";
+                    //var qrImageUrl = await GenerateQRCode(qrContent);
                     var newTicket = new Ticket
                     {
                         TicketId = Guid.NewGuid().ToString(),
@@ -180,12 +182,14 @@ namespace Services.Services
                         TicketTypeId = ticket.TicketTypeId,
                         TicketName = ticket.TicketName,
                         Price = ticket.TotalPrice,
-                        QR = qrImageUrl,
+                        QR = "",
                         Quantity = ticket.TotalQuantity,
-                        Status = 1,
+                        Status = 9,
                         CreateDate = DateTime.UtcNow,
                     };
                     await _unitOfWork.TicketRepository.AddAsync(newTicket);
+
+                    ticketIds.Add(newTicket.TicketId);
                     foreach (var serviceId in serviceIds)
                     {
                         var serviceUsedByTicket = new ServiceUsedByTicket
@@ -193,12 +197,26 @@ namespace Services.Services
                             SUBTId = Guid.NewGuid().ToString(),
                             TicketId = newTicket.TicketId,
                             ServiceId = serviceId,
-                            Status = 1
+                            Status = 9
                         };
                         await _unitOfWork.ServiceUsedByTicketRepository.AddAsync(serviceUsedByTicket);
                     }
                 }
                 _unitOfWork.Save();
+                var qrContent = $"BookingId: {newBooking.BookingId}, TicketIds: {string.Join(",", ticketIds)}";
+                var qrImageUrl = await GenerateQRCode(qrContent);
+
+                foreach (var ticketId in ticketIds)
+                {
+                    var ticket = await _unitOfWork.TicketRepository.GetFirstsOrDefaultAsync(t => t.TicketId == ticketId);
+                    if (ticket != null)
+                    {
+                        ticket.QR = qrImageUrl;
+                        await _unitOfWork.TicketRepository.UpdateAsync(ticket);
+                    }
+                    _unitOfWork.Save();
+                }
+
                 return new APIResponseModel
                 {
                     Message = "Booking and tickets created successfully.",
@@ -251,9 +269,95 @@ namespace Services.Services
             throw new NotImplementedException();
         }
 
-        public Task<APIResponseModel> GetBookingFlowByIdAsync(string id)
+        public async Task<APIResponseModel> GetBookingFlowByZaloIdAsync(AccountZaloIdModel accountZaloIdModel)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var zaloAccount = await _unitOfWork.AccountRepository.GetFirstOrDefaultAsync(query => query
+                                  .Where(a => a.ZaloUser == accountZaloIdModel.ZaloUser));
+                if (zaloAccount == null)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Account not found.",
+                        IsSuccess = false,
+                    };
+                }
+
+                var bookings = await _unitOfWork.BookingRepository.GetAllAsyncs(query => query
+                           .Where(b => b.UserId == zaloAccount.Id));
+
+                if (bookings == null || !bookings.Any())
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "No bookings found for this user.",
+                        IsSuccess = false,
+                    };
+                }
+
+                var bookingIds = bookings.Select(b=>b.BookingId).ToList();
+                var tickets = await _unitOfWork.TicketRepository.GetAllAsyncs(query => query
+                                                            .Where(t=> bookingIds.Contains(t.BookingId)));
+                if (tickets == null || !tickets.Any())
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "No tickets found for this user.",
+                        IsSuccess = false,
+                    };
+                }
+
+                var groupedTickets = tickets.GroupBy(t => new { t.BookingId, t.QR }).Select(group => new
+                {
+                    QR = group.Key.QR,
+                    BookingId = group.Key.BookingId,
+                    Tickets = group.Select(t => new
+                    {
+                        t.TicketId,
+                        t.TicketTypeId,
+                        t.TicketName,
+                        t.Price,
+                        t.Quantity,
+                        t.Status,
+                        t.CreateDate
+                    }).ToList()
+                }).ToList();
+
+                var bookingWithTickets = bookings.Select(b => new
+                {
+                    b.BookingId,
+                    b.UserId,
+                    b.DailyTourId,
+                    b.PaymentId,
+                    b.BookingDate,
+                    b.ExpirationDate,
+                    b.TotalPrice,
+                    b.Status,
+                    b.CreateDate,
+                    QR = groupedTickets.FirstOrDefault(gt => gt.BookingId == b.BookingId)?.QR,
+                    Tickets = groupedTickets.FirstOrDefault(gt => gt.BookingId == b.BookingId)?.Tickets
+                }).ToList();
+
+
+                return new APIResponseModel
+                {
+                    Message = "Found booking",
+                    IsSuccess = true,
+                    Data = new
+                    {
+                        Bookings = bookingWithTickets
+                    }
+                };
+            }
+            catch (Exception ex)
+            {
+                return new APIResponseModel
+                {
+                    Message = ex.Message,
+                    IsSuccess = false,
+                };
+            }
         }
 
         public async Task<APIResponseModel> UpdateBookingByZaloIdFlowAsync(BookingModel updateModel)

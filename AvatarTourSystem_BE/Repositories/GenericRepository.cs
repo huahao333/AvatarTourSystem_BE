@@ -113,6 +113,22 @@ namespace Repositories
 
             return await query.ToListAsync();
         }
+        public async Task<T> GetFirstsOrDefaultAsync(
+            Expression<Func<T, bool>> predicate = null,
+            Func<IQueryable<T>, IQueryable<T>> include = null)
+        {
+            IQueryable<T> query = _dbSet;
+            if (predicate != null)
+            {
+                query = query.Where(predicate);
+            }
+            if (include != null)
+            {
+                query = include(query);
+            }
+
+            return await query.FirstOrDefaultAsync();
+        }
 
         public async Task<T> GetFirstOrDefaultAsync(Func<IQueryable<T>, IQueryable<T>> include = null)
         {
