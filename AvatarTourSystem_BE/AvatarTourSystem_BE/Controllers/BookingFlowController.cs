@@ -34,6 +34,13 @@ namespace AvatarTourSystem_BE.Controllers
             return Ok(result);
         }
 
+        [HttpPost("share-booking-phone")]
+        public async Task<IActionResult> ShareTicketByPhoneNumber(BookingPhoneNumberShareTicket updateModel)
+        {
+            var result = await _bookingFlowService.ShareTicketByPhoneNumber(updateModel);
+            return Ok(result);
+        }
+
         [HttpPut("update-booking-by-zalo")]
         public async Task<IActionResult> UpdateBookingByZaloIdFlowAsync(BookingModel updateModel)
         {

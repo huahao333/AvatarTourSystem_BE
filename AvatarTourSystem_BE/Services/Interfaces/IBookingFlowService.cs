@@ -18,5 +18,6 @@ namespace Services.Interfaces
         Task<APIResponseModel> CreateBookingFlowAsync(BookingFlowCreateModel createModel);
         Task<APIResponseModel> UpdateBookingFlowAsync(BookingUpdateModel updateModel);
         Task<APIResponseModel> UpdateBookingByZaloIdFlowAsync(BookingModel updateModel);
+        Task<APIResponseModel> ShareTicketByPhoneNumber(BookingPhoneNumberShareTicket updateModel);
     }
 }

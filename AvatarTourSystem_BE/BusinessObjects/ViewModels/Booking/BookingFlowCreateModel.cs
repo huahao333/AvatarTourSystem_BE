@@ -16,7 +16,7 @@ namespace BusinessObjects.ViewModels.Booking
     }
     public class TicketModels
     {
-        public string TicketTypeId { get; set; }
+        public string DailyTicketId { get; set; }
         public int TotalQuantity { get; set; }
         public float TotalPrice { get; set; }
         public string TicketName { get; set; }= string.Empty;

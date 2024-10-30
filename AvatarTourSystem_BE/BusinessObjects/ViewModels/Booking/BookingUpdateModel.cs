@@ -30,4 +30,10 @@ namespace BusinessObjects.ViewModels.Booking
       //  [FromForm(Name = "status")]
         public EStatus? Status { get; set; }
     }
+
+    public class BookingPhoneNumberShareTicket
+    {
+        public string TicketId { get; set; }
+        public string PhoneNumber { get; set; }
+    }
 }
