@@ -70,8 +70,8 @@ namespace BusinessObjects.Data
             );
             
             modelBuilder.Entity<PackageTour>().HasData(
-                new PackageTour { PackageTourId = "1", PackageTourName = "Tour Hồ Chí Minh", PackageTourPrice = 500000, CityId = "1", CreateDate = DateTime.Now, Status = 0 },
-                new PackageTour { PackageTourId = "2", PackageTourName = "Tour Hà Nội", PackageTourPrice = 600000, CityId = "2", CreateDate = DateTime.Now, Status = 1 }
+                new PackageTour { PackageTourId = "1", PackageTourName = "Tour Hồ Chí Minh", CityId = "1", CreateDate = DateTime.Now, Status = 0 },
+                new PackageTour { PackageTourId = "2", PackageTourName = "Tour Hà Nội", CityId = "2", CreateDate = DateTime.Now, Status = 1 }
             );
             modelBuilder.Entity<DailyTicketType>().HasData(
                new DailyTicketType { DailyTicketId = "1", TicketTypeId = "1", DailyTourId = "1", Capacity = 10, CreateDate = DateTime.Now, Status = 0 },

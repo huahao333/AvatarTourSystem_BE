@@ -486,7 +486,7 @@ namespace Services.Services
                     {
                         dailyTour.PackageTours?.PackageTourId,
                         dailyTour.PackageTours?.PackageTourName,
-                        dailyTour.PackageTours?.PackageTourPrice,
+                      //  dailyTour.PackageTours?.PackageTourPrice,
                         dailyTour.PackageTours?.PackageTourImgUrl,
                         dailyTour.PackageTours?.CityId,
                         StatusPackageTour = dailyTour.PackageTours?.Status,
@@ -632,7 +632,7 @@ namespace Services.Services
                         {
                             dailyTour.PackageTours?.PackageTourId,
                             dailyTour.PackageTours?.PackageTourName,
-                            dailyTour.PackageTours?.PackageTourPrice,
+                           // dailyTour.PackageTours?.PackageTourPrice,
                             dailyTour.PackageTours?.PackageTourImgUrl,
                             dailyTour.PackageTours?.CityId,
                             StatusPackageTour = dailyTour.PackageTours?.Status,
@@ -779,7 +779,7 @@ namespace Services.Services
                         {
                             dailyTour.PackageTours?.PackageTourId,
                             dailyTour.PackageTours?.PackageTourName,
-                            dailyTour.PackageTours?.PackageTourPrice,
+                         //   dailyTour.PackageTours?.PackageTourPrice,
                             dailyTour.PackageTours?.PackageTourImgUrl,
                             dailyTour.PackageTours?.CityId,
                             StatusPackageTour = dailyTour.PackageTours?.Status,
@@ -924,7 +924,7 @@ namespace Services.Services
                         {
                             dailyTour.PackageTours?.PackageTourId,
                             dailyTour.PackageTours?.PackageTourName,
-                            dailyTour.PackageTours?.PackageTourPrice,
+                         //   dailyTour.PackageTours?.PackageTourPrice,
                             dailyTour.PackageTours?.PackageTourImgUrl,
                             dailyTour.PackageTours?.CityId,
                             StatusPackageTour = dailyTour.PackageTours?.Status,

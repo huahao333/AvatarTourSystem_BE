@@ -35,7 +35,7 @@ namespace Services.Services
             {
                 PackageTourId = Guid.NewGuid().ToString(),
                 PackageTourName = createModel.PackageTourName,
-                PackageTourPrice = 0,
+                //PackageTourPrice = 0,
                 CreateDate = DateTime.Now,
                 Status = 1
 
@@ -301,7 +301,7 @@ namespace Services.Services
                         .Where(sbts => sbts.Status != -1 && sbts.Services?.Status == 1) 
                         .Sum(sbts => sbts.Services?.ServicePrice ?? 0); 
 
-                    packageTour.PackageTourPrice = totalServicePrice;
+                //    packageTour.PackageTourPrice = totalServicePrice;
 
                     await _unitOfWork.PackageTourRepository.UpdateAsync(packageTour);
 
@@ -311,7 +311,7 @@ namespace Services.Services
                         {
                             packageTour.PackageTourId,
                             packageTour.PackageTourName,
-                            packageTour.PackageTourPrice, 
+                        //    packageTour.PackageTourPrice, 
                             packageTour.PackageTourImgUrl,
                             StatusPackageTour = packageTour.Status,
                             packageTour.Cities?.CityName,
@@ -417,7 +417,7 @@ namespace Services.Services
             existingPackageTour.UpdateDate = DateTime.Now;
             existingPackageTour.CityId = updateModel.CityId;
             existingPackageTour.PackageTourImgUrl = updateModel.PackageTourImgUrl;
-            float totalPrice = existingPackageTour.PackageTourPrice ?? 0;
+         //   float totalPrice = existingPackageTour.PackageTourPrice ?? 0;
             foreach (var destinationModel in updateModel.Destinations)
             {
                 var destination = new Destination
@@ -458,7 +458,7 @@ namespace Services.Services
                         };
 
                         // Add service price to total price
-                        totalPrice += service.ServicePrice ?? 0;
+                   //     totalPrice += service.ServicePrice ?? 0;
 
                         // Add service to the location
                         location.Services.Add(service);
@@ -469,7 +469,7 @@ namespace Services.Services
                     destination.Locations.Add(location);
                     await _unitOfWork.LocationRepository.AddAsync(location);
                 }
-                existingPackageTour.PackageTourPrice = totalPrice;
+              //  existingPackageTour.PackageTourPrice = totalPrice;
 
                 // Add TourSegment for the destination
                 var tourSegment = new TourSegment
@@ -530,7 +530,7 @@ namespace Services.Services
                     {
                         packageTourRespone.PackageTourId,
                         packageTourRespone.PackageTourName,
-                        packageTourRespone.PackageTourPrice,
+                    //    packageTourRespone.PackageTourPrice,
                         packageTourRespone.PackageTourImgUrl,
                         StatusPackageTour = packageTourRespone.Status,
                         packageTourRespone.Cities?.CityName,
@@ -605,7 +605,7 @@ namespace Services.Services
                 };
             }
 
-            float totalServicePrice = existingPackageTour.PackageTourPrice ?? 0;  // To store the total price of all services
+          //  float totalServicePrice = existingPackageTour.PackageTourPrice ?? 0;  // To store the total price of all services
 
             // Loop through the list of provided destinations
             foreach (var dest in updateModel.Destinations)
@@ -695,7 +695,7 @@ namespace Services.Services
                                             await _unitOfWork.ServiceByTourSegmentRepository.UpdateAsync(existingServiceByTourSegment);
                                         }
                                         // Subtract the service price if status is -1
-                                        totalServicePrice -= service.ServicePrice ?? 0;
+                                        //totalServicePrice -= service.ServicePrice ?? 0;
                                     }
                                     else
                                     {
@@ -715,7 +715,7 @@ namespace Services.Services
                                         }
 
                                         // Add the service price for other statuses
-                                        totalServicePrice += service.ServicePrice ?? 0;
+                                     //   totalServicePrice += service.ServicePrice ?? 0;
                                     }
                                 }
                             }
@@ -724,7 +724,7 @@ namespace Services.Services
                 }
             }
 
-            existingPackageTour.PackageTourPrice = totalServicePrice;
+          //  existingPackageTour.PackageTourPrice = totalServicePrice;
             var packageTour = await _unitOfWork.PackageTourRepository.GetByIdStringAsync(existingPackageTour.PackageTourId);
             var toursegment = await _unitOfWork.TourSegmentRepository.GetByConditionAsync(i => i.PackageTourId == packageTour.PackageTourId && i.Status != -1);
 
@@ -753,7 +753,7 @@ namespace Services.Services
                     {
                         packageTourRespone.PackageTourId,
                         packageTourRespone.PackageTourName,
-                        packageTourRespone.PackageTourPrice, // Giá ban đầu
+                 //       packageTourRespone.PackageTourPrice, // Giá ban đầu
                         packageTourRespone.PackageTourImgUrl,
                         StatusPackageTour = packageTourRespone.Status,
                         packageTourRespone.Cities?.CityName,
@@ -817,7 +817,7 @@ namespace Services.Services
                 };
 
                 // Cập nhật giá PackageTourPrice bằng tổng giá dịch vụ
-                packageTourRespone.PackageTourPrice = calculatedTotalPrice;
+         //       packageTourRespone.PackageTourPrice = calculatedTotalPrice;
 
                 resultList.Add(result);
             }
@@ -857,7 +857,7 @@ namespace Services.Services
                 };
             }
 
-            float totalServicePrice = existingPackageTour.PackageTourPrice ?? 0;  // To store the total price of all services
+        //    float totalServicePrice = existingPackageTour.PackageTourPrice ?? 0;  // To store the total price of all services
 
             // Loop through the list of provided destinations
             foreach (var dest in createModel.Destinations)
@@ -928,7 +928,7 @@ namespace Services.Services
                                 else
                                 {
                                     // Add the service price for other statuses
-                                    totalServicePrice += service.ServicePrice ?? 0;
+                                    //totalServicePrice += service.ServicePrice ?? 0;
                                 }
                             }
                         }
@@ -937,7 +937,7 @@ namespace Services.Services
             }
 
             // Update the PackageTour price with the total service price
-            existingPackageTour.PackageTourPrice = totalServicePrice;
+          //  existingPackageTour.PackageTourPrice = totalServicePrice;
             var packageToursResponeMess = await _unitOfWork.PackageTourRepository.GetAllAsyncs(query => query
      .Where(pt => pt.PackageTourId == createModel.PackageTourId.ToString())
      .Include(pt => pt.TourSegments)
@@ -961,7 +961,7 @@ namespace Services.Services
                     {
                         packageTourRespone.PackageTourId,
                         packageTourRespone.PackageTourName,
-                        packageTourRespone.PackageTourPrice, // Giá ban đầu
+                     //   packageTourRespone.PackageTourPrice, // Giá ban đầu
                         packageTourRespone.PackageTourImgUrl,
                         StatusPackageTour = packageTourRespone.Status,
                         packageTourRespone.Cities?.CityName,
@@ -1023,7 +1023,7 @@ namespace Services.Services
                 };
 
                 // Cập nhật giá PackageTourPrice bằng tổng giá dịch vụ
-                packageTourRespone.PackageTourPrice = calculatedTotalPrice;
+              //  packageTourRespone.PackageTourPrice = calculatedTotalPrice;
 
                 resultList.Add(result);
             }
