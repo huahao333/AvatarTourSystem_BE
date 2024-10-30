@@ -73,9 +73,9 @@ namespace BusinessObjects.Data
                 new PackageTour { PackageTourId = "1", PackageTourName = "Tour Hồ Chí Minh", PackageTourPrice = 500000, CityId = "1", CreateDate = DateTime.Now, Status = 0 },
                 new PackageTour { PackageTourId = "2", PackageTourName = "Tour Hà Nội", PackageTourPrice = 600000, CityId = "2", CreateDate = DateTime.Now, Status = 1 }
             );
-            modelBuilder.Entity<DailyTicket>().HasData(
-               new DailyTicket { DailyTicketId = "1", TicketTypeId = "1", DailyTourId = "1", Capacity = 10, CreateDate = DateTime.Now, Status = 0 },
-               new DailyTicket { DailyTicketId = "2", TicketTypeId = "2", DailyTourId = "1", Capacity = 10, CreateDate = DateTime.Now, Status = 1 }
+            modelBuilder.Entity<DailyTicketType>().HasData(
+               new DailyTicketType { DailyTicketId = "1", TicketTypeId = "1", DailyTourId = "1", Capacity = 10, CreateDate = DateTime.Now, Status = 0 },
+               new DailyTicketType { DailyTicketId = "2", TicketTypeId = "2", DailyTourId = "1", Capacity = 10, CreateDate = DateTime.Now, Status = 1 }
            );
             modelBuilder.Entity<DailyTour>().HasData(
                 new DailyTour
@@ -101,11 +101,11 @@ namespace BusinessObjects.Data
                 new TicketType { TicketTypeId = "2", PackageTourId = "1", TicketTypeName = "Vé trẻ em", CreateDate = DateTime.Now, Status = 1 }
             );
             modelBuilder.Entity<Booking>().HasData(
-              new Booking { BookingId = "1", UserId = adminAccount.Id.ToString(), BookingDate = DateTime.Now, TotalPrice = 500000, DailyTourId = "1", PaymentId = "1", CreateDate = DateTime.Now, Status = 0 }
+              new Booking { BookingId = "1", UserId = adminAccount.Id.ToString(), BookingDate = DateTime.Now, TotalPrice = 500000, DailyTourId = "1", CreateDate = DateTime.Now, Status = 0 }
             );
             modelBuilder.Entity<Ticket>().HasData(
-                new Ticket { TicketId = "1", TicketTypeId = "1", BookingId = "1", TicketName = "Vé vào cổng", Quantity = 10, QR = "", Price = 100000, CreateDate = DateTime.Now, Status = 0 },
-                new Ticket { TicketId = "2", TicketTypeId = "1", BookingId = "1", TicketName = "Vé ăn uống", Quantity = 10, QR = "", Price = 50000, CreateDate = DateTime.Now, Status = 1 }
+                new Ticket { TicketId = "1", DailyTicketId = "1", BookingId = "1", TicketName = "Vé vào cổng", Quantity = 10, QRImgUrl = "", Price = 100000, CreateDate = DateTime.Now, Status = 0 },
+                new Ticket { TicketId = "2", DailyTicketId = "1", BookingId = "1", TicketName = "Vé ăn uống", Quantity = 10, QRImgUrl = "", Price = 50000, CreateDate = DateTime.Now, Status = 1 }
             );
             modelBuilder.Entity<ServiceUsedByTicket>().HasData(
                 new ServiceUsedByTicket { SUBTId = "1", ServiceId = "1", TicketId = "1", CreateDate = DateTime.Now, Status = 0 },
@@ -119,7 +119,7 @@ namespace BusinessObjects.Data
             //    new Revenue { RevenueId = "1", TotalRevenue = 900000, RevenueDate = DateTime.Now, CreateDate = DateTime.Now, Status = 0 }
             //);
             modelBuilder.Entity<PaymentMethod>().HasData(
-                new PaymentMethod { PaymentId = "1", PaymentType = "Momo", CreateDate = DateTime.Now, Status = 0 }
+                new PaymentMethod { PaymentMethodId = "1", PaymentType = "Momo", CreateDate = DateTime.Now, Status = 0 }
             );
             modelBuilder.Entity<TransactionsHistory>().HasData(
                 new TransactionsHistory { TransactionId = "1", UserId = adminAccount.Id.ToString(), BookingId = "1", CreateDate = DateTime.Now, Status = 0 }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Repositories.Interfaces
 {
-    public interface IDailyTicketRepository : IGenericRepository<DailyTicket>
+    public interface IDailyTicketRepository : IGenericRepository<DailyTicketType>
     {
     }
 }

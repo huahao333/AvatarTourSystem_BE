@@ -146,7 +146,7 @@ namespace Services.Services
         public async Task<APIGenericResponseModel<int>> GetMonthlyTicketsByType(string typeId, int month, int year)
         {
             var tickets = await _unitOfWork.TicketRepository.GetByConditionAsync(s => s.Status != -1);
-            var monthlyTickets = tickets.Where(t => t.TicketTypeId == typeId).Sum(t => t.Quantity);
+            var monthlyTickets = tickets.Where(t => t.DailyTicketId == typeId).Sum(t => t.Quantity);
             if (monthlyTickets > 0 && typeId == "1")
             {
                 return new APIGenericResponseModel<int>

@@ -10,19 +10,20 @@ namespace BusinessObjects.Models
     {
         public TicketType()
         {
-            DailyTickets = new HashSet<DailyTicket>();
-            Tickets = new HashSet<Ticket>();
+            DailyTicketTypes = new HashSet<DailyTicketType>();
+         //   Tickets = new HashSet<Ticket>();
         }
         public string? TicketTypeId { get; set; }
         public string? PackageTourId { get; set; }
         public string? TicketTypeName { get; set; }
         public int? MinBuyTicket { get; set; }
+        public float? PriceDefault { get; set; }
         public DateTime? CreateDate { get; set; }
         public DateTime? UpdateDate { get; set; }
         public int? Status { get; set; }
 
-        public virtual ICollection<DailyTicket> DailyTickets { get; set; }
-        public virtual ICollection<Ticket> Tickets { get; set; }
+        public virtual ICollection<DailyTicketType> DailyTicketTypes { get; set; }
+       // public virtual ICollection<Ticket> Tickets { get; set; }
         public virtual PackageTour? PackageTours { get; set; }
     }
 }

@@ -7,8 +7,12 @@ using System.Threading.Tasks;
 
 namespace BusinessObjects.Models
 {
-    public partial class DailyTicket
+    public partial class DailyTicketType
     {
+        public DailyTicketType()
+        {
+            Tickets = new HashSet<Ticket>();
+        }
         public string? DailyTicketId { get; set; }
         public string? TicketTypeId { get; set; }
         public string? DailyTourId { get; set; }
@@ -20,5 +24,6 @@ namespace BusinessObjects.Models
 
         public virtual TicketType? TicketTypes { get; set; }
         public virtual DailyTour? DailyTours { get; set; }
+        public virtual ICollection<Ticket> Tickets { get; set; }
     }
 }

@@ -69,7 +69,7 @@ namespace Services.Services
 
         public async Task<APIResponseModel> CreateDailyTicketAsync(DailyTicketCreateModel createModel)
         {
-            var dailyTicket = _mapper.Map<DailyTicket>(createModel);
+            var dailyTicket = _mapper.Map<DailyTicketType>(createModel);
             dailyTicket.DailyTicketId = Guid.NewGuid().ToString();
             dailyTicket.CreateDate = DateTime.Now;
             var result = await _unitOfWork.DailyTicketRepository.AddAsync(dailyTicket);

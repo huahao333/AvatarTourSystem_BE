@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Repositories.Repositories
 {
-    public class DailyTicketRepository : GenericRepository<DailyTicket>, IDailyTicketRepository
+    public class DailyTicketRepository : GenericRepository<DailyTicketType>, IDailyTicketRepository
     {
         public DailyTicketRepository(AvatarTourDBContext context) : base(context)
         {

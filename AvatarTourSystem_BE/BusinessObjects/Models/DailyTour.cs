@@ -11,7 +11,7 @@ namespace BusinessObjects.Models
         public DailyTour()
         {
             Bookings = new HashSet<Booking>();
-            DailyTickets = new HashSet<DailyTicket>();
+            DailyTickets = new HashSet<DailyTicketType>();
         }
         public string? DailyTourId { get; set; }
         public string? PackageTourId { get; set; }
@@ -29,6 +29,6 @@ namespace BusinessObjects.Models
 
         public virtual PackageTour? PackageTours { get; set; }
         public virtual ICollection<Booking> Bookings { get; set; }
-        public virtual ICollection<DailyTicket> DailyTickets { get; set; }
+        public virtual ICollection<DailyTicketType> DailyTickets { get; set; }
     }
 }

@@ -26,7 +26,7 @@ namespace Services.Services
         public async Task<APIResponseModel> CreatePaymentMethod(PaymentMethodCreateModel paymentMethodCreateModel)
         {
             var paymentMethod = _mapper.Map<PaymentMethod>(paymentMethodCreateModel);
-            paymentMethod.PaymentId = Guid.NewGuid().ToString();
+            paymentMethod.PaymentMethodId = Guid.NewGuid().ToString();
             paymentMethod.CreateDate = DateTime.Now;
             await _unitOfWork.PaymentMethodRepository.AddAsync(paymentMethod);
             _unitOfWork.Save();

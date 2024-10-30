@@ -160,7 +160,7 @@ namespace Services.Services
                     BookingId = newBookingId.ToString(),
                     UserId = zaloAccount.Id,
                     DailyTourId = createModel.DailyTourId,
-                    PaymentId = "1",
+                //    PaymentId = "1",
                     BookingDate = DateTime.Now,
                     ExpirationDate = DateTime.UtcNow.AddDays(2), 
                     TotalPrice = createModel.TotalPrice,
@@ -179,10 +179,10 @@ namespace Services.Services
                     {
                         TicketId = Guid.NewGuid().ToString(),
                         BookingId = newBooking.BookingId,
-                        TicketTypeId = ticket.TicketTypeId,
+                        DailyTicketId = ticket.TicketTypeId,
                         TicketName = ticket.TicketName,
                         Price = ticket.TotalPrice,
-                        QR = "",
+                        QRImgUrl = "",
                         Quantity = ticket.TotalQuantity,
                         Status = 9,
                         CreateDate = DateTime.UtcNow,
@@ -211,7 +211,7 @@ namespace Services.Services
                     var ticket = await _unitOfWork.TicketRepository.GetFirstsOrDefaultAsync(t => t.TicketId == ticketId);
                     if (ticket != null)
                     {
-                        ticket.QR = qrImageUrl;
+                        ticket.QRImgUrl = qrImageUrl;
                         await _unitOfWork.TicketRepository.UpdateAsync(ticket);
                     }
                     _unitOfWork.Save();
@@ -308,14 +308,14 @@ namespace Services.Services
                     };
                 }
 
-                var groupedTickets = tickets.GroupBy(t => new { t.BookingId, t.QR }).Select(group => new
+                var groupedTickets = tickets.GroupBy(t => new { t.BookingId, t.QRImgUrl }).Select(group => new
                 {
-                    QR = group.Key.QR,
+                    QR = group.Key.QRImgUrl,
                     BookingId = group.Key.BookingId,
                     Tickets = group.Select(t => new
                     {
                         t.TicketId,
-                        t.TicketTypeId,
+                        t.DailyTicketId,
                         t.TicketName,
                         t.Price,
                         t.Quantity,
@@ -329,7 +329,6 @@ namespace Services.Services
                     b.BookingId,
                     b.UserId,
                     b.DailyTourId,
-                    b.PaymentId,
                     b.BookingDate,
                     b.ExpirationDate,
                     b.TotalPrice,

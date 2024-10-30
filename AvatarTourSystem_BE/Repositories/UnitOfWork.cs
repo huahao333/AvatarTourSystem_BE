@@ -20,7 +20,7 @@ namespace Repositories
      //   private GenericRepository<BookingByRevenue> _bookingByRevenueRepository;
         private GenericRepository<City> _cityRepository;
         private GenericRepository<CustomerSupport> _customerSupportRepository;
-        private GenericRepository<DailyTicket> _dailyTicketRepository;
+        private GenericRepository<DailyTicketType> _dailyTicketRepository;
         private GenericRepository<DailyTour> _dailyTourRepository;
         private GenericRepository<Destination> _destinationRepository;  
         private GenericRepository<Feedback> _feedbackRepository;
@@ -108,13 +108,13 @@ namespace Repositories
             }
         }
 
-        public GenericRepository<DailyTicket> DailyTicketRepository
+        public GenericRepository<DailyTicketType> DailyTicketRepository
         {
             get
             {
                 if (this._dailyTicketRepository == null)
                 {
-                    this._dailyTicketRepository = new GenericRepository<DailyTicket>(_context);
+                    this._dailyTicketRepository = new GenericRepository<DailyTicketType>(_context);
                 }
                 return _dailyTicketRepository;
             }
