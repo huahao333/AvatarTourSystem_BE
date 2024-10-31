@@ -48,6 +48,13 @@ namespace AvatarTourSystem_BE.Controllers
             return Ok(result);
         }
 
+        [HttpPost("decrypt-booking")]
+        public async Task<IActionResult> DecryptBookingFlowAsync(DecryptBooking encryptedQrData)
+        {
+            var result = await _bookingFlowService.DecryptBookingFlowAsync(encryptedQrData);
+            return Ok(result);
+        }
+
         [HttpPut("update-booking-by-zalo")]
         public async Task<IActionResult> UpdateBookingByZaloIdFlowAsync(BookingModel updateModel)
         {

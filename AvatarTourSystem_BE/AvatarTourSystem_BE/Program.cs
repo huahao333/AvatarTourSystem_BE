@@ -38,7 +38,9 @@ builder.Services.AddHttpClient();
 builder.Services.AddApiWebService(builder);
 //config cors
 
-
+var encryptionKey = builder.Configuration["EncryptionSettings:Key"];
+var encryptionIV = builder.Configuration["EncryptionSettings:IV"];
+builder.Services.AddSingleton(new EncryptionHelperService(encryptionKey, encryptionIV));
 
 var googleApiKey = builder.Configuration.GetSection("GoogleMaps:ApiKey").Value;
 builder.Services.AddSingleton(new GoogleMapsService(googleApiKey));

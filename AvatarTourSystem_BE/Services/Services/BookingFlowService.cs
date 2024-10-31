@@ -37,11 +37,13 @@ namespace Services.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly CloudinaryService _cloudinaryService;
-        public BookingFlowService(IUnitOfWork unitOfWork, IMapper mapper, CloudinaryService cloudinaryService)
+        private readonly EncryptionHelperService _encryptionHelperService;
+        public BookingFlowService(IUnitOfWork unitOfWork, IMapper mapper, CloudinaryService cloudinaryService, EncryptionHelperService encryptionHelperService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _cloudinaryService = cloudinaryService;
+            _encryptionHelperService = encryptionHelperService;
         }
         //public async Task<APIResponseModel> CreateBookingFlowAsync(BookingCreateModel createModel)
         //{
@@ -255,7 +257,8 @@ namespace Services.Services
                             TicketName = ticket.TicketName,
                             Price = ticket.TotalPrice
                         };
-                        var qrContent = JsonConvert.SerializeObject(qrData);
+                        //  var qrContent = JsonConvert.SerializeObject(qrData);
+                        var qrContent = _encryptionHelperService.EncryptString(JsonConvert.SerializeObject(qrData));
                         var qrImageUrl = await GenerateQRCode(qrContent);
                         var newTicket = new Ticket
                         {
@@ -315,6 +318,40 @@ namespace Services.Services
                 {
                     Message = ex.Message,
                     IsSuccess = false,
+                };
+            }
+        }
+
+        public async Task<APIResponseModel> DecryptBookingFlowAsync(DecryptBooking encryptedQrData)
+        {
+            try
+            {
+                var decryptedJson = _encryptionHelperService.DecryptString(encryptedQrData.EncryptedQr);
+
+                var bookingFlowData = JsonConvert.DeserializeObject<BookingFlowDataModel>(decryptedJson);
+                if (bookingFlowData == null)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Failed to deserialize booking flow data.",
+                        IsSuccess = false
+                    };
+                }
+
+                // Trả về kết quả thành công
+                return new APIResponseModel
+                {
+                    Data = bookingFlowData,
+                    Message = "Decryption successful.",
+                    IsSuccess = true
+                };
+            }
+            catch (Exception ex)
+            {
+                return new APIResponseModel
+                {
+                    Message = $"Error during decryption: {ex.Message}",
+                    IsSuccess = false
                 };
             }
         }
