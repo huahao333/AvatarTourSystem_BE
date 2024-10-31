@@ -9,9 +9,9 @@ namespace BusinessObjects.ViewModels.PackageTourFlow.PackageTourUpdate
 {
     public class FDestinationUpdateModel
     {
-     
-        public string? DestinationId { get; set; } 
-        [Required(ErrorMessage = "DestinationName is required")]        
+
+        [Required(ErrorMessage = "DestinationId is required")]
+        public string? DestinationId { get; set; }
         public string? CityId { get; set; } 
         public int? Status { get; set; }
         public List<FLocationUpdateModel> Locations { get; set; } = new List<FLocationUpdateModel>();

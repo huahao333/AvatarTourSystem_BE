@@ -1,6 +1,7 @@
 ﻿using BusinessObjects.ViewModels.PackageTour;
 using BusinessObjects.ViewModels.PackageTourFlow;
 using BusinessObjects.ViewModels.PackageTourFlow.PackageTourUpdate;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Services.Interfaces;
@@ -16,6 +17,7 @@ namespace AvatarTourSystem_BE.Controllers
         {
             _packageTourFlow = packageTourFlow;
         }
+        [Authorize]
         [HttpPost("package-tour-flows")]
         public async Task<IActionResult> CreatePackageTourFlowAsync([FromBody] FPackageTourCreateModel packageTourFlowModel)
         {
@@ -30,27 +32,18 @@ namespace AvatarTourSystem_BE.Controllers
             }
             else
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, result);
+                return StatusCode(StatusCodes.Status400BadRequest, result);
             }
         }
-        //[HttpPut("parts-package-tour-flow")]
-        //public async Task<IActionResult> CreatePartsPackageTourFlowAsync([FromBody] FPackageTourUpdate packageTourFlowModel)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
-        //    var result = await _packageTourFlow.CreatePartsPackageTourFlowAsync(packageTourFlowModel);
-        //    if (result.IsSuccess)
-        //    {
-        //        return Ok(result);
-        //    }
-        //    else
-        //    {
-        //        return StatusCode(StatusCodes.Status500InternalServerError, result);
-        //    }
-        //}
-        [HttpGet("package-tour-flow/{id}")]
+        [Authorize]
+        [HttpGet("get-all-package-tour")]
+        public async Task<IActionResult> GetPackageTourFlowAsync()
+        {
+            var result = await _packageTourFlow.GetPackageTourFlowAsync();
+            return Ok(result);
+        }
+        [Authorize]
+        [HttpGet("get-package-tour/{id}")]
         public async Task<IActionResult> GetPackageTourByIdFlowAsync(string id)
         {
             var result = await _packageTourFlow.GetPackageTourFlowByIdAsync(id);
@@ -60,10 +53,11 @@ namespace AvatarTourSystem_BE.Controllers
             }
             else
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, result);
+                return StatusCode(StatusCodes.Status404NotFound, result);
             }
         }
-        [HttpPut("package-tours")]
+        [Authorize]
+        [HttpPut("create-detail-package-tours")]
         public async Task<IActionResult> AddPartToPackageTour([FromBody] FPackageTourUpdateModel packageTourFlowModel)
         {
             if (!ModelState.IsValid)
@@ -77,10 +71,11 @@ namespace AvatarTourSystem_BE.Controllers
             }
             else
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, result);
+                return StatusCode(StatusCodes.Status400BadRequest, result);
             }
         }
-        [HttpPut("tour-flow")]
+        [Authorize]
+        [HttpPut("update-packge-tour")]
         public async Task<IActionResult> UpdateTour([FromBody] FPackageTourUpdateModel packageTourFlowModel)
         {
             if (!ModelState.IsValid)
@@ -94,7 +89,7 @@ namespace AvatarTourSystem_BE.Controllers
             }
             else
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, result);
+                return StatusCode(StatusCodes.Status400BadRequest, result);
             }
         }
         
