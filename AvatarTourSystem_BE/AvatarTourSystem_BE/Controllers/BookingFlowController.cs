@@ -41,6 +41,13 @@ namespace AvatarTourSystem_BE.Controllers
             return Ok(result);
         }
 
+        [HttpPost("booking-status")]
+        public async Task<IActionResult> UpdateBookingStatusAsync(BookingFlowModel updateModel)
+        {
+            var result = await _bookingFlowService.UpdateBookingStatusAsync(updateModel);
+            return Ok(result);
+        }
+
         [HttpPut("update-booking-by-zalo")]
         public async Task<IActionResult> UpdateBookingByZaloIdFlowAsync(BookingModel updateModel)
         {

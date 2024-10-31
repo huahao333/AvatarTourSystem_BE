@@ -455,6 +455,61 @@ namespace Services.Services
             }
         }
 
+        public async Task<APIResponseModel> UpdateBookingStatusAsync(BookingFlowModel updateModel)
+        {
+            try
+            {
+                var booking = await _unitOfWork.BookingRepository.GetFirstsOrDefaultAsync(b => b.BookingId == updateModel.BookingId);
+                if (booking == null)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Booking not found.",
+                        IsSuccess = false,
+                    };
+                }
+
+                booking.Status = 1;
+                await _unitOfWork.BookingRepository.UpdateAsync(booking);
+
+                
+                var tickets = await _unitOfWork.TicketRepository.GetAllAsyncs(query => query
+                                                            .Where(t => t.BookingId == updateModel.BookingId));
+                foreach (var ticket in tickets)
+                {
+                    ticket.Status = 1;
+                    await _unitOfWork.TicketRepository.UpdateAsync(ticket);
+                }
+
+                foreach (var ticket in tickets)
+                {
+                    var servicesUsedByTicket = await _unitOfWork.ServiceUsedByTicketRepository.GetAllAsyncs(query => query
+                                                                                             .Where(s=> s.TicketId == ticket.TicketId));
+                    foreach (var serviceUsed in servicesUsedByTicket)
+                    {
+                        serviceUsed.Status = 1;
+                        await _unitOfWork.ServiceUsedByTicketRepository.UpdateAsync(serviceUsed);
+                    }
+                }
+
+                _unitOfWork.Save();
+
+                return new APIResponseModel
+                {
+                    Message = "Status updated successfully for booking and related records.",
+                    IsSuccess = true,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new APIResponseModel
+                {
+                    Message = ex.Message,
+                    IsSuccess = false,
+                };
+            }
+        }
+
         public async Task<object> GetDailyTourDetails(string dailyTourId)
         {
             try
