@@ -18,6 +18,9 @@ namespace BusinessObjects.ViewModels.PackageTourFlow
         [Required(ErrorMessage = "TicketTypeName is required")]
         [StringLength(50, ErrorMessage = "TicketTypeName can't be longer than 50 characters")]
         public string? TicketTypeName { get; set; }
+        [Required(ErrorMessage = "Default Price is required")]
+        public float? PriceDefault { get; set; }
+        [Required(ErrorMessage = "Min Buy Ticket is required")]
         public int? MinBuyTicket { get; set; }
         public int Status { get; set; }
     }
