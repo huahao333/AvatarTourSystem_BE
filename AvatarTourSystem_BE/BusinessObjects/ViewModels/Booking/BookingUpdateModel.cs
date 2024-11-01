@@ -36,4 +36,17 @@ namespace BusinessObjects.ViewModels.Booking
         public string TicketId { get; set; }
         public string PhoneNumber { get; set; }
     }
+
+    public class TicketUsageViewModel
+    {
+        public string TicketId { get; set; } 
+        public string MobileDestinationId { get; set; }
+        public string DailyTourId { get; set; }
+        public DateTime? ExpirationDate { get; set; }
+        public List<ListDestinationModel> Destination { get; set; }
+    }
+    public class ListDestinationModel
+    {
+        public string DestinationIds { get; set; }
+    }
 }

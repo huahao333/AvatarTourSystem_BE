@@ -284,6 +284,7 @@ namespace Services.Services
                                 SUBTId = Guid.NewGuid().ToString(),
                                 TicketId = newTicket.TicketId,
                                 ServiceId = serviceId,
+                                CreateDate = DateTime.Now,
                                 Status = 9
                             };
                             await _unitOfWork.ServiceUsedByTicketRepository.AddAsync(serviceUsedByTicket);
@@ -720,6 +721,191 @@ namespace Services.Services
                 };
 
                 return dailyTourDetails;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public async Task<APIResponseModel> UpdateTicketByQR(TicketUsageViewModel ticketUsageViewModel)
+        {
+            try
+            {
+                var ticket = await _unitOfWork.TicketRepository.GetFirstsOrDefaultAsync(b => b.TicketId == ticketUsageViewModel.TicketId);
+                if (ticket == null)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Ticket not found.",
+                        IsSuccess = false,
+                    };
+                } else if (ticket.Status ==9)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Tickets are pending payment.",
+                        IsSuccess = false,
+                    };
+                } else if (ticket.Status == 4)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Ticket has been used.",
+                        IsSuccess = false,
+                    };
+                }
+
+                bool isDestinationValid = ticketUsageViewModel.Destination
+                                         .Any(d => d.DestinationIds == ticketUsageViewModel.MobileDestinationId);
+                if (!isDestinationValid)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Tickets do not exist at this destination.",
+                        IsSuccess = false,
+                    };
+                }
+
+                if (ticketUsageViewModel.ExpirationDate.HasValue)
+                {
+                    var expirationDate = ticketUsageViewModel.ExpirationDate.Value.Date; 
+                    var currentDate = DateTime.Now.Date;
+
+                    if (expirationDate < currentDate)
+                    {
+                        return new APIResponseModel
+                        {
+                            Message = "Ticket has expired.",
+                            IsSuccess = false,
+                        };
+                    }
+                    else if (expirationDate > currentDate)
+                    {
+                        return new APIResponseModel
+                        {
+                            Message = "Ticket is not yet valid for use.",
+                            IsSuccess = false,
+                        };
+                    }
+                }
+                else
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Expiration date is not set.",
+                        IsSuccess = false,
+                    };
+                }
+
+                var serviceIds = await GetServiceIdByDailyTourIdAndDestinationId(ticketUsageViewModel.DailyTourId, ticketUsageViewModel.MobileDestinationId);
+                if (serviceIds == null || !serviceIds.Any())
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "No services found for the provided Daily Tour and Destination.",
+                        IsSuccess = false,
+                    };
+                }
+                var servicesUsed = await _unitOfWork.ServiceUsedByTicketRepository
+                                           .GetAllAsyncs(query => query.Where(s => s.TicketId == ticketUsageViewModel.TicketId && serviceIds.Contains(s.ServiceId)));
+                bool hasServiceUsedStatus4 = servicesUsed.Any(s => s.Status == 4);
+                if (servicesUsed.Any())
+                {
+                    foreach (var service in servicesUsed)
+                    {
+                        var createDate = service.CreateDate;
+                        service.Status = 4; 
+                        service.UpdateDate = DateTime.Now;
+                        service.CreateDate = createDate;
+                        _unitOfWork.ServiceUsedByTicketRepository.UpdateAsync(service); 
+                    }
+
+                    _unitOfWork.Save(); 
+                }
+
+                if (hasServiceUsedStatus4)
+                {
+                    var createDate = ticket.CreateDate;
+                    ticket.Status = 4;
+                    ticket.UpdateDate = DateTime.Now;
+                    ticket.CreateDate = createDate;
+                    _unitOfWork.TicketRepository.UpdateAsync(ticket); 
+                    _unitOfWork.Save();
+
+                    var bookingTickets = await _unitOfWork.TicketRepository.GetAllAsyncs(query => query.Where(b => b.BookingId == ticket.BookingId));
+                    if (bookingTickets.All(t => t.Status == 4))
+                    {
+                        var booking = await _unitOfWork.BookingRepository.GetFirstsOrDefaultAsync(b => b.BookingId == ticket.BookingId);
+                        if (booking != null)
+                        {
+                            var createDateBooking = booking.CreateDate;
+                            booking.Status = 4;
+                            booking.UpdateDate = DateTime.Now;
+                            booking.CreateDate = createDateBooking;
+                            _unitOfWork.BookingRepository.UpdateAsync(booking);
+                            _unitOfWork.Save();
+                        }
+                           
+                    }
+
+                    return new APIResponseModel
+                    {
+                        Message = "Ticket has been used.",
+                        IsSuccess = false,
+                    };
+                }
+
+                return new APIResponseModel
+                {
+                    Message = "Status updated successfully for tickets.",
+                    IsSuccess = true,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new APIResponseModel
+                {
+                    Message = ex.Message,
+                    IsSuccess = false,
+                };
+            }
+        }
+        public async Task<List<string>> GetServiceIdByDailyTourIdAndDestinationId(string dailyTourId, string destinationId)
+        {
+            try
+            {
+                var dailyTour = await _unitOfWork.DailyTourRepository.GetFirstOrDefaultAsync(query => query
+                    .Where(dt => dt.DailyTourId == dailyTourId && dt.Status == 1)
+                    .Include(dt => dt.PackageTours)
+                        .ThenInclude(pt => pt.TourSegments)
+                            .ThenInclude(ts => ts.Destinations)
+                                .ThenInclude(d => d.Locations)
+                                    .ThenInclude(l => l.Services)
+                                        .ThenInclude(sbt => sbt.ServiceByTourSegments)
+                    .Include(dt => dt.DailyTickets)
+                        .ThenInclude(dt => dt.TicketTypes)
+                );
+
+                if (dailyTour == null)
+                {
+                    return null;
+                }
+
+                var pointOfI = await _unitOfWork.PointOfInterestRepository.GetAllAsyncs(query => query);
+
+                var servicesForDestination = dailyTour.PackageTours?.TourSegments
+                    .Where(ts => ts.Status == 1 && ts.Destinations?.Status == 1)
+                    .SelectMany(ts => ts.Destinations?.Locations
+                        .Where(l => l.Status == 1 && l.DestinationId == destinationId)
+                        .SelectMany(l => l.Services
+                            .Where(s => s.Status == 1)
+                            .Select(s => s.ServiceId))
+                        ?? Enumerable.Empty<string>())
+                    .Distinct()
+                    .ToList();
+
+                return servicesForDestination; // Trả về danh sách ServiceId
             }
             catch
             {
