@@ -14,7 +14,7 @@ namespace BusinessObjects.ViewModels.PackageTourFlow.PackageTourUpdate
         public string? CityId { get; set; }
         [Required(ErrorMessage = "Package Price is required")]
         [Range(0, double.MaxValue, ErrorMessage = "Price must be greater than 0")]
-        public float? Price { get; set; }
+        public float? PackageTourPrice { get; set; }
         [JsonIgnore]
         public DateTime? UpdateDate { get; set; }
         public int? Status { get; set; }
