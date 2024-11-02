@@ -31,7 +31,6 @@ namespace Services.Services
 
         public async Task<APIResponseModel> CreatePackageTourFlowAsync(FPackageTourCreateModel createModel)
         {
-            // Initialize the package tour
             var packageTour = new PackageTour
             {
                 PackageTourId = Guid.NewGuid().ToString(),
@@ -165,7 +164,6 @@ namespace Services.Services
         .ThenInclude(sbt => sbt.ServiceByTourSegments)
     .Include(pt => pt.TicketTypes)
 );
-
                 if (packageToursRespone == null || !packageToursRespone.Any())
                 {
                     return new APIResponseModel
@@ -174,18 +172,13 @@ namespace Services.Services
                         IsSuccess = false,
                     };
                 }
-
                 var resultList = new List<object>();
-
                 foreach (var packageTour in packageToursRespone)
                 {
                     float totalServicePrice = packageTour.TourSegments
                         .SelectMany(ts => ts.ServiceByTourSegments)
                         .Where(sbts => sbts.Status != -1 && sbts.Services?.Status == 1)
                         .Sum(sbts => sbts.Services?.ServicePrice ?? 0);
-
-                    //    packageTour.PackageTourPrice = totalServicePrice;
-
                     await _unitOfWork.PackageTourRepository.UpdateAsync(packageTour);
 
                     var result = new
@@ -264,10 +257,7 @@ namespace Services.Services
 
                     resultList.Add(result);
                 }
-
                 _unitOfWork.Save();
-
-                // Trả về kết quả
                 return new APIResponseModel
                 {
                     IsSuccess = true,
@@ -529,7 +519,7 @@ namespace Services.Services
                 };
             }
         }
-
+        #region wait 
         public async Task<APIResponseModel> CreatePartsPackageTourFlowAsync(FPackageTourUpdate updateModel)
         {
             var existingPackageTour = await _unitOfWork.PackageTourRepository.GetByIdGuidAsync(updateModel.PackageTourId);
@@ -712,6 +702,7 @@ namespace Services.Services
             };
 
         }
+        #endregion
         public async Task<APIResponseModel> UpdatePackageTourFlowAsync(FPackageTourUpdateModel updateModel)
         {
             if (updateModel == null || updateModel.Destinations == null || !updateModel.Destinations.Any())
@@ -723,7 +714,6 @@ namespace Services.Services
                 };
             }
 
-            // Fetch the existing PackageTour
             var existingPackageTour = await _unitOfWork.PackageTourRepository.GetByIdGuidAsync(updateModel.PackageTourId);
             if (existingPackageTour == null)
             {
@@ -747,10 +737,8 @@ namespace Services.Services
                     {
 
                         var existingTourSegment = tourSegment.FirstOrDefault();
-                        existingTourSegment.Status = -1; // Cập nhật status của tour segment thành -1
+                        existingTourSegment.Status = -1; 
                         existingTourSegment.UpdateDate = DateTime.Now;
-
-                        // Update tour segment
                         await _unitOfWork.TourSegmentRepository.UpdateAsync(existingTourSegment);
                     }
                     continue;
@@ -766,8 +754,6 @@ namespace Services.Services
                         Status = 1
                     };
                     existingPackageTour.TourSegments.Add(tourSegmentAdd);
-
-                    // Assuming you save the new tour segment here
                     await _unitOfWork.TourSegmentRepository.AddAsync(tourSegmentAdd);
                 }
 
@@ -818,14 +804,11 @@ namespace Services.Services
                                                 SBTSId = Guid.NewGuid().ToString(),
                                                 TourSegmentId = tourSegmentId,
                                                 ServiceId = svc.ServiceId,
-                                                Status = 1, // Cài đặt mặc định status là 1 khi tạo mới
+                                                Status = 1, 
                                                 CreateDate = DateTime.Now
                                             };
                                             await _unitOfWork.ServiceByTourSegmentRepository.AddAsync(serviceByTourSegmentAdd);
-                                        }
-
-                                        // Add the service price for other statuses
-                                        //   totalServicePrice += service.ServicePrice ?? 0;
+                                        }   
                                     }
                                 }
                             }
@@ -833,13 +816,8 @@ namespace Services.Services
                     }
                 }
             }
-
-            //  existingPackageTour.PackageTourPrice = totalServicePrice;
             var packageTour = await _unitOfWork.PackageTourRepository.GetByIdStringAsync(existingPackageTour.PackageTourId);
             var toursegment = await _unitOfWork.TourSegmentRepository.GetByConditionAsync(i => i.PackageTourId == packageTour.PackageTourId && i.Status != -1);
-
-
-
             var packageToursResponeMess = await _unitOfWork.PackageTourRepository.GetAllAsyncs(query => query
      .Where(pt => pt.PackageTourId == updateModel.PackageTourId.ToString())
      .Include(pt => pt.TourSegments)
@@ -861,7 +839,6 @@ namespace Services.Services
                     {
                         packageTourRespone.PackageTourId,
                         packageTourRespone.PackageTourName,
-                        //       packageTourRespone.PackageTourPrice, // Giá ban đầu
                         PackageTourImgUrl = packageTour.PackageTourImgUrl ?? string.Empty,
                         StatusPackageTour = packageTourRespone.Status,
                         packageTourRespone.Cities?.CityName,
@@ -896,7 +873,6 @@ namespace Services.Services
                                         l.LocationClosingHours,
                                         l.LocationGoogleMap,
                                         l.LocationHotline,
-                                        //l.LocationType,
                                         l.DestinationId,
                                         Services = ts.ServiceByTourSegments
                                             .Where(sbts => sbts.Services?.LocationId == l.LocationId && sbts.Status != -1 && sbts.Services?.Status == 1)
@@ -909,28 +885,18 @@ namespace Services.Services
                                                 s.Services?.LocationId,
                                                 s.Services?.ServiceTypes?.ServiceTypeName,
                                                 StatusServices = s.Services?.Status,
-
-                                                // Cộng tổng giá của các dịch vụ hợp lệ
                                                 CalculatedServicePrice = s.Services?.ServicePrice ?? 0
                                             }).ToList()
                                     }).ToList(),
                             }).ToList(),
-
-                        // Tính tổng giá dịch vụ trong tất cả các tour segment
                         TotalServicePrice = packageTourRespone.TourSegments
                             .SelectMany(ts => ts.ServiceByTourSegments)
                             .Where(sbts => sbts.Status != -1 && sbts.Services?.Status == 1)
-                            .Sum(sbts => sbts.Services?.ServicePrice ?? 0), // Tính tổng giá
+                            .Sum(sbts => sbts.Services?.ServicePrice ?? 0), 
                     }
-                };
-
-                // Cập nhật giá PackageTourPrice bằng tổng giá dịch vụ
-                //       packageTourRespone.PackageTourPrice = calculatedTotalPrice;
-
+                };              
                 resultList.Add(result);
             }
-
-            // Save changes to the database
             _unitOfWork.Save();
 
             return new APIResponseModel
@@ -942,7 +908,6 @@ namespace Services.Services
             };
 
         }
-
         public async Task<APIResponseModel> AddPartToPackageTourFlow(FPackageTourUpdateModel createModel)
         {
             if (createModel == null || createModel.Destinations == null || !createModel.Destinations.Any())
@@ -953,8 +918,6 @@ namespace Services.Services
                     IsSuccess = false
                 };
             }
-
-            // Fetch the existing PackageTour
             var existingPackageTour = await _unitOfWork.PackageTourRepository.GetByIdGuidAsync(createModel.PackageTourId);
             if (existingPackageTour == null)
             {
@@ -968,7 +931,6 @@ namespace Services.Services
 
             foreach (var dest in createModel.Destinations)
             {
-                // Check if the destination exists
                 var destination = await _unitOfWork.DestinationRepository.GetByIdStringAsync(dest.DestinationId);
                 if (destination == null)
                 {
@@ -1017,24 +979,13 @@ namespace Services.Services
 
                                 await _unitOfWork.ServiceByTourSegmentRepository.AddAsync(serviceByTourSegment);
 
-                                if (svc.Status == -1)
-                                {
-                                    // Subtract the service price if status is -1
-                                    //totalServicePrice -= service.ServicePrice ?? 0;
-                                }
-                                else
-                                {
-                                    // Add the service price for other statuses
-                                    //totalServicePrice += service.ServicePrice ?? 0;
-                                }
+                             
                             }
                         }
                     }
                 }
             }
 
-            // Update the PackageTour price with the total service price
-            //  existingPackageTour.PackageTourPrice = totalServicePrice;
             var packageToursResponeMess = await _unitOfWork.PackageTourRepository.GetAllAsyncs(query => query
      .Where(pt => pt.PackageTourId == createModel.PackageTourId.ToString())
      .Include(pt => pt.TourSegments)
@@ -1049,7 +1000,6 @@ namespace Services.Services
 
             foreach (var packageTourRespone in packageToursResponeMess)
             {
-                // Khởi tạo biến để tính tổng giá dịch vụ, đổi tên thành calculatedTotalPrice
                 float calculatedTotalPrice = 0;
 
                 var result = new
@@ -1058,7 +1008,6 @@ namespace Services.Services
                     {
                         packageTourRespone.PackageTourId,
                         packageTourRespone.PackageTourName,
-                        //   packageTourRespone.PackageTourPrice, // Giá ban đầu
                         PackageTourImgUrl = packageTourRespone.PackageTourImgUrl ?? string.Empty,
                         StatusPackageTour = packageTourRespone.Status,
                         packageTourRespone.Cities?.CityName,
@@ -1104,18 +1053,14 @@ namespace Services.Services
                                                 s.Services?.LocationId,
                                                 s.Services?.ServiceTypes?.ServiceTypeName,
                                                 StatusServices = s.Services?.Status,
-
-                                                // Cộng tổng giá của các dịch vụ hợp lệ
                                                 CalculatedServicePrice = s.Services?.ServicePrice ?? 0
                                             }).ToList()
                                     }).ToList(),
                             }).ToList(),
-
-                        // Tính tổng giá dịch vụ trong tất cả các tour segment
                         TotalServicePrice = packageTourRespone.TourSegments
                             .SelectMany(ts => ts.ServiceByTourSegments)
                             .Where(sbts => sbts.Status != -1 && sbts.Services?.Status == 1)
-                            .Sum(sbts => sbts.Services?.ServicePrice ?? 0), // Tính tổng giá
+                            .Sum(sbts => sbts.Services?.ServicePrice ?? 0), 
                     }
                 };
 
