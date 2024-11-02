@@ -21,5 +21,6 @@ namespace Services.Interfaces
         Task<APIResponseModel> ShareTicketByPhoneNumber(BookingPhoneNumberShareTicket updateModel);
         Task<APIResponseModel> UpdateBookingStatusAsync(BookingFlowModel updateModel);
         Task<APIResponseModel> DecryptBookingFlowAsync(DecryptBooking encryptedQrData);
+        Task<APIResponseModel> UpdateTicketByQR(TicketUsageViewModel ticketUsageViewModel);
     }
 }
