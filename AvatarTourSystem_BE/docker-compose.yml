@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - DEBIAN_FRONTEND=noninteractive
+    ports:
+      - "5000:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__DefaultConnection=Server=sql;Database=AvatarTourSystemDB;User=sa;Password=12345;TrustServerCertificate=True;
+    depends_on:
+      - sql
+    networks:
+      - avatar-network
+
+  sql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=12345
+    ports:
+      - "1433:1433"
+    volumes:
+      - sql-data:/var/opt/mssql
+    networks:
+      - avatar-network
+
+networks:
+  avatar-network:
+    driver: bridge
+
+volumes:
+  sql-data:
