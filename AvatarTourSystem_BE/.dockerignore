@@ -1,0 +1,6 @@
+.vs/
+.vscode/
+*.user
+.env
+.git
+.gitignore

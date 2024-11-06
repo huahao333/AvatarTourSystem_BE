@@ -13,7 +13,7 @@ namespace Repositories.Interfaces
         GenericRepository<TourSegment> TourSegmentRepository { get; }
         GenericRepository<PackageTour> PackageTourRepository { get; }
         GenericRepository<TicketType> TicketTypeRepository { get; }
-        GenericRepository<DailyTicket> DailyTicketRepository { get; }
+        GenericRepository<DailyTicketType> DailyTicketRepository { get; }
         GenericRepository<Ticket> TicketRepository { get; }
         GenericRepository<PaymentMethod> PaymentMethodRepository { get; }
         GenericRepository<TransactionsHistory> TransactionsHistoryRepository { get; }

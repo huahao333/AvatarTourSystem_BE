@@ -15,17 +15,18 @@ namespace BusinessObjects.Models
         }
         public string? TicketId { get; set; }
         public string? BookingId { get; set; }
-        public string? TicketTypeId { get; set; }
+        public string? DailyTicketId { get; set; }
         public string? TicketName { get; set; }
         public int? Quantity { get; set; }
-        public string? QR { get; set; }
+        public string? QRImgUrl { get; set; }
+        public string? PhoneNumberReference { get; set; }
         public float? Price { get; set; }
         public DateTime? CreateDate { get; set; }
         public DateTime? UpdateDate { get; set; }
         public int? Status { get; set; }
 
         public virtual Booking? Bookings { get; set; }
-        public virtual TicketType? TicketTypes { get; set; }
+        public virtual DailyTicketType? DailyTicketType { get; set; }
         public virtual ICollection<ServiceUsedByTicket> ServiceUsedByTickets { get; set; }
     }
 }

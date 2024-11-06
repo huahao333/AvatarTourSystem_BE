@@ -54,9 +54,9 @@ namespace AvatarTourSystem_BE.AutoMapper
             CreateMap<TicketType, TicketTypeUpdateModel>().ReverseMap();
 
             //DailyTicket
-            CreateMap<DailyTicket, DailyTicketModel>().ReverseMap();
-            CreateMap<DailyTicket, DailyTicketCreateModel>().ReverseMap();
-            CreateMap<DailyTicket, DailyTicketUpdateModel>().ReverseMap();
+            CreateMap<DailyTicketType, DailyTicketModel>().ReverseMap();
+            CreateMap<DailyTicketType, DailyTicketCreateModel>().ReverseMap();
+            CreateMap<DailyTicketType, DailyTicketUpdateModel>().ReverseMap();
 
             //PaymentMethod
             CreateMap<PaymentMethod, PaymentMethodModel>().ReverseMap();

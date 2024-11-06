@@ -151,7 +151,7 @@ namespace Services.Services
              //   _unitOfWork.Save();
 
                 
-                var dailyTicketAdult = new DailyTicket
+                var dailyTicketAdult = new DailyTicketType
                 {
                     DailyTicketId = Guid.NewGuid().ToString(), 
                     DailyTourId = dailyTour.DailyTourId, 
@@ -162,10 +162,10 @@ namespace Services.Services
                     CreateDate = DateTime.Now
                 };
 
-                DailyTicket dailyTicketChildren = null;
+                DailyTicketType dailyTicketChildren = null;
                 if (!string.IsNullOrEmpty(dailyTourFlowModel.TicketTypeIdChildren?.Trim()))
                 {
-                    dailyTicketChildren = new DailyTicket
+                    dailyTicketChildren = new DailyTicketType
                     {
                         DailyTicketId = Guid.NewGuid().ToString(),
                         DailyTourId = dailyTour.DailyTourId,
@@ -486,7 +486,7 @@ namespace Services.Services
                     {
                         dailyTour.PackageTours?.PackageTourId,
                         dailyTour.PackageTours?.PackageTourName,
-                        dailyTour.PackageTours?.PackageTourPrice,
+                      //  dailyTour.PackageTours?.PackageTourPrice,
                         dailyTour.PackageTours?.PackageTourImgUrl,
                         dailyTour.PackageTours?.CityId,
                         StatusPackageTour = dailyTour.PackageTours?.Status,
@@ -632,7 +632,7 @@ namespace Services.Services
                         {
                             dailyTour.PackageTours?.PackageTourId,
                             dailyTour.PackageTours?.PackageTourName,
-                            dailyTour.PackageTours?.PackageTourPrice,
+                           // dailyTour.PackageTours?.PackageTourPrice,
                             dailyTour.PackageTours?.PackageTourImgUrl,
                             dailyTour.PackageTours?.CityId,
                             StatusPackageTour = dailyTour.PackageTours?.Status,
@@ -779,7 +779,7 @@ namespace Services.Services
                         {
                             dailyTour.PackageTours?.PackageTourId,
                             dailyTour.PackageTours?.PackageTourName,
-                            dailyTour.PackageTours?.PackageTourPrice,
+                         //   dailyTour.PackageTours?.PackageTourPrice,
                             dailyTour.PackageTours?.PackageTourImgUrl,
                             dailyTour.PackageTours?.CityId,
                             StatusPackageTour = dailyTour.PackageTours?.Status,
@@ -924,7 +924,7 @@ namespace Services.Services
                         {
                             dailyTour.PackageTours?.PackageTourId,
                             dailyTour.PackageTours?.PackageTourName,
-                            dailyTour.PackageTours?.PackageTourPrice,
+                         //   dailyTour.PackageTours?.PackageTourPrice,
                             dailyTour.PackageTours?.PackageTourImgUrl,
                             dailyTour.PackageTours?.CityId,
                             StatusPackageTour = dailyTour.PackageTours?.Status,

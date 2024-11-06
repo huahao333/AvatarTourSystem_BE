@@ -18,5 +18,9 @@ namespace Services.Interfaces
         Task<APIResponseModel> CreateBookingFlowAsync(BookingFlowCreateModel createModel);
         Task<APIResponseModel> UpdateBookingFlowAsync(BookingUpdateModel updateModel);
         Task<APIResponseModel> UpdateBookingByZaloIdFlowAsync(BookingModel updateModel);
+        Task<APIResponseModel> ShareTicketByPhoneNumber(BookingPhoneNumberShareTicket updateModel);
+        Task<APIResponseModel> UpdateBookingStatusAsync(BookingFlowModel updateModel);
+        Task<APIResponseModel> DecryptBookingFlowAsync(DecryptBooking encryptedQrData);
+        Task<APIResponseModel> UpdateTicketByQR(TicketUsageViewModel ticketUsageViewModel);
     }
 }

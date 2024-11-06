@@ -25,12 +25,13 @@ namespace BusinessObjects.Models
         public virtual DbSet<City> Cities { get; set; } = null!;
         public virtual DbSet<CustomerSupport> CustomerSupports { get; set; } = null!;
         public virtual DbSet<DailyTour> DailyTours { get; set; } = null!;
-        public virtual DbSet<DailyTicket> DailyTickets { get; set; } = null!;
+        public virtual DbSet<DailyTicketType> DailyTickets { get; set; } = null!;
         public virtual DbSet<Destination> Destinations { get; set; } = null!;
         public virtual DbSet<Feedback> Feedbacks { get; set; } = null!;
         public virtual DbSet<Location> Locations { get; set; } = null!;
         public virtual DbSet<Notification> Notifications { get; set; } = null!;
         public virtual DbSet<PackageTour> PackageTours { get; set; } = null!;
+        public virtual DbSet<Payment> Payments { get; set; } = null!;
         public virtual DbSet<PaymentMethod> PaymentMethods { get; set; } = null!;
         public virtual DbSet<PointOfInterest> PointOfInterests { get; set; } = null!;
         //public virtual DbSet<POIType> POITypes { get; set; } = null!;
@@ -80,10 +81,10 @@ namespace BusinessObjects.Models
                    .HasForeignKey(d => d.UserId)
                    .HasConstraintName("FK__Booking__UserId__3A81B327");
 
-                entity.HasOne(d => d.PaymentMethods)
-                   .WithMany(p => p.Bookings)
-                   .HasForeignKey(d => d.PaymentId)
-                   .HasConstraintName("FK__Booking__PaymentId__3A81B328");
+                //entity.HasOne(d => d.PaymentMethods)
+                //   .WithMany(p => p.Bookings)
+                //   .HasForeignKey(d => d.PaymentId)
+                //   .HasConstraintName("FK__Booking__PaymentId__3A81B328");
 
                 entity.HasOne(d => d.DailyTours)
                    .WithMany(p => p.Bookings)
@@ -150,7 +151,7 @@ namespace BusinessObjects.Models
                   .HasConstraintName("FK__CustomerSupport__RequestTypeId__3A81A229");
             });
 
-            modelBuilder.Entity<DailyTicket>(entity =>
+            modelBuilder.Entity<DailyTicketType>(entity =>
             {
                 entity.HasKey(e => e.DailyTicketId)
                    .HasName("PK__DailyTicket__551479467C27FEC5");
@@ -162,7 +163,7 @@ namespace BusinessObjects.Models
                     .HasColumnType("date");
 
                 entity.HasOne(d => d.TicketTypes)
-                  .WithMany(p => p.DailyTickets)
+                  .WithMany(p => p.DailyTicketTypes)
                   .HasForeignKey(d => d.TicketTypeId)
                   .HasConstraintName("FK__DailyTicket__TicketTypeId__3A81E217");
 
@@ -294,7 +295,7 @@ namespace BusinessObjects.Models
 
             modelBuilder.Entity<PaymentMethod>(entity =>
             {
-                entity.HasKey(e => e.PaymentId)
+                entity.HasKey(e => e.PaymentMethodId)
                   .HasName("PK__PaymentMethod__539279467C17FFG3");
                 entity.ToTable("PaymentMethod");
 
@@ -304,6 +305,30 @@ namespace BusinessObjects.Models
                     .HasColumnType("date");
 
 
+
+            });
+
+
+            modelBuilder.Entity<Payment>(entity =>
+            {
+                entity.HasKey(e => e.PaymentId)
+                  .HasName("PK__Payment__539279267C17FFF1");
+                entity.ToTable("Payment");
+
+                entity.Property(e => e.CreateDate)
+                    .HasColumnType("date");
+                entity.Property(e => e.UpdateDate)
+                    .HasColumnType("date");
+
+                entity.HasOne(d => d.Booking)
+                .WithMany(p => p.Payments)
+                .HasForeignKey(d => d.BookingId)
+                .HasConstraintName("FK__Payment__BookingId__3C81C217");
+
+                entity.HasOne(d => d.PaymentMethod)
+               .WithMany(p => p.Payments)
+               .HasForeignKey(d => d.PaymentMethodId)
+               .HasConstraintName("FK__Payment__PaymentMethodId__3C822F217");
 
             });
 
@@ -503,10 +528,10 @@ namespace BusinessObjects.Models
                   .WithMany(p => p.Tickets)
                   .HasForeignKey(d => d.BookingId)
                   .HasConstraintName("FK__Ticket__BookingId__3G23F227");
-                entity.HasOne(d => d.TicketTypes)
+                entity.HasOne(d => d.DailyTicketType)
                   .WithMany(p => p.Tickets)
-                  .HasForeignKey(d => d.TicketTypeId)
-                  .HasConstraintName("FK__Ticket__TicketTypeId__3G28F217");
+                  .HasForeignKey(d => d.DailyTicketId)
+                  .HasConstraintName("FK__Ticket__DailyTicketId__3G28F217");
             });
 
             modelBuilder.Entity<TicketType>(entity =>

@@ -22,6 +22,13 @@ using ZXing.Common;
 using BusinessObjects.ViewModels.Rate;
 using BusinessObjects.ViewModels.Account;
 using Google.Apis.Storage.v1.Data;
+using static QRCoder.PayloadGenerator;
+using BusinessObjects.ViewModels.Location;
+using BusinessObjects.ViewModels.PackageTour;
+using BusinessObjects.ViewModels.Service;
+using BusinessObjects.ViewModels.TicketType;
+using BusinessObjects.ViewModels.TourSegment;
+using Newtonsoft.Json;
 
 namespace Services.Services
 {
@@ -30,11 +37,13 @@ namespace Services.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly CloudinaryService _cloudinaryService;
-        public BookingFlowService(IUnitOfWork unitOfWork, IMapper mapper, CloudinaryService cloudinaryService)
+        private readonly EncryptionHelperService _encryptionHelperService;
+        public BookingFlowService(IUnitOfWork unitOfWork, IMapper mapper, CloudinaryService cloudinaryService, EncryptionHelperService encryptionHelperService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _cloudinaryService = cloudinaryService;
+            _encryptionHelperService = encryptionHelperService;
         }
         //public async Task<APIResponseModel> CreateBookingFlowAsync(BookingCreateModel createModel)
         //{
@@ -152,7 +161,33 @@ namespace Services.Services
                         IsSuccess = false,
                     };
                 }
-                Console.WriteLine(serviceIds + "ss");
+
+                var dailyTourDetails = await GetDailyToursDetails(createModel.DailyTourId);
+                if (dailyTourDetails == null)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Tour details not found.",
+                        IsSuccess = false,
+                    };
+                }
+                var destinationId = dailyTourDetails?.PackageTour?.TourSegments?
+                                        .SelectMany(l => l.DestinationId)
+                                        .ToList();
+                var destination = dailyTourDetails.PackageTour?.TourSegments?.ToList();
+                var location = destination.SelectMany(l => l.Locations)
+                                           .Select(c=>c.LocationId).ToList();
+
+                var services = destination.SelectMany(l => l.Locations)
+                                           .SelectMany(s => s.Services)
+                                           .Select(c=> c.ServiceId).ToList();
+
+                //var destinationIdString = string.Join("; ", destinationId);
+                //var locationId = string.Join("; ", location);
+                //var servicesId = string.Join("; ", services);
+                var destinationIdJson = JsonConvert.SerializeObject(destinationId);
+                var locationJson = JsonConvert.SerializeObject(location);
+                var servicesJson = JsonConvert.SerializeObject(services);
 
                 var newBookingId = Guid.NewGuid();
                 var newBooking = new Booking
@@ -160,11 +195,10 @@ namespace Services.Services
                     BookingId = newBookingId.ToString(),
                     UserId = zaloAccount.Id,
                     DailyTourId = createModel.DailyTourId,
-                    PaymentId = "1",
                     BookingDate = DateTime.Now,
-                    ExpirationDate = DateTime.UtcNow.AddDays(2), 
+                    ExpirationDate = DateTime.UtcNow.AddDays(2),
                     TotalPrice = createModel.TotalPrice,
-                    Status = 9,  
+                    Status = 9,
                     CreateDate = DateTime.UtcNow,
                 };
                 await _unitOfWork.BookingRepository.AddAsync(newBooking);
@@ -173,49 +207,105 @@ namespace Services.Services
 
                 foreach (var ticket in createModel.Tickets)
                 {
-                    //var qrContent = $"đây là id booking nè {newBooking.BookingId}: còn đây là ticketid{ticket.TicketTypeId}";
-                    //var qrImageUrl = await GenerateQRCode(qrContent);
-                    var newTicket = new Ticket
+                    for (int i = 0; i < ticket.TotalQuantity; i++)
                     {
-                        TicketId = Guid.NewGuid().ToString(),
-                        BookingId = newBooking.BookingId,
-                        TicketTypeId = ticket.TicketTypeId,
-                        TicketName = ticket.TicketName,
-                        Price = ticket.TotalPrice,
-                        QR = "",
-                        Quantity = ticket.TotalQuantity,
-                        Status = 9,
-                        CreateDate = DateTime.UtcNow,
-                    };
-                    await _unitOfWork.TicketRepository.AddAsync(newTicket);
+                        var newTicketId = Guid.NewGuid().ToString();
+                        //var qrContent = $"BookingId: {newBooking.BookingId}\n" +
+                        //                $"ZaloUser: {createModel.ZaloId}\n" +
+                        //                $"DailyTourId: {newBooking.DailyTourId}\n" +
+                        //                $"TourName: {dailyTourDetails.DailyTourName}\n" +
+                        //                $"ExpirationDate: {dailyTourDetails.ExpirationDate}\n" +
+                        //                $"StartDate: {dailyTourDetails.StartDate}\n" +
+                        //                $"EndDate: {dailyTourDetails.EndDate}\n" +
+                        //                $"Discount: {dailyTourDetails.Discount}\n" +
+                        //                $"DailyTourPrice: {dailyTourDetails.DailyTourPrice}\n" +
+                        //                $"City: {dailyTourDetails.PackageTour?.CityId}\n" +
+                        //                $"DestinationId: {destinationIdString}\n" +
+                        //                $"LocationId: {locationId}\n" +
+                        //                $"ServiceId: {servicesId}\n" +
 
-                    ticketIds.Add(newTicket.TicketId);
-                    foreach (var serviceId in serviceIds)
-                    {
-                        var serviceUsedByTicket = new ServiceUsedByTicket
+                        //                $"PhoneNumber: {zaloAccount.PhoneNumber}\n" +
+                        //                $"BookingDate: {newBooking.BookingDate}\n" +
+                        //                $"ExpirationDate: {newBooking.ExpirationDate}\n" +
+                        //                $"TotalPrice: {newBooking.TotalPrice}\n" +
+                        //                $"TicketTypeId: {newTicketId} \n" +
+                        //                $"DailyTicketId:{ticket.DailyTicketId} \n" +
+                        //                $"TicketName:{ticket.TicketName} \n" +
+                        //                $"Price:{ticket.TotalPrice} \n";
+
+                        var qrData = new
                         {
-                            SUBTId = Guid.NewGuid().ToString(),
-                            TicketId = newTicket.TicketId,
-                            ServiceId = serviceId,
-                            Status = 9
+                            BookingId = newBooking.BookingId,
+                            ZaloUser = createModel.ZaloId,
+                            DailyTourId = newBooking.DailyTourId,
+                            TourName = dailyTourDetails.DailyTourName,
+                         //   ExpirationDate = dailyTourDetails.ExpirationDate,
+                            StartDate = dailyTourDetails.StartDate,
+                            EndDate = dailyTourDetails.EndDate,
+                            Discount = dailyTourDetails.Discount,
+                            DailyTourPrice = dailyTourDetails.DailyTourPrice,
+                            City = dailyTourDetails.PackageTour?.CityId,
+                            DestinationId = destinationIdJson, 
+                            LocationId = locationJson, 
+                            ServiceId = servicesJson, 
+                            PhoneNumber = zaloAccount.PhoneNumber,
+                            BookingDate = newBooking.BookingDate,
+                            ExpirationDate = newBooking.ExpirationDate,
+                            TotalPrice = newBooking.TotalPrice,
+                            TicketTypeId = newTicketId,
+                            DailyTicketId = ticket.DailyTicketId,
+                            TicketName = ticket.TicketName,
+                            Price = ticket.TotalPrice
                         };
-                        await _unitOfWork.ServiceUsedByTicketRepository.AddAsync(serviceUsedByTicket);
+                        //  var qrContent = JsonConvert.SerializeObject(qrData);
+                        var qrContent = _encryptionHelperService.EncryptString(JsonConvert.SerializeObject(qrData));
+                        var qrImageUrl = await GenerateQRCode(qrContent);
+                        var newTicket = new Ticket
+                        {
+                            TicketId = newTicketId,
+                            BookingId = newBooking.BookingId,
+                            DailyTicketId = ticket.DailyTicketId,
+                            TicketName = ticket.TicketName,
+                            Price = ticket.TotalPrice,
+                            QRImgUrl = qrImageUrl,
+                            PhoneNumberReference = zaloAccount.PhoneNumber,
+                            Quantity = 1,  
+                            Status = 9,
+                            CreateDate = DateTime.UtcNow,
+                        };
+                        await _unitOfWork.TicketRepository.AddAsync(newTicket);
+
+                        ticketIds.Add(newTicket.TicketId);
+
+                        foreach (var serviceId in serviceIds)
+                        {
+                            var serviceUsedByTicket = new ServiceUsedByTicket
+                            {
+                                SUBTId = Guid.NewGuid().ToString(),
+                                TicketId = newTicket.TicketId,
+                                ServiceId = serviceId,
+                                CreateDate = DateTime.Now,
+                                Status = 9
+                            };
+                            await _unitOfWork.ServiceUsedByTicketRepository.AddAsync(serviceUsedByTicket);
+                        }
                     }
                 }
                 _unitOfWork.Save();
-                var qrContent = $"BookingId: {newBooking.BookingId}, TicketIds: {string.Join(",", ticketIds)}";
-                var qrImageUrl = await GenerateQRCode(qrContent);
 
-                foreach (var ticketId in ticketIds)
-                {
-                    var ticket = await _unitOfWork.TicketRepository.GetFirstsOrDefaultAsync(t => t.TicketId == ticketId);
-                    if (ticket != null)
-                    {
-                        ticket.QR = qrImageUrl;
-                        await _unitOfWork.TicketRepository.UpdateAsync(ticket);
-                    }
-                    _unitOfWork.Save();
-                }
+                //var qrContent = $"BookingId: {newBooking.BookingId}, TicketIds: {string.Join(",", ticketIds)}";
+                //var qrImageUrl = await GenerateQRCode(qrContent);
+
+                //foreach (var ticketId in ticketIds)
+                //{
+                //    var ticket = await _unitOfWork.TicketRepository.GetFirstsOrDefaultAsync(t => t.TicketId == ticketId);
+                //    if (ticket != null)
+                //    {
+                //        ticket.QRImgUrl = qrImageUrl;
+                //        await _unitOfWork.TicketRepository.UpdateAsync(ticket);
+                //    }
+                //}
+                //_unitOfWork.Save();
 
                 return new APIResponseModel
                 {
@@ -233,6 +323,40 @@ namespace Services.Services
             }
         }
 
+        public async Task<APIResponseModel> DecryptBookingFlowAsync(DecryptBooking encryptedQrData)
+        {
+            try
+            {
+                var decryptedJson = _encryptionHelperService.DecryptString(encryptedQrData.EncryptedQr);
+
+                var bookingFlowData = JsonConvert.DeserializeObject<BookingFlowDataModel>(decryptedJson);
+                if (bookingFlowData == null)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Failed to deserialize booking flow data.",
+                        IsSuccess = false
+                    };
+                }
+
+                // Trả về kết quả thành công
+                return new APIResponseModel
+                {
+                    Data = bookingFlowData,
+                    Message = "Decryption successful.",
+                    IsSuccess = true
+                };
+            }
+            catch (Exception ex)
+            {
+                return new APIResponseModel
+                {
+                    Message = $"Error during decryption: {ex.Message}",
+                    IsSuccess = false
+                };
+            }
+        }
+
         private async Task<string> GenerateQRCode(string data)
         {
             var qrWriter = new ZXing.BarcodeWriterPixelData
@@ -240,8 +364,8 @@ namespace Services.Services
                 Format = ZXing.BarcodeFormat.QR_CODE,
                 Options = new EncodingOptions
                 {
-                    Height = 300,
-                    Width = 300
+                    Height = 500,
+                    Width = 500
                 }
             };
 
@@ -284,10 +408,27 @@ namespace Services.Services
                     };
                 }
 
-                var bookings = await _unitOfWork.BookingRepository.GetAllAsyncs(query => query
-                           .Where(b => b.UserId == zaloAccount.Id));
+                //var bookings = await _unitOfWork.BookingRepository.GetAllAsyncs(query => query
+                //           .Where(b => b.UserId == zaloAccount.Id));
 
-                if (bookings == null || !bookings.Any())
+                //if (bookings == null || !bookings.Any())
+                //{
+                //    return new APIResponseModel
+                //    {
+                //        Message = "No bookings found for this user.",
+                //        IsSuccess = false,
+                //    };
+                //}
+
+                var allBookings = await _unitOfWork.BookingRepository.GetAllAsyncs(query => query);
+                var bookings = allBookings
+                    .Where(b => b.UserId == zaloAccount.Id
+                        || _unitOfWork.TicketRepository.GetAllAsyncs(query => query
+                            .Where(t => t.BookingId == b.BookingId && t.PhoneNumberReference == zaloAccount.PhoneNumber))
+                            .Result.Any())
+                    .ToList();
+
+                if (!bookings.Any())
                 {
                     return new APIResponseModel
                     {
@@ -296,9 +437,9 @@ namespace Services.Services
                     };
                 }
 
-                var bookingIds = bookings.Select(b=>b.BookingId).ToList();
+                var bookingIds = bookings.Select(b => b.BookingId).ToList();
                 var tickets = await _unitOfWork.TicketRepository.GetAllAsyncs(query => query
-                                                            .Where(t=> bookingIds.Contains(t.BookingId)));
+                                                            .Where(t => bookingIds.Contains(t.BookingId)));
                 if (tickets == null || !tickets.Any())
                 {
                     return new APIResponseModel
@@ -308,37 +449,56 @@ namespace Services.Services
                     };
                 }
 
-                var groupedTickets = tickets.GroupBy(t => new { t.BookingId, t.QR }).Select(group => new
+                var bookingWithTickets = new List<object>();
+
+                foreach (var booking in bookings)
                 {
-                    QR = group.Key.QR,
-                    BookingId = group.Key.BookingId,
-                    Tickets = group.Select(t => new
+                    var dailyTourDetails = await GetDailyTourDetails(booking.DailyTourId);
+
+                    var ticketsForBooking = tickets
+                        .Where(t => t.BookingId == booking.BookingId
+                            && (zaloAccount.Id == booking.UserId || t.PhoneNumberReference == zaloAccount.PhoneNumber))
+                        .Select(t => new
+                        {
+                            t.TicketId,
+                            t.DailyTicketId,
+                            t.TicketName,
+                            t.Price,
+                            t.Quantity,
+                            PhoneNumberReference = t.PhoneNumberReference.StartsWith("84")
+                                ? "0" + t.PhoneNumberReference[2..]
+                                : t.PhoneNumberReference,
+                            t.Status,
+                            t.CreateDate,
+                            QR = t.QRImgUrl
+                        }).ToList();
+
+                    if (ticketsForBooking.Any())
                     {
-                        t.TicketId,
-                        t.TicketTypeId,
-                        t.TicketName,
-                        t.Price,
-                        t.Quantity,
-                        t.Status,
-                        t.CreateDate
-                    }).ToList()
-                }).ToList();
+                        bookingWithTickets.Add(new
+                        {
+                            booking.BookingId,
+                            booking.UserId,
+                            booking.DailyTourId,
+                            booking.BookingDate,
+                            booking.ExpirationDate,
+                            booking.TotalPrice,
+                            booking.Status,
+                            booking.CreateDate,
+                            DailyTourDetails = dailyTourDetails,
+                            Tickets = ticketsForBooking,
+                        });
+                    }
+                }
 
-                var bookingWithTickets = bookings.Select(b => new
+                if (!bookingWithTickets.Any())
                 {
-                    b.BookingId,
-                    b.UserId,
-                    b.DailyTourId,
-                    b.PaymentId,
-                    b.BookingDate,
-                    b.ExpirationDate,
-                    b.TotalPrice,
-                    b.Status,
-                    b.CreateDate,
-                    QR = groupedTickets.FirstOrDefault(gt => gt.BookingId == b.BookingId)?.QR,
-                    Tickets = groupedTickets.FirstOrDefault(gt => gt.BookingId == b.BookingId)?.Tickets
-                }).ToList();
-
+                    return new APIResponseModel
+                    {
+                        Message = "No tickets found for the specified phone number.",
+                        IsSuccess = false,
+                    };
+                }
 
                 return new APIResponseModel
                 {
@@ -346,7 +506,7 @@ namespace Services.Services
                     IsSuccess = true,
                     Data = new
                     {
-                        Bookings = bookingWithTickets
+                        Bookings = bookingWithTickets,
                     }
                 };
             }
@@ -359,6 +519,523 @@ namespace Services.Services
                 };
             }
         }
+
+
+        public async Task<APIResponseModel> ShareTicketByPhoneNumber(BookingPhoneNumberShareTicket updateModel)
+        {
+            try
+            {
+                var ticket = await _unitOfWork.TicketRepository.GetFirstOrDefaultAsync(query => query
+                                 .Where(a => a.TicketId == updateModel.TicketId));
+                if (ticket == null)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Ticket not found.",
+                        IsSuccess = false,
+                    };
+                }else if (ticket.Status == 9)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Ticket is in process so cannot be updated.",
+                        IsSuccess = false,
+                    };
+                }
+
+                string formattedPhoneNumber = updateModel.PhoneNumber.Trim();
+                if (formattedPhoneNumber.StartsWith("0"))
+                {
+                    formattedPhoneNumber = "84" + formattedPhoneNumber.Substring(1);
+                }
+
+                var createDate = ticket.CreateDate;
+
+                ticket.PhoneNumberReference = formattedPhoneNumber;
+                ticket.CreateDate = createDate;
+                ticket.UpdateDate = DateTime.Now;
+
+                var result = await _unitOfWork.TicketRepository.UpdateAsync(ticket);
+                _unitOfWork.Save();
+
+                return new APIResponseModel
+                {
+                    Message = "Ticket Updated Successfully",
+                    IsSuccess = true,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new APIResponseModel
+                {
+                    Message = ex.Message,
+                    IsSuccess = false,
+                };
+            }
+        }
+
+        public async Task<APIResponseModel> UpdateBookingStatusAsync(BookingFlowModel updateModel)
+        {
+            try
+            {
+                var booking = await _unitOfWork.BookingRepository.GetFirstsOrDefaultAsync(b => b.BookingId == updateModel.BookingId);
+                if (booking == null)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Booking not found.",
+                        IsSuccess = false,
+                    };
+                }
+
+                booking.Status = 1;
+                await _unitOfWork.BookingRepository.UpdateAsync(booking);
+
+                
+                var tickets = await _unitOfWork.TicketRepository.GetAllAsyncs(query => query
+                                                            .Where(t => t.BookingId == updateModel.BookingId));
+                foreach (var ticket in tickets)
+                {
+                    ticket.Status = 1;
+                    await _unitOfWork.TicketRepository.UpdateAsync(ticket);
+                }
+
+                foreach (var ticket in tickets)
+                {
+                    var servicesUsedByTicket = await _unitOfWork.ServiceUsedByTicketRepository.GetAllAsyncs(query => query
+                                                                                             .Where(s=> s.TicketId == ticket.TicketId));
+                    foreach (var serviceUsed in servicesUsedByTicket)
+                    {
+                        serviceUsed.Status = 1;
+                        await _unitOfWork.ServiceUsedByTicketRepository.UpdateAsync(serviceUsed);
+                    }
+                }
+
+                _unitOfWork.Save();
+
+                return new APIResponseModel
+                {
+                    Message = "Status updated successfully for booking and related records.",
+                    IsSuccess = true,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new APIResponseModel
+                {
+                    Message = ex.Message,
+                    IsSuccess = false,
+                };
+            }
+        }
+
+        public async Task<DailyTourDetailModel> GetDailyToursDetails(string dailyTourId)
+        {
+            try
+            {
+                // Truy vấn lấy DailyTour với các điều kiện lọc ban đầu
+                var dailyTour = await _unitOfWork.DailyTourRepository.GetFirstOrDefaultAsync(query => query
+                    .Where(dt => dt.DailyTourId == dailyTourId && dt.Status == 1)
+                    .Include(dt => dt.PackageTours)
+                        .ThenInclude(pt => pt.TourSegments)
+                            .ThenInclude(des => des.Destinations)
+                                .ThenInclude(lo => lo.Locations)
+                                    .ThenInclude(l => l.Services)
+                                        .ThenInclude(sbt => sbt.ServiceByTourSegments)
+                    .Include(dt => dt.DailyTickets)
+                        .ThenInclude(dt => dt.TicketTypes)
+                );
+
+                if (dailyTour == null)
+                {
+                    return null;
+                }
+
+                // Khởi tạo model để trả về, áp dụng điều kiện lọc cho từng phần tử
+                var dailyTourDetails = new DailyTourDetailModel
+                {
+                    DailyTourId = dailyTour.DailyTourId,
+                    DailyTourName = dailyTour.DailyTourName,
+                    Description = dailyTour.Description,
+                    DailyTourPrice = dailyTour.DailyTourPrice,
+                    ImgUrl = dailyTour.ImgUrl,
+                    ExpirationDate = dailyTour.ExpirationDate,
+                    StartDate = dailyTour.StartDate,
+                    EndDate = dailyTour.EndDate,
+                    Discount = dailyTour.Discount,
+                    PackageTour = new PackageToursModel
+                    {
+                        PackageTourId = dailyTour.PackageTours?.PackageTourId,
+                        PackageTourName = dailyTour.PackageTours?.PackageTourName,
+                        PackageTourImgUrl = dailyTour.PackageTours?.PackageTourImgUrl,
+                        CityId = dailyTour.PackageTours?.CityId,
+                        StatusPackageTour = dailyTour.PackageTours?.Status,
+                        CityName = dailyTour.PackageTours?.Cities?.CityName,
+                        TourSegments = dailyTour.PackageTours?.TourSegments
+                            .Where(ts => ts.Status == 1 && ts.Destinations?.Status == 1)
+                            .Select(ts => new TourSegmentsModel
+                            {
+                                TourSegmentId = ts.TourSegmentId,
+                                DestinationId = ts.DestinationId,
+                                DestinationName = ts.Destinations?.DestinationName,
+                                DestinationAddress = ts.Destinations?.DestinationAddress,
+                                DestinationImgUrl = ts.Destinations?.DestinationImgUrl,
+                                DestinationHotline = ts.Destinations?.DestinationHotline,
+                                DestinationGoogleMap = ts.Destinations?.DestinationGoogleMap,
+                                DestinationOpeningDate = ts.Destinations?.DestinationOpeningDate,
+                                DestinationClosingDate = ts.Destinations?.DestinationClosingDate,
+                                DestinationOpeningHours = ts.Destinations?.DestinationOpeningHours,
+                                DestinationClosingHours = ts.Destinations?.DestinationClosingHours,
+                                Locations = ts.Destinations?.Locations
+                                    .Where(c => c.Status == 1 &&
+                                                c.DestinationId == ts.DestinationId &&
+                                                dailyTour.PackageTours?.PackageTourId == ts.PackageTourId &&
+                                                ts.ServiceByTourSegments.Any(sbts => sbts.Services?.LocationId == c.LocationId && sbts.Status == 1))
+                                    .Select(lo => new LocationsModel
+                                    {
+                                        LocationId = lo.LocationId,
+                                        LocationName = lo.LocationName,
+                                        LocationImgUrl = lo.LocationImgUrl,
+                                        LocationHotline = lo.LocationHotline,
+                                        LocationOpeningHours = lo.LocationOpeningHours,
+                                        LocationClosingHours = lo.LocationClosingHours,
+                                        LocationGoogleMap = lo.LocationGoogleMap,
+                                        DestinationId = lo.DestinationId,
+                                        Services = ts.ServiceByTourSegments
+                                            .Where(sbts => sbts.Services?.LocationId == lo.LocationId && sbts.Services?.Status == 1)
+                                            .Select(se => new ServicesModel
+                                            {
+                                                ServiceId = se.Services?.ServiceId,
+                                                ServiceName = se.Services?.ServiceName,
+                                                ServicePrice = se.Services?.ServicePrice,
+                                                SupplierName = se.Services?.Suppliers?.SupplierName,
+                                                LocationId = se.Services?.LocationId,
+                                                ServiceTypeName = se.Services?.ServiceTypes?.ServiceTypeName,
+                                            })
+                                            .ToList()
+                                    })
+                                    .ToList()
+                            })
+                            .ToList()
+                    }
+                };
+
+                return dailyTourDetails;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public async Task<APIResponseModel> UpdateTicketByQR(TicketUsageViewModel ticketUsageViewModel)
+        {
+            try
+            {
+                var ticket = await _unitOfWork.TicketRepository.GetFirstsOrDefaultAsync(b => b.TicketId == ticketUsageViewModel.TicketId);
+                if (ticket == null)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Ticket not found.",
+                        IsSuccess = false,
+                    };
+                } else if (ticket.Status ==9)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Tickets are pending payment.",
+                        IsSuccess = false,
+                    };
+                } else if (ticket.Status == 4)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Ticket has been used.",
+                        IsSuccess = false,
+                    };
+                }
+
+                bool isDestinationValid = ticketUsageViewModel.Destination
+                                         .Any(d => d.DestinationIds == ticketUsageViewModel.MobileDestinationId);
+                if (!isDestinationValid)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Tickets do not exist at this destination.",
+                        IsSuccess = false,
+                    };
+                }
+
+                if (ticketUsageViewModel.ExpirationDate.HasValue)
+                {
+                    var expirationDate = ticketUsageViewModel.ExpirationDate.Value.Date; 
+                    var currentDate = DateTime.Now.Date;
+
+                    if (expirationDate < currentDate)
+                    {
+                        return new APIResponseModel
+                        {
+                            Message = "Ticket has expired.",
+                            IsSuccess = false,
+                        };
+                    }
+                    else if (expirationDate > currentDate)
+                    {
+                        return new APIResponseModel
+                        {
+                            Message = "Ticket is not yet valid for use.",
+                            IsSuccess = false,
+                        };
+                    }
+                }
+                else
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Expiration date is not set.",
+                        IsSuccess = false,
+                    };
+                }
+
+                var serviceIds = await GetServiceIdByDailyTourIdAndDestinationId(ticketUsageViewModel.DailyTourId, ticketUsageViewModel.MobileDestinationId);
+                if (serviceIds == null || !serviceIds.Any())
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "No services found for the provided Daily Tour and Destination.",
+                        IsSuccess = false,
+                    };
+                }
+                var servicesUsed = await _unitOfWork.ServiceUsedByTicketRepository
+                                           .GetAllAsyncs(query => query.Where(s => s.TicketId == ticketUsageViewModel.TicketId && serviceIds.Contains(s.ServiceId)));
+                bool hasServiceUsedStatus4 = servicesUsed.Any(s => s.Status == 4);
+                if (servicesUsed.Any())
+                {
+                    foreach (var service in servicesUsed)
+                    {
+                        var createDate = service.CreateDate;
+                        service.Status = 4; 
+                        service.UpdateDate = DateTime.Now;
+                        service.CreateDate = createDate;
+                        _unitOfWork.ServiceUsedByTicketRepository.UpdateAsync(service); 
+                    }
+
+                    _unitOfWork.Save(); 
+                }
+
+                if (hasServiceUsedStatus4)
+                {
+                    var createDate = ticket.CreateDate;
+                    ticket.Status = 4;
+                    ticket.UpdateDate = DateTime.Now;
+                    ticket.CreateDate = createDate;
+                    _unitOfWork.TicketRepository.UpdateAsync(ticket); 
+                    _unitOfWork.Save();
+
+                    var bookingTickets = await _unitOfWork.TicketRepository.GetAllAsyncs(query => query.Where(b => b.BookingId == ticket.BookingId));
+                    if (bookingTickets.All(t => t.Status == 4))
+                    {
+                        var booking = await _unitOfWork.BookingRepository.GetFirstsOrDefaultAsync(b => b.BookingId == ticket.BookingId);
+                        if (booking != null)
+                        {
+                            var createDateBooking = booking.CreateDate;
+                            booking.Status = 4;
+                            booking.UpdateDate = DateTime.Now;
+                            booking.CreateDate = createDateBooking;
+                            _unitOfWork.BookingRepository.UpdateAsync(booking);
+                            _unitOfWork.Save();
+                        }
+                           
+                    }
+
+                    return new APIResponseModel
+                    {
+                        Message = "Ticket has been used.",
+                        IsSuccess = false,
+                    };
+                }
+
+                return new APIResponseModel
+                {
+                    Message = "Status updated successfully for tickets.",
+                    IsSuccess = true,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new APIResponseModel
+                {
+                    Message = ex.Message,
+                    IsSuccess = false,
+                };
+            }
+        }
+        public async Task<List<string>> GetServiceIdByDailyTourIdAndDestinationId(string dailyTourId, string destinationId)
+        {
+            try
+            {
+                var dailyTour = await _unitOfWork.DailyTourRepository.GetFirstOrDefaultAsync(query => query
+                    .Where(dt => dt.DailyTourId == dailyTourId && dt.Status == 1)
+                    .Include(dt => dt.PackageTours)
+                        .ThenInclude(pt => pt.TourSegments)
+                            .ThenInclude(ts => ts.Destinations)
+                                .ThenInclude(d => d.Locations)
+                                    .ThenInclude(l => l.Services)
+                                        .ThenInclude(sbt => sbt.ServiceByTourSegments)
+                    .Include(dt => dt.DailyTickets)
+                        .ThenInclude(dt => dt.TicketTypes)
+                );
+
+                if (dailyTour == null)
+                {
+                    return null;
+                }
+
+                var pointOfI = await _unitOfWork.PointOfInterestRepository.GetAllAsyncs(query => query);
+
+                var servicesForDestination = dailyTour.PackageTours?.TourSegments
+                    .Where(ts => ts.Status == 1 && ts.Destinations?.Status == 1)
+                    .SelectMany(ts => ts.Destinations?.Locations
+                        .Where(l => l.Status == 1 && l.DestinationId == destinationId)
+                        .SelectMany(l => l.Services
+                            .Where(s => s.Status == 1)
+                            .Select(s => s.ServiceId))
+                        ?? Enumerable.Empty<string>())
+                    .Distinct()
+                    .ToList();
+
+                return servicesForDestination; // Trả về danh sách ServiceId
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public async Task<object> GetDailyTourDetails(string dailyTourId)
+        {
+            try
+            {
+                var dailyTour = await _unitOfWork.DailyTourRepository.GetFirstOrDefaultAsync(query => query
+                    .Where(dt => dt.DailyTourId == dailyTourId && dt.Status == 1)
+                    .Include(dt => dt.PackageTours)
+                        .ThenInclude(pt => pt.TourSegments)
+                            .ThenInclude(des => des.Destinations)
+                                .ThenInclude(lo => lo.Locations)
+                                    .ThenInclude(l => l.Services)
+                                        .ThenInclude(sbt => sbt.ServiceByTourSegments)
+                    .Include(dt => dt.DailyTickets)
+                        .ThenInclude(dt => dt.TicketTypes)
+                );
+
+                if (dailyTour == null)
+                {
+                    return null;
+                }
+
+                var pointOfI = await _unitOfWork.PointOfInterestRepository.GetAllAsyncs(query => query);
+
+                return new
+                {
+                    DailyTour = new
+                    {
+                        dailyTour.DailyTourId,
+                        dailyTour.PackageTourId,
+                        dailyTour.DailyTourName,
+                        dailyTour.Description,
+                        dailyTour.DailyTourPrice,
+                        dailyTour.ImgUrl,
+                        dailyTour.ExpirationDate,
+                        dailyTour.StartDate,
+                        dailyTour.EndDate,
+                        dailyTour.Discount,
+                        StatusDailyTour = dailyTour.Status,
+                        TicketTypes = dailyTour.DailyTickets
+                            .Where(c => c.DailyTourId == dailyTour.DailyTourId
+                                       && c.TicketTypes?.PackageTourId == dailyTour.PackageTourId
+                                       && c.Capacity > 0)
+                            .Select(tt => new
+                            {
+                                tt.DailyTicketId,
+                                tt.Capacity,
+                                tt.TicketTypes?.TicketTypeName,
+                                tt.TicketTypes?.MinBuyTicket,
+                                tt.DailyTicketPrice,
+                                tt.CreateDate
+                            }).ToList()
+                    },
+                    PackageTour = new
+                    {
+                        dailyTour.PackageTours?.PackageTourId,
+                        dailyTour.PackageTours?.PackageTourName,
+                        dailyTour.PackageTours?.PackageTourImgUrl,
+                        dailyTour.PackageTours?.CityId,
+                        StatusPackageTour = dailyTour.PackageTours?.Status,
+                        dailyTour.PackageTours?.Cities?.CityName,
+                        TourSegments = dailyTour.PackageTours?.TourSegments
+                            .Where(ts => ts.Status == 1 && ts.Destinations?.Status == 1)
+                            .Select(ts => new
+                            {
+                                ts.TourSegmentId,
+                                ts.DestinationId,
+                                ts.Destinations?.DestinationName,
+                                ts.Destinations?.DestinationAddress,
+                                ts.Destinations?.DestinationImgUrl,
+                                ts.Destinations?.DestinationHotline,
+                                ts.Destinations?.DestinationGoogleMap,
+                                ts.Destinations?.DestinationOpeningDate,
+                                ts.Destinations?.DestinationClosingDate,
+                                ts.Destinations?.DestinationOpeningHours,
+                                ts.Destinations?.DestinationClosingHours,
+                                StatusDestinations = ts.Destinations?.Status,
+                                Locations = ts.Destinations?.Locations
+                                    .Where(c => c.Status == 1 &&
+                                                c.DestinationId == ts.DestinationId &&
+                                                dailyTour.PackageTours?.PackageTourId == ts.PackageTourId &&
+                                                ts.ServiceByTourSegments.Any(sbts => sbts.Services?.LocationId == c.LocationId &&
+                                                                                      sbts.Status == 1))
+                                    .Select(lo => new
+                                    {
+                                        lo.LocationId,
+                                        lo.LocationName,
+                                        lo.LocationImgUrl,
+                                        lo.LocationHotline,
+                                        lo.LocationOpeningHours,
+                                        lo.LocationClosingHours,
+                                        lo.LocationGoogleMap,
+                                        lo.DestinationId,
+                                        PointOfInterests = pointOfI.Where(poi => poi.LocationId == lo.LocationId).Select(type => new
+                                        {
+                                            type.PointId,
+                                            type.PointName,
+                                        }),
+                                        StatusLocation = lo.Status,
+                                        Services = ts.ServiceByTourSegments
+                                            .Where(sbts => sbts.Services?.LocationId == lo.LocationId
+                                                           && sbts.Services?.Status == 1)
+                                            .Select(se => new
+                                            {
+                                                se.Services?.ServiceId,
+                                                se.Services?.ServiceName,
+                                                se.Services?.ServicePrice,
+                                                se.Services?.Suppliers?.SupplierName,
+                                                se.Services?.LocationId,
+                                                se.Services?.ServiceTypes?.ServiceTypeName,
+                                                StatusServices = se.Services?.Status,
+                                            }).ToList(),
+                                    }).ToList(),
+                            }).ToList(),
+                    }
+                };
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+
 
         public async Task<APIResponseModel> UpdateBookingByZaloIdFlowAsync(BookingModel updateModel)
         {
