@@ -12,7 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using QRCoder;
+//using QRCoder;
 using System.Drawing;
 using System.IO;
 using ZXing.QrCode.Internal;
@@ -22,13 +22,14 @@ using ZXing.Common;
 using BusinessObjects.ViewModels.Rate;
 using BusinessObjects.ViewModels.Account;
 using Google.Apis.Storage.v1.Data;
-using static QRCoder.PayloadGenerator;
+//using static QRCoder.PayloadGenerator;
 using BusinessObjects.ViewModels.Location;
 using BusinessObjects.ViewModels.PackageTour;
 using BusinessObjects.ViewModels.Service;
 using BusinessObjects.ViewModels.TicketType;
 using BusinessObjects.ViewModels.TourSegment;
 using Newtonsoft.Json;
+//using SixLabors.ImageSharp.Formats.Png;
 
 namespace Services.Services
 {
@@ -383,7 +384,7 @@ namespace Services.Services
                     ms.Position = 0;
 
                     var imageUrl = await _cloudinaryService.UploadImageAsync(ms, "qrcode.png");
-                    return imageUrl; 
+                    return imageUrl;
                 }
             }
         }
