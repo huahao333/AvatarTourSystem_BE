@@ -25,7 +25,190 @@ namespace Services.Services
             _mapper = mapper;
         }
 
-        public async Task<APIResponseModel> CreateDailyTourFlow(DailyTourFlowModel dailyTourFlowModel)
+        //public async Task<APIResponseModel> CreateDailyTourFlow(DailyTourFlowModel dailyTourFlowModel)
+        //{
+        //    try
+        //    {
+        //        var packageTourIdExisting = await _unitOfWork.PackageTourRepository.GetByIdStringAsync(dailyTourFlowModel.PackageTourId);
+        //        if (packageTourIdExisting == null || string.IsNullOrEmpty(dailyTourFlowModel.PackageTourId))
+        //        {
+        //            return new APIResponseModel
+        //            {
+        //                Message = "PackageTourId must exist.",
+        //                IsSuccess = false,
+        //            };
+        //        }
+
+        //        if (dailyTourFlowModel.DailyTourPrice <= 0)
+        //        {
+        //            return new APIResponseModel
+        //            {
+        //                Message = "DailyTourPrice must be greater than 0.",
+        //                IsSuccess = false,
+        //            };
+        //        }
+
+
+        //        if (dailyTourFlowModel.StartDate < DateTime.Now)
+        //        {
+        //            return new APIResponseModel
+        //            {
+        //                Message = "StartDate must be greater than or equal to the current date.",
+        //                IsSuccess = false,
+        //            };
+        //        }
+
+        //        if (dailyTourFlowModel.EndDate < DateTime.Now || dailyTourFlowModel.EndDate < dailyTourFlowModel.StartDate)
+        //        {
+        //            return new APIResponseModel
+        //            {
+        //                Message = "EndDate must be greater than or equal to the current date and greater than StartDate.",
+        //                IsSuccess = false,
+        //            };
+        //        }
+
+        //        if (dailyTourFlowModel.Discount < 0)
+        //        {
+        //            return new APIResponseModel
+        //            {
+        //                Message = "Discount must be greater than or equal to 0.",
+        //                IsSuccess = false,
+        //            };
+        //        }
+
+        //        if (string.IsNullOrEmpty(dailyTourFlowModel.TicketTypeIdAdult?.Trim()))
+        //        {
+        //            return new APIResponseModel
+        //            {
+        //                Message = "TicketTypeId must exist.",
+        //                IsSuccess = false,
+        //            };
+        //        }
+
+        //        if (dailyTourFlowModel.CapacityByAdult < 0 || dailyTourFlowModel.CapacityByChildren<0)
+        //        {
+        //            return new APIResponseModel
+        //            {
+        //                Message = "CapacityByAdult or CapacityByChildren must be greater than or equal to 0.",
+        //                IsSuccess = false,
+        //            };
+        //        }
+
+        //        if (dailyTourFlowModel.PriceByAdult < 0 || dailyTourFlowModel.PriceByChildren < 0)
+        //        {
+        //            return new APIResponseModel
+        //            {
+        //                Message = "PriceByAdult or PriceByChildren must be greater than or equal to 0.",
+        //                IsSuccess = false,
+        //            };
+        //        }
+
+
+
+        //        var ticketTypeAdultExisting = await _unitOfWork.TicketTypeRepository.GetByIdStringAsync(dailyTourFlowModel.TicketTypeIdAdult);
+
+        //        if (ticketTypeAdultExisting == null)
+        //        {
+        //            return new APIResponseModel
+        //            {
+        //                Message = "TicketTypeIdAdult must exist.",
+        //                IsSuccess = false,
+        //            };
+        //        }
+
+        //        TicketType ticketTypeChildrenExisting = null;
+        //        if (!string.IsNullOrEmpty(dailyTourFlowModel.TicketTypeIdChildren?.Trim()))
+        //        {
+        //            ticketTypeChildrenExisting = await _unitOfWork.TicketTypeRepository.GetByIdStringAsync(dailyTourFlowModel.TicketTypeIdChildren);
+        //            if (ticketTypeChildrenExisting == null)
+        //            {
+        //                return new APIResponseModel
+        //                {
+        //                    Message = "TicketTypeIdChildren must exist.",
+        //                    IsSuccess = false,
+        //                };
+        //            }
+        //        }
+
+        //        var newDailyTourId = Guid.NewGuid();
+        //        var dailyTour = new DailyTour
+        //        {
+        //            DailyTourId = newDailyTourId.ToString(), 
+        //            PackageTourId = dailyTourFlowModel.PackageTourId,
+        //            DailyTourName = dailyTourFlowModel.DailyTourName,
+        //            Description = dailyTourFlowModel.Description,
+        //            DailyTourPrice = dailyTourFlowModel.DailyTourPrice,
+        //            ImgUrl = dailyTourFlowModel.ImgUrl,
+        //            StartDate = dailyTourFlowModel.StartDate,
+        //            EndDate = dailyTourFlowModel.EndDate,
+        //            Discount = dailyTourFlowModel.Discount,
+        //            Status = 1, 
+        //            CreateDate = DateTime.Now
+        //        };
+
+
+        //        //var createdDailyTour = await _unitOfWork.DailyTourRepository.AddAsync(dailyTour);
+        //     //   _unitOfWork.Save();
+
+
+        //        var dailyTicketAdult = new DailyTicketType
+        //        {
+        //            DailyTicketId = Guid.NewGuid().ToString(), 
+        //            DailyTourId = dailyTour.DailyTourId, 
+        //            TicketTypeId = dailyTourFlowModel.TicketTypeIdAdult, 
+        //            Capacity = dailyTourFlowModel.CapacityByAdult, 
+        //            DailyTicketPrice = dailyTourFlowModel.PriceByAdult,
+        //            Status = 1, 
+        //            CreateDate = DateTime.Now
+        //        };
+
+        //        DailyTicketType dailyTicketChildren = null;
+        //        if (!string.IsNullOrEmpty(dailyTourFlowModel.TicketTypeIdChildren?.Trim()))
+        //        {
+        //            dailyTicketChildren = new DailyTicketType
+        //            {
+        //                DailyTicketId = Guid.NewGuid().ToString(),
+        //                DailyTourId = dailyTour.DailyTourId,
+        //                TicketTypeId = dailyTourFlowModel.TicketTypeIdChildren,
+        //                Capacity = dailyTourFlowModel.CapacityByChildren,
+        //                DailyTicketPrice = dailyTourFlowModel.PriceByChildren,
+        //                Status = 1,
+        //                CreateDate = DateTime.Now
+        //            };
+        //        }
+        //        await _unitOfWork.DailyTourRepository.AddAsync(dailyTour);
+        //        await _unitOfWork.DailyTicketRepository.AddAsync(dailyTicketAdult);
+
+        //        if (dailyTicketChildren != null)
+        //        {
+        //            await _unitOfWork.DailyTicketRepository.AddAsync(dailyTicketChildren);
+        //        }
+        //        _unitOfWork.Save();
+
+        //        return new APIResponseModel
+        //        {
+        //            Message = "DailyTour and Tickets created successfully",
+        //            IsSuccess = true,
+        //            //Data = new
+        //            //{
+        //            //    DailyTour = dailyTour,
+        //            //    DailyTicketAdult = dailyTicketAdult,
+        //            //    DailyTicketChildren = dailyTicketChildren
+        //            //}
+        //        };
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return new APIResponseModel
+        //        {
+        //            Message = ex.Message,
+        //            IsSuccess = false,
+        //        };
+        //    }
+        //}
+
+        public async Task<APIResponseModel> CreateDailyTourFlow(DailyToursFlowModel dailyTourFlowModel)
         {
             try
             {
@@ -47,7 +230,6 @@ namespace Services.Services
                         IsSuccess = false,
                     };
                 }
-
 
                 if (dailyTourFlowModel.StartDate < DateTime.Now)
                 {
@@ -76,127 +258,94 @@ namespace Services.Services
                     };
                 }
 
-                if (string.IsNullOrEmpty(dailyTourFlowModel.TicketTypeIdAdult?.Trim()))
+                if (dailyTourFlowModel.DailyTicketTypes == null || !dailyTourFlowModel.DailyTicketTypes.Any())
                 {
                     return new APIResponseModel
                     {
-                        Message = "TicketTypeId must exist.",
+                        Message = "At least one DailyTicketType must be provided.",
                         IsSuccess = false,
                     };
                 }
 
-                if (dailyTourFlowModel.CapacityByAdult < 0 || dailyTourFlowModel.CapacityByChildren<0)
+                if (dailyTourFlowModel.ExpirationDate <= dailyTourFlowModel.StartDate || dailyTourFlowModel.ExpirationDate <= dailyTourFlowModel.EndDate)
                 {
                     return new APIResponseModel
                     {
-                        Message = "CapacityByAdult or CapacityByChildren must be greater than or equal to 0.",
+                        Message = "ExpirationDate must be greater than both StartDate and EndDate.",
                         IsSuccess = false,
                     };
-                }
-
-                if (dailyTourFlowModel.PriceByAdult < 0 || dailyTourFlowModel.PriceByChildren < 0)
-                {
-                    return new APIResponseModel
-                    {
-                        Message = "PriceByAdult or PriceByChildren must be greater than or equal to 0.",
-                        IsSuccess = false,
-                    };
-                }
-
-
-
-                var ticketTypeAdultExisting = await _unitOfWork.TicketTypeRepository.GetByIdStringAsync(dailyTourFlowModel.TicketTypeIdAdult);
-
-                if (ticketTypeAdultExisting == null)
-                {
-                    return new APIResponseModel
-                    {
-                        Message = "TicketTypeIdAdult must exist.",
-                        IsSuccess = false,
-                    };
-                }
-
-                TicketType ticketTypeChildrenExisting = null;
-                if (!string.IsNullOrEmpty(dailyTourFlowModel.TicketTypeIdChildren?.Trim()))
-                {
-                    ticketTypeChildrenExisting = await _unitOfWork.TicketTypeRepository.GetByIdStringAsync(dailyTourFlowModel.TicketTypeIdChildren);
-                    if (ticketTypeChildrenExisting == null)
-                    {
-                        return new APIResponseModel
-                        {
-                            Message = "TicketTypeIdChildren must exist.",
-                            IsSuccess = false,
-                        };
-                    }
                 }
 
                 var newDailyTourId = Guid.NewGuid();
                 var dailyTour = new DailyTour
                 {
-                    DailyTourId = newDailyTourId.ToString(), 
+                    DailyTourId = newDailyTourId.ToString(),
                     PackageTourId = dailyTourFlowModel.PackageTourId,
                     DailyTourName = dailyTourFlowModel.DailyTourName,
                     Description = dailyTourFlowModel.Description,
                     DailyTourPrice = dailyTourFlowModel.DailyTourPrice,
                     ImgUrl = dailyTourFlowModel.ImgUrl,
+                    ExpirationDate = dailyTourFlowModel.ExpirationDate,
                     StartDate = dailyTourFlowModel.StartDate,
                     EndDate = dailyTourFlowModel.EndDate,
                     Discount = dailyTourFlowModel.Discount,
-                    Status = 1, 
+                    Status = 1,
                     CreateDate = DateTime.Now
                 };
 
-               
-                //var createdDailyTour = await _unitOfWork.DailyTourRepository.AddAsync(dailyTour);
-             //   _unitOfWork.Save();
+                await _unitOfWork.DailyTourRepository.AddAsync(dailyTour);
 
-                
-                var dailyTicketAdult = new DailyTicketType
+                foreach (var ticketType in dailyTourFlowModel.DailyTicketTypes)
                 {
-                    DailyTicketId = Guid.NewGuid().ToString(), 
-                    DailyTourId = dailyTour.DailyTourId, 
-                    TicketTypeId = dailyTourFlowModel.TicketTypeIdAdult, 
-                    Capacity = dailyTourFlowModel.CapacityByAdult, 
-                    DailyTicketPrice = dailyTourFlowModel.PriceByAdult,
-                    Status = 1, 
-                    CreateDate = DateTime.Now
-                };
+                    if (string.IsNullOrEmpty(ticketType.TicketTypeId))
+                    {
+                        return new APIResponseModel
+                        {
+                            Message = "TicketTypeId in DailyTicketTypes must exist.",
+                            IsSuccess = false,
+                        };
+                    }
 
-                DailyTicketType dailyTicketChildren = null;
-                if (!string.IsNullOrEmpty(dailyTourFlowModel.TicketTypeIdChildren?.Trim()))
-                {
-                    dailyTicketChildren = new DailyTicketType
+                    var ticketTypeExisting = await _unitOfWork.TicketTypeRepository.GetByIdStringAsync(ticketType.TicketTypeId);
+                    if (ticketTypeExisting == null)
+                    {
+                        return new APIResponseModel
+                        {
+                            Message = $"TicketTypeId {ticketType.TicketTypeId} does not exist.",
+                            IsSuccess = false,
+                        };
+                    }
+
+                    if (ticketType.Capacity < 0 || ticketType.Price < 0)
+                    {
+                        return new APIResponseModel
+                        {
+                            Message = "Capacity and Price in DailyTicketTypes must be greater than or equal to 0.",
+                            IsSuccess = false,
+                        };
+                    }
+
+                    var dailyTicketType = new DailyTicketType
                     {
                         DailyTicketId = Guid.NewGuid().ToString(),
                         DailyTourId = dailyTour.DailyTourId,
-                        TicketTypeId = dailyTourFlowModel.TicketTypeIdChildren,
-                        Capacity = dailyTourFlowModel.CapacityByChildren,
-                        DailyTicketPrice = dailyTourFlowModel.PriceByChildren,
+                        TicketTypeId = ticketType.TicketTypeId,
+                        Capacity = ticketType.Capacity ?? 0,
+                        DailyTicketPrice = ticketType.Price ?? 0,
                         Status = 1,
                         CreateDate = DateTime.Now
                     };
-                }
-                await _unitOfWork.DailyTourRepository.AddAsync(dailyTour);
-                await _unitOfWork.DailyTicketRepository.AddAsync(dailyTicketAdult);
 
-                if (dailyTicketChildren != null)
-                {
-                    await _unitOfWork.DailyTicketRepository.AddAsync(dailyTicketChildren);
+                    await _unitOfWork.DailyTicketRepository.AddAsync(dailyTicketType);
                 }
+
                 _unitOfWork.Save();
 
                 return new APIResponseModel
                 {
                     Message = "DailyTour and Tickets created successfully",
-                    IsSuccess = true,
-                    //Data = new
-                    //{
-                    //    DailyTour = dailyTour,
-                    //    DailyTicketAdult = dailyTicketAdult,
-                    //    DailyTicketChildren = dailyTicketChildren
-                    //}
+                    IsSuccess = true
                 };
-
             }
             catch (Exception ex)
             {
@@ -207,6 +356,7 @@ namespace Services.Services
                 };
             }
         }
+
 
         //public async Task<APIResponseModel> GetDailyTourDetails(string dailyTourId)
         //{

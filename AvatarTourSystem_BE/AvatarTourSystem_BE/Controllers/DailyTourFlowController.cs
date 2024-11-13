@@ -1,4 +1,5 @@
-﻿using BusinessObjects.ViewModels.DailyTour;
+﻿using Azure;
+using BusinessObjects.ViewModels.DailyTour;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -19,21 +20,22 @@ namespace AvatarTourSystem_BE.Controllers
 
         [Authorize]
         [HttpPost("daily-tours")]
-        public async Task<IActionResult> CreateDailyTourFlowAsync( DailyTourFlowModel dailyTourFlowModel)
+        public async Task<IActionResult> CreateDailyTourFlowAsync( DailyToursFlowModel dailyTourFlowModel)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            //if (!ModelState.IsValid)
+            //{
+            //    return BadRequest(ModelState);
+            //}
             var result = await _dailyTourFlowService.CreateDailyTourFlow(dailyTourFlowModel);
-            if (result.IsSuccess)
-            {
-                return Ok(result);
-            }
-            else
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, result);
-            }
+            //if (result.IsSuccess)
+            //{
+            //    return Ok(result);
+            //}
+            //else
+            //{
+            //    return StatusCode(StatusCodes.Status500InternalServerError, result);
+            //}
+            return Ok(result);
         }
 
         [Authorize]
