@@ -12,6 +12,7 @@ using BusinessObjects.ViewModels.Location;
 using BusinessObjects.ViewModels.Notification;
 using BusinessObjects.ViewModels.PackageTour;
 using BusinessObjects.ViewModels.PackageTourFlow;
+using BusinessObjects.ViewModels.PackageTourFlow.PackageTourGet;
 using BusinessObjects.ViewModels.PaymentMethod;
 using BusinessObjects.ViewModels.POI;
 using BusinessObjects.ViewModels.Rate;
@@ -187,6 +188,10 @@ namespace AvatarTourSystem_BE.AutoMapper
             CreateMap<DailyTour, DailyTourUpdateModel>().ReverseMap();
 
             //Flow-Packagetour
+            CreateMap<City, GetDestinationByCityModel>().ReverseMap();
+            CreateMap<Destination, GetLocationByDestinationModel>().ReverseMap();
+            CreateMap<Location, GetServiceByLocationModel>().ReverseMap();
+
             #region
             //       CreateMap<FPackageTourCreateModel, PackageTour>()
             //.ForMember(dest => dest.CreateDate, opt => opt.MapFrom(src => DateTime.Now))
