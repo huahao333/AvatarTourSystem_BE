@@ -4,6 +4,7 @@ using BusinessObjects.Enums;
 using BusinessObjects.Models;
 using BusinessObjects.ViewModels.PackageTour;
 using BusinessObjects.ViewModels.PackageTourFlow;
+using BusinessObjects.ViewModels.PackageTourFlow.PackageTourGet;
 using BusinessObjects.ViewModels.PackageTourFlow.PackageTourUpdate;
 using BusinessObjects.ViewModels.Rate;
 using MailKit.Net.Smtp;
@@ -49,7 +50,7 @@ namespace Services.Services
                     PackageTourId = packageTour.PackageTourId,
                     CreateDate = DateTime.Now,
                     PriceDefault = ticketTypeModel.PriceDefault,
-                    Status = createModel.Status,
+                    Status = 1,
                 };
                 packageTour.TicketTypes.Add(ticketType);
             }
@@ -140,7 +141,7 @@ namespace Services.Services
                     TicketTypeId = Guid.NewGuid().ToString(),
                     TicketTypeName = ticket.TicketTypeName,
                     MinBuyTicket = ticket.MinBuyTicket,
-                    Status = ticket.Status
+                    Status = 1
                 }).ToList()
             };
             return new APIResponseModel
@@ -191,6 +192,7 @@ namespace Services.Services
                             PackageTourImgUrl = packageTour.PackageTourImgUrl ?? string.Empty,
                             StatusPackageTour = packageTour.Status,
                             packageTour.Cities?.CityName,
+                            packageTour.Cities?.CityId,
                             TourSegments = packageTour.TourSegments?
                                 .Where(ts => ts.Status == 1)
                                 .Select(ts => new
@@ -206,6 +208,7 @@ namespace Services.Services
                                     ts.Destinations?.DestinationGoogleMap,
                                     ts.Destinations?.DestinationImgUrl,
                                     ts.Destinations?.DestinationAddress,
+                                    ts.Destinations?.CityId,
                                     StatusDestinations = ts.Destinations?.Status,
                                     Locations = ts.Destinations?.Locations?
                                         .Where(l => l.Status == 1 &&
@@ -842,6 +845,7 @@ namespace Services.Services
                         PackageTourImgUrl = packageTour.PackageTourImgUrl ?? string.Empty,
                         StatusPackageTour = packageTourRespone.Status,
                         packageTourRespone.Cities?.CityName,
+                        packageTourRespone.Cities?.CityId,
                         TourSegments = packageTourRespone.TourSegments
                             .Where(ts => ts.Status == 1)
                             .Select(ts => new
@@ -1011,6 +1015,7 @@ namespace Services.Services
                         PackageTourImgUrl = packageTourRespone.PackageTourImgUrl ?? string.Empty,
                         StatusPackageTour = packageTourRespone.Status,
                         packageTourRespone.Cities?.CityName,
+                        packageTourRespone.Cities?.CityId,
                         TourSegments = packageTourRespone.TourSegments
                             .Where(ts => ts.Status == 1)
                             .Select(ts => new
@@ -1020,6 +1025,7 @@ namespace Services.Services
                                 ts.Destinations?.DestinationName,
                                 StatusDestinations = ts.Destinations?.Status,
                                 ts.Destinations?.DestinationOpeningDate,
+                                ts.Destinations?.CityId,
                                 ts.Destinations?.DestinationClosingDate,
                                 ts.Destinations?.DestinationOpeningHours,
                                 ts.Destinations?.DestinationClosingHours,
@@ -1078,6 +1084,64 @@ namespace Services.Services
 
             };
 
+        }
+
+        public async Task<APIResponseModel> GetDestinationByCityIdAsync(GetDestinationByCityModel cityId)
+        {
+            var destinations = await _unitOfWork.DestinationRepository.GetByConditionAsync(i => i.CityId.Equals(cityId.CityId) && i.Status.Equals(1));
+            if (destinations == null)
+            {
+                return new APIResponseModel
+                {
+                    Message = "No Destinations Found",
+                    IsSuccess = false,
+                };
+            }
+            return new APIResponseModel
+            {
+                Message = "Destinations found",
+                IsSuccess = true,
+                Data = destinations
+            };
+
+        }
+
+        public async Task<APIResponseModel> GetLocationsByDestinationIdAsync(GetLocationByDestinationModel destinationId)
+        {
+            var locations = await _unitOfWork.LocationRepository.GetByConditionAsync(i => i.DestinationId.Equals(destinationId.DestinationId) && i.Status.Equals(1));
+            if (locations == null)
+            {
+                return new APIResponseModel
+                {
+                    Message = "No Locations Found",
+                    IsSuccess = false,
+                };
+            }
+            return new APIResponseModel
+            {
+                Message = "Locations found",
+                IsSuccess = true,
+                Data = locations
+            };
+        }
+
+        public async Task<APIResponseModel> GetServicesByLocationIdAsync(GetServiceByLocationModel locationId)
+        {
+            var services = await _unitOfWork.ServiceRepository.GetByConditionAsync(i => i.LocationId.Equals(locationId.LocationId) && i.Status.Equals(1));
+            if (services == null)
+            {
+                return new APIResponseModel
+                {
+                    Message = "No Services Found",
+                    IsSuccess = false,
+                };
+            }
+            return new APIResponseModel
+            {
+                Message = "Services found",
+                IsSuccess = true,
+                Data = services
+            };
         }
     }
 }

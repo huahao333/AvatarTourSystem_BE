@@ -50,7 +50,7 @@ namespace BusinessObjects.ViewModels.Account
         public string Address { get; set; } = "";
 
         [Required(ErrorMessage = "Email is required!")]
-        [EmailAddress(ErrorMessage = "Please enter valid email!")]
+        
         public string AccountEmail { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Password is required!")]

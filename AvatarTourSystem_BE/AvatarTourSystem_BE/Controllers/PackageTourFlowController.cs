@@ -1,5 +1,6 @@
 ﻿using BusinessObjects.ViewModels.PackageTour;
 using BusinessObjects.ViewModels.PackageTourFlow;
+using BusinessObjects.ViewModels.PackageTourFlow.PackageTourGet;
 using BusinessObjects.ViewModels.PackageTourFlow.PackageTourUpdate;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -92,6 +93,48 @@ namespace AvatarTourSystem_BE.Controllers
                 return StatusCode(StatusCodes.Status400BadRequest, result);
             }
         }
-        
+        //[Authorize]
+        [HttpPost("get-destination-by-city")]
+        public async Task<IActionResult> GetDestinationByCityIdFlowAsync(GetDestinationByCityModel cityId)
+        {
+            var result = await _packageTourFlow.GetDestinationByCityIdAsync(cityId);
+            if (result.IsSuccess)
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return StatusCode(StatusCodes.Status404NotFound, result);
+            }
+        }
+        //[Authorize]
+        [HttpPost("get-location-by-destination")]
+        public async Task<IActionResult> GetLocationsByDestinationIdFlowAsync(GetLocationByDestinationModel destinationId)
+        {
+            var result = await _packageTourFlow.GetLocationsByDestinationIdAsync(destinationId);
+            if (result.IsSuccess)
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return StatusCode(StatusCodes.Status404NotFound, result);
+            }
+        }
+        //[Authorize]
+        [HttpPost("get-service-by-location")]
+        public async Task<IActionResult> GetServicesByLocationIdFlowAsync(GetServiceByLocationModel locationId)
+        {
+            var result = await _packageTourFlow.GetServicesByLocationIdAsync(locationId);
+            if (result.IsSuccess)
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return StatusCode(StatusCodes.Status404NotFound, result);
+            }
+        }
+
     }
 }
