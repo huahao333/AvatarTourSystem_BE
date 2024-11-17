@@ -250,6 +250,7 @@ namespace Services.Services
                                     tt.TicketTypeId,
                                     tt.TicketTypeName,
                                     tt.MinBuyTicket,
+                                    tt.PriceDefault,
                                     tt.Status
                                 }).ToList(),
 
@@ -493,6 +494,7 @@ namespace Services.Services
                                     tt.TicketTypeId,
                                     tt.TicketTypeName,
                                     tt.MinBuyTicket,
+                                    tt.PriceDefault,
                                     tt.Status
                                 }).ToList(),
 

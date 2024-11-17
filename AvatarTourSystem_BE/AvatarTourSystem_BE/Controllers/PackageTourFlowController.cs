@@ -93,7 +93,7 @@ namespace AvatarTourSystem_BE.Controllers
                 return StatusCode(StatusCodes.Status400BadRequest, result);
             }
         }
-        //[Authorize]
+        [Authorize]
         [HttpPost("get-destination-by-city")]
         public async Task<IActionResult> GetDestinationByCityIdFlowAsync(GetDestinationByCityModel cityId)
         {
@@ -107,7 +107,7 @@ namespace AvatarTourSystem_BE.Controllers
                 return StatusCode(StatusCodes.Status404NotFound, result);
             }
         }
-        //[Authorize]
+        [Authorize]
         [HttpPost("get-location-by-destination")]
         public async Task<IActionResult> GetLocationsByDestinationIdFlowAsync(GetLocationByDestinationModel destinationId)
         {
@@ -121,7 +121,7 @@ namespace AvatarTourSystem_BE.Controllers
                 return StatusCode(StatusCodes.Status404NotFound, result);
             }
         }
-        //[Authorize]
+        [Authorize]
         [HttpPost("get-service-by-location")]
         public async Task<IActionResult> GetServicesByLocationIdFlowAsync(GetServiceByLocationModel locationId)
         {
