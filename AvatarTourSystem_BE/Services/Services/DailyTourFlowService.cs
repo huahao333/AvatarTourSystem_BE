@@ -357,6 +357,239 @@ namespace Services.Services
             }
         }
 
+        public async Task<APIResponseModel> UpdateDailyTourFlow(UpdateDailyTourFlowModel updateModel)
+        {
+            try
+            {
+                // Check if the DailyTour exists
+                var existingDailyTour = await _unitOfWork.DailyTourRepository.GetByIdStringAsync(updateModel.DailyTourId);
+                if (existingDailyTour == null)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "DailyTour not found.",
+                        IsSuccess = false,
+                    };
+                }
+
+                // Check PackageTourId
+                if (!string.IsNullOrEmpty(updateModel.PackageTourId))
+                {
+                    var packageTourExists = await _unitOfWork.PackageTourRepository.GetByIdStringAsync(updateModel.PackageTourId);
+                    if (packageTourExists == null)
+                    {
+                        return new APIResponseModel
+                        {
+                            Message = "PackageTourId does not exist.",
+                            IsSuccess = false,
+                        };
+                    }
+                }
+
+                // Validate other fields
+                if (updateModel.DailyTourPrice <= 0)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "DailyTourPrice must be greater than 0.",
+                        IsSuccess = false,
+                    };
+                }
+
+                //if (updateModel.StartDate < DateTime.Now)
+                //{
+                //    return new APIResponseModel
+                //    {
+                //        Message = "StartDate must be greater than or equal to the current date.",
+                //        IsSuccess = false,
+                //    };
+                //}
+
+                //if (updateModel.EndDate < DateTime.Now || updateModel.EndDate < updateModel.StartDate)
+                //{
+                //    return new APIResponseModel
+                //    {
+                //        Message = "EndDate must be greater than or equal to the current date and greater than StartDate.",
+                //        IsSuccess = false,
+                //    };
+                //}
+
+                //if (updateModel.ExpirationDate <= updateModel.StartDate || updateModel.ExpirationDate <= updateModel.EndDate)
+                //{
+                //    return new APIResponseModel
+                //    {
+                //        Message = "ExpirationDate must be greater than both StartDate and EndDate.",
+                //        IsSuccess = false,
+                //    };
+                //}
+                // Validate StartDate if provided
+                if (updateModel.StartDate.HasValue)
+                {
+                    if (updateModel.StartDate.Value < DateTime.Now.Date && updateModel.StartDate.Value != existingDailyTour.StartDate)
+                    {
+                        return new APIResponseModel
+                        {
+                            Message = "StartDate must be greater than or equal to the current date.",
+                            IsSuccess = false,
+                        };
+                    }
+                }
+
+                // Validate EndDate if provided
+                if (updateModel.EndDate.HasValue)
+                {
+                    if (updateModel.EndDate.Value < DateTime.Now.Date && updateModel.EndDate.Value != existingDailyTour.EndDate)
+                    {
+                        return new APIResponseModel
+                        {
+                            Message = "EndDate must be greater than or equal to the current date.",
+                            IsSuccess = false,
+                        };
+                    }
+
+                    if (updateModel.StartDate.HasValue && updateModel.EndDate.Value < updateModel.StartDate.Value)
+                    {
+                        return new APIResponseModel
+                        {
+                            Message = "EndDate must be greater than or equal to StartDate.",
+                            IsSuccess = false,
+                        };
+                    }
+                    else if (!updateModel.StartDate.HasValue && updateModel.EndDate.Value < existingDailyTour.StartDate)
+                    {
+                        return new APIResponseModel
+                        {
+                            Message = "EndDate must be greater than or equal to the existing StartDate.",
+                            IsSuccess = false,
+                        };
+                    }
+                }
+
+                // Validate ExpirationDate if provided
+                if (updateModel.ExpirationDate.HasValue)
+                {
+                    if (updateModel.ExpirationDate.Value <= (updateModel.StartDate ?? existingDailyTour.StartDate))
+                    {
+                        return new APIResponseModel
+                        {
+                            Message = "ExpirationDate must be greater than StartDate.",
+                            IsSuccess = false,
+                        };
+                    }
+
+                    if (updateModel.ExpirationDate.Value <= (updateModel.EndDate ?? existingDailyTour.EndDate))
+                    {
+                        return new APIResponseModel
+                        {
+                            Message = "ExpirationDate must be greater than EndDate.",
+                            IsSuccess = false,
+                        };
+                    }
+                }
+
+                if (updateModel.Discount < 0)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Discount must be greater than or equal to 0.",
+                        IsSuccess = false,
+                    };
+                }
+
+                // Update DailyTour fields
+                existingDailyTour.PackageTourId = updateModel.PackageTourId ?? existingDailyTour.PackageTourId;
+                existingDailyTour.DailyTourName = updateModel.DailyTourName ?? existingDailyTour.DailyTourName;
+                existingDailyTour.Description = updateModel.Description ?? existingDailyTour.Description;
+                existingDailyTour.DailyTourPrice = updateModel.DailyTourPrice ?? existingDailyTour.DailyTourPrice;
+                existingDailyTour.ImgUrl = updateModel.ImgUrl ?? existingDailyTour.ImgUrl;
+                existingDailyTour.ExpirationDate = updateModel.ExpirationDate ?? existingDailyTour.ExpirationDate;
+                existingDailyTour.StartDate = updateModel.StartDate ?? existingDailyTour.StartDate;
+                existingDailyTour.EndDate = updateModel.EndDate ?? existingDailyTour.EndDate;
+                existingDailyTour.Discount = updateModel.Discount ?? existingDailyTour.Discount;
+                existingDailyTour.UpdateDate = DateTime.Now;
+
+                // Update DailyTicketTypes if provided
+                if (updateModel.DailyTicketTypes != null && updateModel.DailyTicketTypes.Any())
+                {
+                    foreach (var ticketType in updateModel.DailyTicketTypes)
+                    {
+                        if (string.IsNullOrEmpty(ticketType.TicketTypeId))
+                        {
+                            return new APIResponseModel
+                            {
+                                Message = "TicketTypeId in DailyTicketTypes must exist.",
+                                IsSuccess = false,
+                            };
+                        }
+
+                        var ticketTypeExists = await _unitOfWork.TicketTypeRepository.GetByIdStringAsync(ticketType.TicketTypeId);
+                        if (ticketTypeExists == null)
+                        {
+                            return new APIResponseModel
+                            {
+                                Message = $"TicketTypeId {ticketType.TicketTypeId} does not exist.",
+                                IsSuccess = false,
+                            };
+                        }
+
+                        if (ticketType.Capacity < 0 || ticketType.Price < 0)
+                        {
+                            return new APIResponseModel
+                            {
+                                Message = "Capacity and Price in DailyTicketTypes must be greater than or equal to 0.",
+                                IsSuccess = false,
+                            };
+                        }
+
+                        var existingTicket = (await _unitOfWork.DailyTicketRepository.GetByConditionAsync(x =>
+                                             x.DailyTourId == updateModel.DailyTourId && x.TicketTypeId == ticketType.TicketTypeId))
+                                             .FirstOrDefault();
+
+                        if (existingTicket != null)
+                        {
+                            // Update existing ticket
+                            existingTicket.Capacity = ticketType.Capacity ?? existingTicket.Capacity;
+                            existingTicket.DailyTicketPrice = ticketType.Price ?? existingTicket.DailyTicketPrice;
+                            existingTicket.UpdateDate = DateTime.Now;
+                        }
+                        else
+                        {
+                            // Add new ticket
+                            var newDailyTicket = new DailyTicketType
+                            {
+                                DailyTicketId = Guid.NewGuid().ToString(),
+                                DailyTourId = updateModel.DailyTourId,
+                                TicketTypeId = ticketType.TicketTypeId,
+                                Capacity = ticketType.Capacity ?? 0,
+                                DailyTicketPrice = ticketType.Price ?? 0,
+                                Status = 1,
+                                CreateDate = DateTime.Now
+                            };
+
+                            await _unitOfWork.DailyTicketRepository.AddAsync(newDailyTicket);
+                        }
+                    }
+                }
+
+                // Save changes
+                _unitOfWork.Save();
+
+                return new APIResponseModel
+                {
+                    Message = "DailyTour updated successfully.",
+                    IsSuccess = true
+                };
+            }
+            catch (Exception ex)
+            {
+                return new APIResponseModel
+                {
+                    Message = ex.Message,
+                    IsSuccess = false,
+                };
+            }
+        }
+
 
         //public async Task<APIResponseModel> GetDailyTourDetails(string dailyTourId)
         //{

@@ -46,4 +46,27 @@ namespace BusinessObjects.ViewModels.DailyTour
         public int? Capacity { get; set; }
         public float? Price { get; set; }
     }
+
+
+    public class UpdateDailyTourFlowModel
+    {
+        public string DailyTourId { get; set; } 
+        public string? PackageTourId { get; set; } = "";
+        public string? DailyTourName { get; set; } = "";
+        public string? Description { get; set; } = "";
+        public float? DailyTourPrice { get; set; } = 0;
+        public string? ImgUrl { get; set; } = "";
+        public DateTime? ExpirationDate { get; set; }
+        public DateTime? StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
+        public int? Discount { get; set; } = 0;
+        public List<UpdateDailyTicketTypeModel> DailyTicketTypes { get; set; }
+    }
+
+    public class UpdateDailyTicketTypeModel
+    {
+        public string TicketTypeId { get; set; }
+        public int? Capacity { get; set; }
+        public float? Price { get; set; }
+    }
 }

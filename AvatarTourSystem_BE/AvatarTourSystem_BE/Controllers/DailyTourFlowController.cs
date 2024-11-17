@@ -54,6 +54,14 @@ namespace AvatarTourSystem_BE.Controllers
         //}
 
         [Authorize]
+        [HttpPost("daily-tours-flow")]
+        public async Task<IActionResult> UpdateDailyTourFlow(UpdateDailyTourFlowModel updateModel)
+        {
+            var response = await _dailyTourFlowService.UpdateDailyTourFlow(updateModel);
+            return Ok(response);
+        }
+
+        [Authorize]
         [HttpGet("daily-tours")]
         public async Task<IActionResult> GetAllDailysToursAsync()
         {
