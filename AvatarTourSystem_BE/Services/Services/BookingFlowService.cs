@@ -474,6 +474,13 @@ namespace Services.Services
                             QR = t.QRImgUrl
                         }).ToList();
 
+                    var hasFeedbacks = await _unitOfWork.FeedbackRepository.GetAllAsyncs(query => query
+                                            .Where(f=>f.BookingId == booking.BookingId &&f.Status==1));
+                    var hasRates = await _unitOfWork.RateRepository.GetAllAsyncs(query => query
+                                            .Where(r => r.BookingId == booking.BookingId && f.Status == 1));
+                    var hasFeedback = hasFeedbacks.Any();
+                    var hasRate = hasRates.Any();
+
                     if (ticketsForBooking.Any())
                     {
                         bookingWithTickets.Add(new
@@ -486,6 +493,7 @@ namespace Services.Services
                             booking.TotalPrice,
                             booking.Status,
                             booking.CreateDate,
+                            HasFeedbackAndRate = hasFeedback && hasRate,
                             DailyTourDetails = dailyTourDetails,
                             Tickets = ticketsForBooking,
                         });
