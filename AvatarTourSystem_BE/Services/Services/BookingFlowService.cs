@@ -477,7 +477,7 @@ namespace Services.Services
                     var hasFeedbacks = await _unitOfWork.FeedbackRepository.GetAllAsyncs(query => query
                                             .Where(f=>f.BookingId == booking.BookingId &&f.Status==1));
                     var hasRates = await _unitOfWork.RateRepository.GetAllAsyncs(query => query
-                                            .Where(r => r.BookingId == booking.BookingId && f.Status == 1));
+                                            .Where(r => r.BookingId == booking.BookingId && r.Status == 1));
                     var hasFeedback = hasFeedbacks.Any();
                     var hasRate = hasRates.Any();
 
