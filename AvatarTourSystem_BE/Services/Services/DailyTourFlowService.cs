@@ -231,20 +231,20 @@ namespace Services.Services
                     };
                 }
 
-                if (dailyTourFlowModel.StartDate < DateTime.Now)
+                if (dailyTourFlowModel.StartDate <= DateTime.Now)
                 {
                     return new APIResponseModel
                     {
-                        Message = "StartDate must be greater than or equal to the current date.",
+                        Message = "StartDate must be greater than to the current date.",
                         IsSuccess = false,
                     };
                 }
 
-                if (dailyTourFlowModel.EndDate < DateTime.Now || dailyTourFlowModel.EndDate < dailyTourFlowModel.StartDate)
+                if (dailyTourFlowModel.EndDate <= DateTime.Now || dailyTourFlowModel.EndDate <= dailyTourFlowModel.StartDate)
                 {
                     return new APIResponseModel
                     {
-                        Message = "EndDate must be greater than or equal to the current date and greater than StartDate.",
+                        Message = "EndDate must be greater than to the current date and greater than StartDate.",
                         IsSuccess = false,
                     };
                 }
