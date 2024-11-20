@@ -249,14 +249,6 @@ namespace Services.Services
                     };
                 }
 
-                if (dailyTourFlowModel.Discount < 0)
-                {
-                    return new APIResponseModel
-                    {
-                        Message = "Discount must be greater than or equal to 0.",
-                        IsSuccess = false,
-                    };
-                }
 
                 if (dailyTourFlowModel.DailyTicketTypes == null || !dailyTourFlowModel.DailyTicketTypes.Any())
                 {
@@ -272,6 +264,16 @@ namespace Services.Services
                     return new APIResponseModel
                     {
                         Message = "ExpirationDate must be greater than both StartDate and EndDate.",
+                        IsSuccess = false,
+                    };
+                }
+
+
+                if (dailyTourFlowModel.Discount < 0)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Discount must be greater than or equal to 0.",
                         IsSuccess = false,
                     };
                 }
