@@ -494,6 +494,7 @@ namespace Services.Services
                             booking.Status,
                             booking.CreateDate,
                             HasFeedbackAndRate = hasFeedback && hasRate,
+                            IsOwner = zaloAccount.Id == booking.UserId,
                             DailyTourDetails = dailyTourDetails,
                             Tickets = ticketsForBooking,
                         });
