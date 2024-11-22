@@ -477,7 +477,7 @@ namespace Services.Services
                     var hasFeedbacks = await _unitOfWork.FeedbackRepository.GetAllAsyncs(query => query
                                             .Where(f=>f.BookingId == booking.BookingId &&f.Status==1));
                     var hasRates = await _unitOfWork.RateRepository.GetAllAsyncs(query => query
-                                            .Where(r => r.BookingId == booking.BookingId && f.Status == 1));
+                                            .Where(r => r.BookingId == booking.BookingId && r.Status == 1));
                     var hasFeedback = hasFeedbacks.Any();
                     var hasRate = hasRates.Any();
 
@@ -494,6 +494,7 @@ namespace Services.Services
                             booking.Status,
                             booking.CreateDate,
                             HasFeedbackAndRate = hasFeedback && hasRate,
+                            IsOwner = zaloAccount.Id == booking.UserId,
                             DailyTourDetails = dailyTourDetails,
                             Tickets = ticketsForBooking,
                         });
@@ -807,6 +808,16 @@ namespace Services.Services
                     };
                 }
 
+                var bookingStatus = await _unitOfWork.BookingRepository.GetAllAsyncs(query=>query.Where(s=>s.BookingId== ticket.BookingId));
+                if (bookingStatus.All(s => s.Status == 4))
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Ticket has been used.",
+                        IsSuccess = false,
+                    };
+                }
+
                 var serviceIds = await GetServiceIdByDailyTourIdAndDestinationId(ticketUsageViewModel.DailyTourId, ticketUsageViewModel.MobileDestinationId);
                 if (serviceIds == null || !serviceIds.Any())
                 {
@@ -817,8 +828,16 @@ namespace Services.Services
                     };
                 }
                 var servicesUsed = await _unitOfWork.ServiceUsedByTicketRepository
-                                           .GetAllAsyncs(query => query.Where(s => s.TicketId == ticketUsageViewModel.TicketId && serviceIds.Contains(s.ServiceId)));
-                bool hasServiceUsedStatus4 = servicesUsed.Any(s => s.Status == 4);
+                                           .GetAllAsyncs(query => query.Where(s =>s.TicketId == ticketUsageViewModel.TicketId && serviceIds.Contains(s.ServiceId)));
+             //   bool hasServiceUsedStatus4 = servicesUsed.All(s => s.Status == 4);
+                if (servicesUsed.All(s => s.Status == 4))
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Ticket has been used in this destination",
+                        IsSuccess = false,
+                    };
+                }
                 if (servicesUsed.Any())
                 {
                     foreach (var service in servicesUsed)
@@ -829,11 +848,14 @@ namespace Services.Services
                         service.CreateDate = createDate;
                         _unitOfWork.ServiceUsedByTicketRepository.UpdateAsync(service); 
                     }
-
-                    _unitOfWork.Save(); 
+                    _unitOfWork.Save();
                 }
+                
+                               
+                var hasServiceUsedStatus4 = await _unitOfWork.ServiceUsedByTicketRepository
+                                                .GetAllAsyncs(query => query.Where(s => s.TicketId == ticket.TicketId));
 
-                if (hasServiceUsedStatus4)
+                if (hasServiceUsedStatus4.All(s=> s.Status==4))
                 {
                     var createDate = ticket.CreateDate;
                     ticket.Status = 4;
@@ -860,8 +882,8 @@ namespace Services.Services
 
                     return new APIResponseModel
                     {
-                        Message = "Ticket has been used.",
-                        IsSuccess = false,
+                        Message = "Status updated successfully for tickets.",
+                        IsSuccess = true,
                     };
                 }
 

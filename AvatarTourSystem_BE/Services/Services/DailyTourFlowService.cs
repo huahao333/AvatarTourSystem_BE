@@ -231,32 +231,24 @@ namespace Services.Services
                     };
                 }
 
-                if (dailyTourFlowModel.StartDate < DateTime.Now)
+                if (dailyTourFlowModel.StartDate <= DateTime.Now)
                 {
                     return new APIResponseModel
                     {
-                        Message = "StartDate must be greater than or equal to the current date.",
+                        Message = "StartDate must be greater than to the current date.",
                         IsSuccess = false,
                     };
                 }
 
-                if (dailyTourFlowModel.EndDate < DateTime.Now || dailyTourFlowModel.EndDate < dailyTourFlowModel.StartDate)
+                if (dailyTourFlowModel.EndDate <= DateTime.Now || dailyTourFlowModel.EndDate <= dailyTourFlowModel.StartDate)
                 {
                     return new APIResponseModel
                     {
-                        Message = "EndDate must be greater than or equal to the current date and greater than StartDate.",
+                        Message = "EndDate must be greater than to the current date and greater than StartDate.",
                         IsSuccess = false,
                     };
                 }
 
-                if (dailyTourFlowModel.Discount < 0)
-                {
-                    return new APIResponseModel
-                    {
-                        Message = "Discount must be greater than or equal to 0.",
-                        IsSuccess = false,
-                    };
-                }
 
                 if (dailyTourFlowModel.DailyTicketTypes == null || !dailyTourFlowModel.DailyTicketTypes.Any())
                 {
@@ -272,6 +264,16 @@ namespace Services.Services
                     return new APIResponseModel
                     {
                         Message = "ExpirationDate must be greater than both StartDate and EndDate.",
+                        IsSuccess = false,
+                    };
+                }
+
+
+                if (dailyTourFlowModel.Discount < 0)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Discount must be greater than or equal to 0.",
                         IsSuccess = false,
                     };
                 }
@@ -425,11 +427,11 @@ namespace Services.Services
                 // Validate StartDate if provided
                 if (updateModel.StartDate.HasValue)
                 {
-                    if (updateModel.StartDate.Value < DateTime.Now.Date && updateModel.StartDate.Value != existingDailyTour.StartDate)
+                    if (updateModel.StartDate.Value <= DateTime.Now.Date && updateModel.StartDate.Value != existingDailyTour.StartDate)
                     {
                         return new APIResponseModel
                         {
-                            Message = "StartDate must be greater than or equal to the current date.",
+                            Message = "StartDate must be greater than to the current date.",
                             IsSuccess = false,
                         };
                     }
@@ -438,28 +440,28 @@ namespace Services.Services
                 // Validate EndDate if provided
                 if (updateModel.EndDate.HasValue)
                 {
-                    if (updateModel.EndDate.Value < DateTime.Now.Date && updateModel.EndDate.Value != existingDailyTour.EndDate)
+                    if (updateModel.EndDate.Value <= DateTime.Now.Date && updateModel.EndDate.Value != existingDailyTour.EndDate)
                     {
                         return new APIResponseModel
                         {
-                            Message = "EndDate must be greater than or equal to the current date.",
+                            Message = "EndDate must be greater than to the current date.",
                             IsSuccess = false,
                         };
                     }
 
-                    if (updateModel.StartDate.HasValue && updateModel.EndDate.Value < updateModel.StartDate.Value)
+                    if (updateModel.StartDate.HasValue && updateModel.EndDate.Value <= updateModel.StartDate.Value)
                     {
                         return new APIResponseModel
                         {
-                            Message = "EndDate must be greater than or equal to StartDate.",
+                            Message = "EndDate must be greater than to StartDate.",
                             IsSuccess = false,
                         };
                     }
-                    else if (!updateModel.StartDate.HasValue && updateModel.EndDate.Value < existingDailyTour.StartDate)
+                    else if (!updateModel.StartDate.HasValue && updateModel.EndDate.Value <= existingDailyTour.StartDate)
                     {
                         return new APIResponseModel
                         {
-                            Message = "EndDate must be greater than or equal to the existing StartDate.",
+                            Message = "EndDate must be greater than to the existing StartDate.",
                             IsSuccess = false,
                         };
                     }
