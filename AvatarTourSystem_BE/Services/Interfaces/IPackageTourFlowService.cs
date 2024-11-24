@@ -22,5 +22,7 @@ namespace Services.Interfaces
         Task<APIResponseModel> UpdatePackageTourFlowAsync(FPackageTourUpdateModel updateModel);
         Task<APIResponseModel> AddPartToPackageTourFlow(FPackageTourUpdateModel createModel);
 
+        Task<APIResponseModel> CreatePackageTourAsync(FPackageTourCreatedModel createModel);
+
     }
 }

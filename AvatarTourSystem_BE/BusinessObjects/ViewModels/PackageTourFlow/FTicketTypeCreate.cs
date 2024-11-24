@@ -22,6 +22,7 @@ namespace BusinessObjects.ViewModels.PackageTourFlow
         public float? PriceDefault { get; set; }
         [Required(ErrorMessage = "Min Buy Ticket is required")]
         public int? MinBuyTicket { get; set; }
+        [JsonIgnore]
         public int Status { get; set; }
     }
 }
