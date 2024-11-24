@@ -474,7 +474,7 @@ namespace Services.Services
                 UserName = !string.IsNullOrWhiteSpace(accountZalo.UserName) ? accountZalo.UserName : "",
                 FullName = !string.IsNullOrWhiteSpace(accountZalo.FullName) ? accountZalo.FullName : "",
                 AvatarUrl = !string.IsNullOrWhiteSpace(accountZalo.AvatarUrl) ? accountZalo.AvatarUrl : "",
-                isHasPhoneNumber = !string.IsNullOrWhiteSpace(accountZalo.PhoneNumber) ? "True" : "False"
+                isHasPhoneNumber = !string.IsNullOrWhiteSpace(accountZalo.PhoneNumber) ? "true" : "false"
             };
 
             return new APIResponseModel
