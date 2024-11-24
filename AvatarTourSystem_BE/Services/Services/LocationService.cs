@@ -92,6 +92,8 @@ namespace Services.Services
                     LocationImgUrl = createModel.LocationImgUrl,
                     LocationHotline = createModel.LocationHotline,
                     DestinationId = createModel.DestinationId,
+                    LocationOpeningHours = createModel.LocationOpeningHours,
+                    LocationClosingHours = createModel.LocationClosingHours,
                     Status = (int)EStatus.Active,
                     CreateDate = DateTime.Now,
                     UpdateDate = DateTime.Now
