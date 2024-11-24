@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Services.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +9,8 @@ namespace Services.Interfaces
 {
     public interface IZaloPayService
     {
-        public bool VerifyCallback(string data, string mac);
-        public Task HandleCallbackAsync(dynamic callbackData);
+        bool ValidateCallback(ZaloMiniAppCallback data);
+        string GenerateMac(ZaloMiniAppCallback data);
+        string GenerateOverallMac(ZaloMiniAppCallback data);
     }
 }

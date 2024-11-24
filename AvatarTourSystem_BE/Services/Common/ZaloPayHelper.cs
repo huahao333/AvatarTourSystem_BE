@@ -51,78 +51,80 @@ namespace Services.Common.ZaloPayHelper
                 return BitConverter.ToString(hashMessage).Replace("-", "").ToLower();
             }
         }
-
-        //RSA
-        public static string Encrypt(string data, string publicKey)
+        public class RSAHelper
         {
-            byte[] publicKeyBytes = Convert.FromBase64String(publicKey);
-            AsymmetricKeyParameter asymmetricKeyParameter = PublicKeyFactory.CreateKey(publicKeyBytes);
-            RsaKeyParameters rsaKeyParameters = (RsaKeyParameters)asymmetricKeyParameter;
-
-            RSAParameters rsaParameters = new RSAParameters
+            public static string Encrypt(string data, string publicKey)
             {
-                Modulus = rsaKeyParameters.Modulus.ToByteArrayUnsigned(),
-                Exponent = rsaKeyParameters.Exponent.ToByteArrayUnsigned()
-            };
+                byte[] publicKeyBytes = Convert.FromBase64String(publicKey);
+                AsymmetricKeyParameter asymmetricKeyParameter = PublicKeyFactory.CreateKey(publicKeyBytes);
+                RsaKeyParameters rsaKeyParameters = (RsaKeyParameters)asymmetricKeyParameter;
 
-            //You can then easily import the key parameters into RSACryptoServiceProvider:
-            RSACryptoServiceProvider rsa = new RSACryptoServiceProvider();
-            rsa.ImportParameters(rsaParameters);
+                RSAParameters rsaParameters = new RSAParameters
+                {
+                    Modulus = rsaKeyParameters.Modulus.ToByteArrayUnsigned(),
+                    Exponent = rsaKeyParameters.Exponent.ToByteArrayUnsigned()
+                };
 
-            //Finally, do your encryption:
-            byte[] dataToEncrypt = Encoding.UTF8.GetBytes(data);
-            // Sign data with Pkcs1
-            byte[] encryptedData = rsa.Encrypt(dataToEncrypt, false);
-            // Convert Bytes to Hash
-            var hash = Convert.ToBase64String(encryptedData);
+                //You can then easily import the key parameters into RSACryptoServiceProvider:
+                RSACryptoServiceProvider rsa = new RSACryptoServiceProvider();
+                rsa.ImportParameters(rsaParameters);
 
-            return hash;
-        }
-        public static string EncryptV1(string data, string publicKey)
-        {
-            string hash = "";
-            try
-            {
-                byte[] keys = Convert.FromBase64String(publicKey);
-                X509Certificate2 cert = new X509Certificate2(keys);
-                hash = Encrypt(data, cert);
+                //Finally, do your encryption:
+                byte[] dataToEncrypt = Encoding.UTF8.GetBytes(data);
+                // Sign data with Pkcs1
+                byte[] encryptedData = rsa.Encrypt(dataToEncrypt, false);
+                // Convert Bytes to Hash
+                var hash = Convert.ToBase64String(encryptedData);
+
+                return hash;
             }
-            catch (Exception e)
+            public static string EncryptV1(string data, string publicKey)
             {
-                Console.WriteLine(e.Message);
+                string hash = "";
+                try
+                {
+                    byte[] keys = Convert.FromBase64String(publicKey);
+                    X509Certificate2 cert = new X509Certificate2(keys);
+                    hash = Encrypt(data, cert);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+
+                return hash;
+            }
+            public static string Encrypt(string plainText, X509Certificate2 cert)
+            {
+                RSACryptoServiceProvider publicKey = (RSACryptoServiceProvider)cert.PublicKey.Key;
+                byte[] plainBytes = Encoding.UTF8.GetBytes(plainText);
+                byte[] encryptedBytes = publicKey.Encrypt(plainBytes, false);
+                string encryptedText = Convert.ToBase64String(encryptedBytes);
+                return encryptedText;
             }
 
-            return hash;
+            public static string Decrypt(string encryptedText, X509Certificate2 cert)
+            {
+                RSACryptoServiceProvider privateKey = (RSACryptoServiceProvider)cert.PrivateKey;
+                byte[] encryptedBytes = Convert.FromBase64String(encryptedText);
+                byte[] decryptedBytes = privateKey.Decrypt(encryptedBytes, false);
+                string decryptedText = Encoding.UTF8.GetString(decryptedBytes);
+                return decryptedText;
+            }
         }
-        public static string Encrypt(string plainText, X509Certificate2 cert)
+        //TimeUtils
+        public class Utils
         {
-            RSACryptoServiceProvider publicKey = (RSACryptoServiceProvider)cert.PublicKey.Key;
-            byte[] plainBytes = Encoding.UTF8.GetBytes(plainText);
-            byte[] encryptedBytes = publicKey.Encrypt(plainBytes, false);
-            string encryptedText = Convert.ToBase64String(encryptedBytes);
-            return encryptedText;
-        }
+            public static long GetTimeStamp(DateTime date)
+            {
+                return (long)(date.ToUniversalTime() - new DateTime(1970, 1, 1, 0, 0, 0)).TotalMilliseconds;
+            }
 
-        public static string Decrypt(string encryptedText, X509Certificate2 cert)
-        {
-            RSACryptoServiceProvider privateKey = (RSACryptoServiceProvider)cert.PrivateKey;
-            byte[] encryptedBytes = Convert.FromBase64String(encryptedText);
-            byte[] decryptedBytes = privateKey.Decrypt(encryptedBytes, false);
-            string decryptedText = Encoding.UTF8.GetString(decryptedBytes);
-            return decryptedText;
+            public static long GetTimeStamp()
+            {
+                return GetTimeStamp(DateTime.Now);
+            }
         }
     }
-    //TimeUtils
-    public class Utils
-    {
-        public static long GetTimeStamp(DateTime date)
-        {
-            return (long)(date.ToUniversalTime() - new DateTime(1970, 1, 1, 0, 0, 0)).TotalMilliseconds;
-        }
 
-        public static long GetTimeStamp()
-        {
-            return GetTimeStamp(DateTime.Now);
-        }
-    }
 }

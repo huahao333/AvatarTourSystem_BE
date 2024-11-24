@@ -1,56 +1,75 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Services.Common;
 using Services.Interfaces;
+using static Services.Common.ZaloPayHelper.ZaloPayHelper;
 
 namespace AvatarTourSystem_BE.Controllers
 {
     [Route("[controller]")]
     [ApiController]
     public class PaymentController : ControllerBase
-
     {
-        private readonly IZaloPayService _zaloPayService;
 
-        public PaymentController(IZaloPayService zaloPayService)
+        private readonly IZaloPayService _zaloPayService;
+        private readonly ILogger<PaymentController> _logger;
+
+        public PaymentController(
+            IZaloPayService zaloPayService,
+            ILogger<PaymentController> logger)
         {
             _zaloPayService = zaloPayService;
+            _logger = logger;
         }
 
         [HttpPost("zalo-callback")]
-        public async Task<IActionResult> PostZaloPay([FromBody] dynamic cbdata)
+        public IActionResult HandleCallback([FromBody] ZaloPayCallbackRequest callback)
         {
-            var result = new Dictionary<string, object>();
             try
             {
-                var dataStr = Convert.ToString(cbdata["data"]);
-                var reqMac = Convert.ToString(cbdata["mac"]);
+                _logger.LogInformation("Received ZaloPay callback: {@Callback}", callback);
 
-                // Verify the callback
-                if (!_zaloPayService.VerifyCallback(dataStr, reqMac))
+                if (callback?.Data == null)
                 {
-                    // Callback is not valid
-                    result["return_code"] = -1;
-                    result["return_message"] = "MAC not equal";
-                    return Ok(result);
+                    return BadRequest(new ZaloPayCallbackResponse
+                    {
+                        returnCode = 0,
+                        returnMessage = "Invalid callback"
+                    });
                 }
 
-                // Deserialize the data
-                var dataJson = JsonConvert.DeserializeObject<Dictionary<string, object>>(dataStr);
+                //var isValid = _zaloPayService.ValidateCallback(callback.Data);
+                var isValid = _zaloPayService.ValidateCallback(callback.Data);
+                if (!isValid)
+                {
+                    return BadRequest(new ZaloPayCallbackResponse
+                    {
+                        returnCode = 0,
+                        returnMessage = "Invalid mac or overall mac"
+                    });
+                }
 
-                // Update the order's status
-                await _zaloPayService.HandleCallbackAsync(dataJson);
+                if (callback.Data.resultCode == 1)
+                {
+                    return Ok(new ZaloPayCallbackResponse
+                    {
+                        returnCode = 1,
+                        returnMessage = callback.Data.message,
+                    });
 
-                result["return_code"] = 1;
-                result["return_message"] = "success";
+                }
+                return BadRequest(new ZaloPayCallbackResponse
+                {
+                    returnCode = 0,
+                    returnMessage = "Payment failure"
+                });
+
             }
             catch (Exception ex)
             {
-                result["return_code"] = 0; // ZaloPay server will callback again (maximum 3 times)
-                result["return_message"] = ex.Message;
+                _logger.LogError(ex, "Error processing ZaloPay callback");
+                return StatusCode(500, new { returncode = 0, returnmessage = "internal server error" });
             }
-
-            // Notify the result to the ZaloPay server
-            return Ok(result);
         }
     }
 }
