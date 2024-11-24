@@ -89,6 +89,9 @@ namespace Services.Services
                     LocationId = Guid.NewGuid().ToString(),
                     LocationName = createModel.LocationName,
                     LocationGoogleMap = locationGGMap,
+                    LocationImgUrl = createModel.LocationImgUrl,
+                    LocationHotline = createModel.LocationHotline,
+                    DestinationId = createModel.DestinationId,
                     Status = (int)EStatus.Active,
                     CreateDate = DateTime.Now,
                     UpdateDate = DateTime.Now
