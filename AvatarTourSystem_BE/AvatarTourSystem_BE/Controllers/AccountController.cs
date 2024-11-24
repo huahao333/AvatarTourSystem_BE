@@ -125,10 +125,22 @@ namespace AvatarTourSystem_BE.Controllers
             return Ok(response);
         }
 
-        [HttpPost("account-sign-up")]
+        [HttpPost("account-admin-sign-up")]
         public async Task<IActionResult> SignUp(AccountSignUpModel signUpModel)
         {
             var response = await _accountService.SignUpAccountAsync(signUpModel);
+            return Ok(response);
+        }
+        [HttpPost("account-staff-sign-up")]
+        public async Task<IActionResult> SignUpStaff(AccountSignUpModel signUpModel)
+        {
+            var response = await _accountService.SignUpStaffAccountAsync(signUpModel);
+            return Ok(response);
+        }
+        [HttpPost("account-supplier-sign-up")]
+        public async Task<IActionResult> SignUpSupplier(AccountSignUpModel signUpModel)
+        {
+            var response = await _accountService.SignUpSupplierAccountAsync(signUpModel);
             return Ok(response);
         }
 

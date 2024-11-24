@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Services.Common
+namespace BusinessObjects.ViewModels.Payment
 {
-    public class ZaloMiniAppCallback
+    public class CallbackModel
     {
         public string appId { get; set; }
         public string orderid { get; set; }
@@ -19,15 +19,5 @@ namespace Services.Common
         public int resultCode { get; set; }
         public string message { get; set; }
         public string? extradata { get; set; }
-    }
-    public class ZaloPayCallbackRequest
-    {
-        public ZaloMiniAppCallback Data { get; set; }
-    }
-
-    public class ZaloPayCallbackResponse
-    {
-        public int returnCode { get; set; }
-        public string returnMessage { get; set; }
     }
 }

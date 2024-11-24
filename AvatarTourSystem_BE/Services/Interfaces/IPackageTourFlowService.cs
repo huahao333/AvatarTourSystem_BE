@@ -1,4 +1,5 @@
 ﻿using BusinessObjects.ViewModels.PackageTourFlow;
+using BusinessObjects.ViewModels.PackageTourFlow.PackageTourGet;
 using BusinessObjects.ViewModels.PackageTourFlow.PackageTourUpdate;
 using Services.Common;
 using System;
@@ -13,6 +14,9 @@ namespace Services.Interfaces
     {
         Task<APIResponseModel> GetPackageTourFlowAsync();
         Task<APIResponseModel> GetPackageTourFlowByIdAsync(string id);
+        Task<APIResponseModel> GetDestinationByCityIdAsync(GetDestinationByCityModel cityId);
+        Task<APIResponseModel> GetLocationsByDestinationIdAsync(GetLocationByDestinationModel destinationId);
+        Task<APIResponseModel> GetServicesByLocationIdAsync(GetServiceByLocationModel locationId);
         Task<APIResponseModel> CreatePackageTourFlowAsync(FPackageTourCreateModel createModel);
         Task<APIResponseModel> CreatePartsPackageTourFlowAsync(FPackageTourUpdate updateModel);
         Task<APIResponseModel> UpdatePackageTourFlowAsync(FPackageTourUpdateModel updateModel);

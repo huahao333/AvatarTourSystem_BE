@@ -42,6 +42,7 @@ namespace Services.Services
             var feedback = _mapper.Map<Feedback>(feedbackCreateModel);
             feedback.FeedbackId = Guid.NewGuid().ToString();
             feedback.CreateDate = DateTime.Now;
+            feedback.Status= (int)EStatus.Active;
             var user = await _unitOfWork.AccountRepository.GetByConditionAsync(x => x.ZaloUser == feedbackCreateModel.ZaloUser);
             if (user == null || !user.Any())
             {

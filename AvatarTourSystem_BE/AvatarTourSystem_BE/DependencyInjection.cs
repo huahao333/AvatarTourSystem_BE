@@ -11,6 +11,7 @@ using Repositories;
 using Repositories.Interfaces;
 using Repositories.Repositories;
 using Services.Common;
+using Services.Common.ZaloPayHelper;
 using Services.Interfaces;
 using Services.Services;
 using System;
@@ -155,7 +156,11 @@ namespace AvatarTourSystem_BE
 
          //   services.AddScoped<IBookingFlowService, BookingFlowService>();
             services.AddScoped<IVNPayService, VNPayService>();
+
+            services.AddScoped<IZaloPayService, ZaloPayService>();
+
             services.AddSingleton<VNPayHelper>();
+            services.AddSingleton<ZaloPayHelper>();
             services.Configure<VNPaySettings>(builder.Configuration.GetSection("VNPay"));
             //auto mapper
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());

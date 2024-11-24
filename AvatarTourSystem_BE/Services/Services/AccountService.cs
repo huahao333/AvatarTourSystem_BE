@@ -230,7 +230,7 @@ namespace Services.Services
             {
                 if (string.IsNullOrEmpty(signUpModel.AccountEmail) || string.IsNullOrWhiteSpace(signUpModel.AccountEmail))
                 {
-                    return new APIResponseModel { IsSuccess = false, Message = "Email cannot be empty or whitespace." };
+                    return new APIResponseModel { IsSuccess = false, Message = "Username cannot be empty or whitespace." };
                 }
 
                 var existAccount = await _unitOfWork.AccountRepository.GetByConditionAsync(a => a.Email == signUpModel.AccountEmail);
@@ -629,6 +629,98 @@ namespace Services.Services
                     Message = "Phone Updated Successfully",
                     IsSuccess = true
                 };
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception: {ex.Message}");
+                return new APIResponseModel { IsSuccess = false, Message = "An error occurred while checking if the account exists." };
+            }
+        }
+
+        public async Task<APIResponseModel> SignUpStaffAccountAsync(AccountSignUpModel signUpModel)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(signUpModel.AccountEmail) || string.IsNullOrWhiteSpace(signUpModel.AccountEmail))
+                {
+                    return new APIResponseModel { IsSuccess = false, Message = "Username cannot be empty or whitespace." };
+                }
+
+                var existAccount = await _unitOfWork.AccountRepository.GetByConditionAsync(a => a.Email == signUpModel.AccountEmail);
+                if (existAccount.Any())
+                {
+                    return new APIResponseModel { IsSuccess = false, Message = "Account already exists" };
+                }
+
+                var user = new Account
+                {
+                    FullName = signUpModel.FullName,
+                    Dob = signUpModel.BirthDate,
+                    Gender = signUpModel.Gender,
+                    Address = signUpModel.Address,
+                    UserName = signUpModel.AccountEmail,
+                    Email = signUpModel.AccountEmail,
+                    PhoneNumber = signUpModel.AccountPhone,
+                    CreateDate = DateTime.Now,
+                    Status = 1,
+                    Roles = (int)ERole.Staff,
+                    
+                };
+
+                var passwordHasher = new PasswordHasher<Account>();
+                user.PasswordHash = passwordHasher.HashPassword(user, signUpModel.AccountPassword);
+
+                await _unitOfWork.AccountRepository.AddAsync(user);
+                _unitOfWork.Save();
+
+
+                return new APIResponseModel { IsSuccess = true, Message = "Registration successful." };
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception: {ex.Message}");
+                return new APIResponseModel { IsSuccess = false, Message = "An error occurred while checking if the account exists." };
+            }
+        }
+
+        public async Task<APIResponseModel> SignUpSupplierAccountAsync(AccountSignUpModel signUpModel)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(signUpModel.AccountEmail) || string.IsNullOrWhiteSpace(signUpModel.AccountEmail))
+                {
+                    return new APIResponseModel { IsSuccess = false, Message = "Username cannot be empty or whitespace." };
+                }
+
+                var existAccount = await _unitOfWork.AccountRepository.GetByConditionAsync(a => a.Email == signUpModel.AccountEmail);
+                if (existAccount.Any())
+                {
+                    return new APIResponseModel { IsSuccess = false, Message = "Account already exists" };
+                }
+
+                var user = new Account
+                {
+                    FullName = signUpModel.FullName,
+                    Dob = signUpModel.BirthDate,
+                    Gender = signUpModel.Gender,
+                    Address = signUpModel.Address,
+                    UserName = signUpModel.AccountEmail,
+                    Email = signUpModel.AccountEmail,
+                    PhoneNumber = signUpModel.AccountPhone,
+                    CreateDate = DateTime.Now,
+                    Status = 1,
+                    Roles = (int)ERole.Supplier,
+
+                };
+
+                var passwordHasher = new PasswordHasher<Account>();
+                user.PasswordHash = passwordHasher.HashPassword(user, signUpModel.AccountPassword);
+
+                await _unitOfWork.AccountRepository.AddAsync(user);
+                _unitOfWork.Save();
+
+
+                return new APIResponseModel { IsSuccess = true, Message = "Registration successful." };
             }
             catch (Exception ex)
             {
