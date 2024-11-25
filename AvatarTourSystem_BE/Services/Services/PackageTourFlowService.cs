@@ -1087,19 +1087,17 @@ namespace Services.Services
                     IsSuccess = false
                 };
             }
-
+            var validationMessages = new List<string>();
             var packageTour = new PackageTour
             {
                 PackageTourId = Guid.NewGuid().ToString(),
                 PackageTourName = createModel.PackageTourName,
                 PackageTourImgUrl = createModel.PackageTourImgURL ?? "IMG",
+                CityId = createModel.CityId,        
                 CreateDate = DateTime.Now,
                 Status = 1
 
             };
-
-
-
             foreach (var ticketTypeModel in createModel.TicketTypesCreate)
             {
                 var ticketType = new TicketType
@@ -1121,7 +1119,16 @@ namespace Services.Services
                 var destination = await _unitOfWork.DestinationRepository.GetByIdStringAsync(dest.DestinationId);
                 if (destination == null)
                 {
+                    
                     continue;
+                }
+                if (destination.CityId != packageTour.CityId)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = $"DestinationId {destination.DestinationId} does not belong to CityId {packageTour.CityId}.",
+                        IsSuccess = false
+                    };
                 }
 
                 var tourSegment = new TourSegment
@@ -1140,20 +1147,36 @@ namespace Services.Services
                     foreach (var loc in dest.Locations)
                     {
                         var location = await _unitOfWork.LocationRepository.GetByIdStringAsync(loc.LocationId);
-                        if (location == null || location.DestinationId != destination.DestinationId)
+                        if (location == null)
                         {
                             continue;
                         }
-
+                        if (location.DestinationId != destination.DestinationId)
+                        {
+                            return new APIResponseModel
+                            {
+                                Message = $"LocationId {location.LocationId} does not belong to DestinationId {destination.DestinationId}.",
+                                IsSuccess = false
+                            };
+                        }
                         if (loc.Services != null && loc.Services.Any())
                         {
                             foreach (var svc in loc.Services)
                             {
                                 var service = await _unitOfWork.ServiceRepository.GetByIdStringAsync(svc.ServiceId);
-                                if (service == null || service.LocationId != location.LocationId)
+                                if (service == null)
                                 {
                                     continue;
                                 }
+                                if (service.LocationId != location.LocationId)
+                                {
+                                    return new APIResponseModel
+                                    {
+                                        Message = $"ServiceId {service.ServiceId} does not belong to LocationId {location.LocationId}.",
+                                        IsSuccess = false
+                                    };
+                                }
+
 
                                 var serviceByTourSegment = new ServiceByTourSegment
                                 {
@@ -1171,11 +1194,12 @@ namespace Services.Services
                         }
                     }
                 }
+                _unitOfWork.Save();
+
             }
             try
             {
                 // Lưu thay đổi
-                _unitOfWork.Save();
 
                 // Tạo response từ createModel và dữ liệu liên quan
                 var response = new
