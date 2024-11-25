@@ -121,7 +121,7 @@ namespace Services.Services
                             PackageTourImgUrl = packageTour.PackageTourImgUrl ?? string.Empty,
                             StatusPackageTour = packageTour.Status,
                             packageTour.Cities?.CityName,
-                            packageTour.Cities?.CityId,
+                            packageTour.CityId,
                             TourSegments = packageTour.TourSegments?
                                 .Where(ts => ts.Status == 1)
                                 .Select(ts => new
@@ -366,6 +366,7 @@ namespace Services.Services
                             //    packageTour.PackageTourPrice, 
                             PackageTourImgUrl = packageTour.PackageTourImgUrl ?? string.Empty,
                             StatusPackageTour = packageTour.Status,
+                            packageTour.CityId,
                             packageTour.Cities?.CityName,
                             TourSegments = packageTour.TourSegments?
                                 .Where(ts => ts.Status == 1)
