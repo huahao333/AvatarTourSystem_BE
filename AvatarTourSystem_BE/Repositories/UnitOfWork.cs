@@ -28,6 +28,7 @@ namespace Repositories
         private GenericRepository<Notification> _notificationRepository;
         private GenericRepository<PackageTour> _packageTourRepository;
         private GenericRepository<PaymentMethod> _paymentMethodRepository;
+        private GenericRepository<Payment> _paymentRepository;
         private GenericRepository<PointOfInterest> _pointOfInterestRepository;
         //private GenericRepository<POIType> _poiTypeRepository;
         private GenericRepository<Rate> _rateRepository;
@@ -201,6 +202,17 @@ namespace Repositories
                     this._paymentMethodRepository = new GenericRepository<PaymentMethod>(_context);
                 }
                 return _paymentMethodRepository;
+            }
+        }
+        public GenericRepository<Payment> PaymentRepository
+        {
+            get
+            {
+                if (this._paymentRepository == null)
+                {
+                    this._paymentRepository = new GenericRepository<Payment>(_context);
+                }
+                return _paymentRepository;
             }
         }
 
