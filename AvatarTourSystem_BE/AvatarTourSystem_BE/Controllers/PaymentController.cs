@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BusinessObjects.ViewModels.Booking;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Services.Common;
 using Services.Interfaces;
+using Services.Services;
 using static Services.Common.ZaloPayHelper.ZaloPayHelper;
 
 namespace AvatarTourSystem_BE.Controllers
@@ -18,7 +20,7 @@ namespace AvatarTourSystem_BE.Controllers
             IZaloPayService zaloPayService,
             ILogger<PaymentController> logger)
         {
-            _zaloPayService = zaloPayService;
+             _zaloPayService = zaloPayService;
             _logger = logger;
         }
 
@@ -54,7 +56,7 @@ namespace AvatarTourSystem_BE.Controllers
                     return Ok(new ZaloPayCallbackResponse
                     {
                         returnCode = 1,
-                        returnMessage = callback.Data.message,
+                        returnMessage = callback.Data.extradata,
                     });
 
                 }
@@ -71,5 +73,12 @@ namespace AvatarTourSystem_BE.Controllers
                 return StatusCode(500, new { returncode = 0, returnmessage = "internal server error" });
             }
         }
+
+        //[HttpPost("create-booking")]
+        //public async Task<IActionResult> CreateBookingFlowAsync(BookingFlowCreateModel createModel)
+        //{
+        //    var result = await _zaloPayService.CreateBookingAsync(createModel);
+        //    return Ok(result);
+        //}
     }
 }
