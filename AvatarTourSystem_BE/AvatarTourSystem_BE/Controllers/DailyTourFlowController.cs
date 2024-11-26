@@ -70,6 +70,14 @@ namespace AvatarTourSystem_BE.Controllers
         }
 
         [Authorize]
+        [HttpGet("daily-tours-user")]
+        public async Task<IActionResult> GetAllDailyToursForUser()
+        {
+            var response = await _dailyTourFlowService.GetAllDailyToursForUser();
+            return Ok(response);
+        }
+
+        [Authorize]
         [HttpGet("daily-tours-discount")]
         public async Task<IActionResult> GetDailyToursHaveDiscount()
         {

@@ -14,7 +14,7 @@ namespace Services.Interfaces
         Task<APIResponseModel> CreateDailyTourFlow(DailyToursFlowModel dailyTourFlowModel);
         Task<APIResponseModel> UpdateDailyTourFlow(UpdateDailyTourFlowModel updateModel);
         Task<APIResponseModel> GetDailyTourDetails(string dailyTourId);
-       // Task<APIResponseModel> GetAllDailyTours();
+        Task<APIResponseModel> GetAllDailyToursForUser();
         Task<APIResponseModel> GetAllDailysTours();
         Task<APIResponseModel> GetDailyToursHaveDiscount();
         Task<APIResponseModel> GetDailyToursHavePOI();
