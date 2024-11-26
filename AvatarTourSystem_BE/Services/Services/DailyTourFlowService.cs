@@ -269,7 +269,7 @@ namespace Services.Services
                 }
 
 
-                if (dailyTourFlowModel.Discount < 0)
+                if (dailyTourFlowModel.Discount < 0 && dailyTourFlowModel.Discount>100)
                 {
                     return new APIResponseModel
                     {
@@ -489,7 +489,7 @@ namespace Services.Services
                     }
                 }
 
-                if (updateModel.Discount < 0)
+                if (updateModel.Discount < 0 && updateModel.Discount >100)
                 {
                     return new APIResponseModel
                     {
