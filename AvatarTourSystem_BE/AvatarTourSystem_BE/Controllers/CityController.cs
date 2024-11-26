@@ -17,9 +17,9 @@ namespace AvatarTourSystem_BE.Controllers
         }
 
         [HttpPost("callback-test")]
-        public async Task<IActionResult> GetCallbackCityAsync()
+        public async Task<IActionResult> GetCallbackCityAsync([FromBody] object data)
         {
-            var result = await _CityService.GetCallbackCityAsync();
+            var result = await _CityService.GetCallbackCityAsync(data);
             return Ok(result);
         }
 
