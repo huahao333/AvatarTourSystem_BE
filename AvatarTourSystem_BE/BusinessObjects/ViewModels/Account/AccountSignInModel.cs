@@ -10,7 +10,7 @@ namespace BusinessObjects.ViewModels.Account
 {
     public class AccountSignInModel
     {
-        [Required(ErrorMessage = "Email can not be blank!"), EmailAddress(ErrorMessage = "Please enter valid email!")]
+        [Required(ErrorMessage = "Email can not be blank!")]
         public String AccountEmail { get; set; } = string.Empty;
         [Required(ErrorMessage = "Password can not be blank!")]
         [DataType(DataType.Password)]

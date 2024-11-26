@@ -21,9 +21,12 @@ namespace Services.Interfaces
         Task<APIResponseModel> SignUpAccountAsync(AccountSignUpModel signUpModel);
         Task<APIResponseModel> SignUpStaffAccountAsync(AccountSignUpModel signUpModel);
         Task<APIResponseModel> SignUpSupplierAccountAsync(AccountSignUpModel signUpModel);
+        Task<APIResponseModel> SignUpSuperAdminAccountAsync(AccountSignUpModel signUpModel);
         Task<APIResponseModel> SignUpAccountZaloAsync(AccountZaloIdModel accountZaloIdModel);
         Task<APIAuthenticationResponseModel> SignInAccountAsync(AccountSignInModel signInModel);
         Task<APIResponseModel> GetPhoneInfoAndSaveAsync(AccountZaloCURLModel accountZaloCURLModel);
         Task<APIResponseModel> UpdatePhoneNumberByZaloId(AccountUpdatePhoneWithZaloIdModel updatePhoneWithZaloIdModel);
+        Task<APIResponseModel> ChangeAccountRoleAsync(AccountChangeRoleViewModel accountChangeRoleViewModel);
+        Task<APIResponseModel> GetAllAccountByRole(AccountInforByRole accountInforByRole);
     }
 }

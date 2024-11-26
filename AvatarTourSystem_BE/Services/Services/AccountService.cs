@@ -728,5 +728,184 @@ namespace Services.Services
                 return new APIResponseModel { IsSuccess = false, Message = "An error occurred while checking if the account exists." };
             }
         }
+
+        public async Task<APIResponseModel> SignUpSuperAdminAccountAsync(AccountSignUpModel signUpModel)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(signUpModel.AccountEmail) || string.IsNullOrWhiteSpace(signUpModel.AccountEmail))
+                {
+                    return new APIResponseModel { IsSuccess = false, Message = "Username cannot be empty or whitespace." };
+                }
+
+                var existAccount = await _unitOfWork.AccountRepository.GetByConditionAsync(a => a.Email == signUpModel.AccountEmail);
+                if (existAccount.Any())
+                {
+                    return new APIResponseModel { IsSuccess = false, Message = "Account already exists" };
+                }
+
+                var user = new Account
+                {
+                    FullName = signUpModel.FullName,
+                    Dob = signUpModel.BirthDate,
+                    Gender = signUpModel.Gender,
+                    Address = signUpModel.Address,
+                    UserName = signUpModel.AccountEmail,
+                    Email = signUpModel.AccountEmail,
+                    PhoneNumber = signUpModel.AccountPhone,
+                    CreateDate = DateTime.Now,
+                    Status = 1,
+                    Roles = (int)ERole.SuperAdmin,
+
+                };
+
+                var passwordHasher = new PasswordHasher<Account>();
+                user.PasswordHash = passwordHasher.HashPassword(user, signUpModel.AccountPassword);
+
+                await _unitOfWork.AccountRepository.AddAsync(user);
+                _unitOfWork.Save();
+
+
+                return new APIResponseModel { IsSuccess = true, Message = "Registration successful." };
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception: {ex.Message}");
+                return new APIResponseModel { IsSuccess = false, Message = "An error occurred while checking if the account exists." };
+            }
+        }
+
+        public async Task<APIResponseModel> ChangeAccountRoleAsync(AccountChangeRoleViewModel accountChangeRoleViewModel)
+        {
+            try
+            {
+                var requesterAccount = await _unitOfWork.AccountRepository.GetByConditionAsync(a => a.UserName == accountChangeRoleViewModel.UserName);
+                var requester = requesterAccount.FirstOrDefault();
+
+                if (requester == null || (ERole)requester.Roles != ERole.SuperAdmin)
+                {
+                    return new APIResponseModel { IsSuccess = false, Message = "No permission to update role." };
+                }
+
+                var targetAccountResult = await _unitOfWork.AccountRepository.GetByConditionAsync(a => a.Id == accountChangeRoleViewModel.UserId);
+                var targetAccount = targetAccountResult.FirstOrDefault();
+
+                if (targetAccount == null)
+                {
+                    return new APIResponseModel { IsSuccess = false, Message = "Account does not exist." };
+                }
+
+                if ((ERole)targetAccount.Roles == ERole.Customer || accountChangeRoleViewModel.NewRole == ERole.Customer)
+                {
+                    return new APIResponseModel { IsSuccess = false, Message = "Cannot change role from Customer or to customer." };
+                }
+
+                // Kiểm tra role hợp lệ
+                if (!Enum.IsDefined(typeof(ERole), accountChangeRoleViewModel.NewRole))
+                {
+                    return new APIResponseModel { IsSuccess = false, Message = "Invalid role." };
+                }
+
+                // Cập nhật role cho tài khoản
+                targetAccount.Roles = (int)accountChangeRoleViewModel.NewRole;
+
+                // Lưu thay đổi vào database
+                _unitOfWork.AccountRepository.UpdateAsync(targetAccount);
+                _unitOfWork.Save();
+
+                return new APIResponseModel { IsSuccess = true, Message = "Role update successful." };
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception: {ex.Message}");
+                return new APIResponseModel { IsSuccess = false, Message = "An error occurred while changing the account role." };
+            }
+        }
+
+        public async Task<APIResponseModel> GetAllAccountByRole(AccountInforByRole accountInforByRole)
+        {
+            try
+            {
+                var requesterAccount = await _unitOfWork.AccountRepository.GetByConditionAsync(a => a.UserName == accountInforByRole.UserName);
+                var requester = requesterAccount.FirstOrDefault();
+
+                if (requester == null)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Account does not exist.",
+                        IsSuccess = false,
+                        Data = null
+                    };
+                }
+
+                var requesterRole = (ERole)requester.Roles;
+                IEnumerable<Account> accountsQuery = null;
+
+                if (requesterRole == ERole.Admin)
+                {
+                    accountsQuery = await _unitOfWork.AccountRepository.GetAllAsyncs(query =>
+                                               query.Where(a => a.Roles != (int)ERole.SuperAdmin && a.Roles != requester.Roles));
+                }
+                else if (requesterRole == ERole.SuperAdmin)
+                {
+                    accountsQuery = await _unitOfWork.AccountRepository.GetAllAsyncs(query =>
+                                              query.Where(a => a.Roles != requester.Roles));
+                }
+                else if (requesterRole == ERole.Staff)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "No permission to view.",
+                        IsSuccess = false,
+                        Data = null
+                    };
+                }
+                else if (requesterRole == ERole.Supplier)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "No permission to view.",
+                        IsSuccess = false,
+                        Data = null
+                    };
+                }
+                else if (requesterRole == ERole.Customer)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "No permission to view.",
+                        IsSuccess = false,
+                        Data = null
+                    };
+                }
+
+                if (accountsQuery == null || !accountsQuery.Any())
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "No accounts found.",
+                        IsSuccess = false,
+                        Data = null
+                    };
+                }
+                return new APIResponseModel
+                {
+                    Message = "Get All Account Successfully",
+                    IsSuccess = true,
+                    Data = accountsQuery
+                };
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception: {ex.Message}");
+                return new APIResponseModel
+                {
+                    Message = "An error occurred while retrieving accounts.",
+                    IsSuccess = false,
+                    Data = null
+                };
+            }
+        }
     }
 }
