@@ -151,7 +151,7 @@ namespace AvatarTourSystem_BE
             services.AddScoped<IDailyTourFlowRepository, DailyTourFlowRepository>();
 
             services.AddScoped<IPackageTourFlowService,  PackageTourFlowService>();
-
+            services.AddScoped<IZaloPaySandBoxService, ZaloPaySandBoxService>();
             services.AddScoped<IDashboardService, DashboardService>();
 
          //   services.AddScoped<IBookingFlowService, BookingFlowService>();
