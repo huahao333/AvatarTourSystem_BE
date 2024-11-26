@@ -9,11 +9,13 @@ namespace BusinessObjects.ViewModels.Payment
     public class CallbackResponseViewModel
     {
         public CallbackData Data { get; set; }
+        public string overallMac { get; set; }
+        public string Mac { get; set; }
     }
     public class CallbackData
     {
         public decimal Amount { get; set; }
-        public string TransTime { get; set; }
+        public int TransTime { get; set; }
         public string Method { get; set; }
         public string OrderId { get; set; }
         public string TransId { get; set; }
@@ -21,6 +23,7 @@ namespace BusinessObjects.ViewModels.Payment
         public string Extradata { get; set; }
         public int ResultCode { get; set; } 
         public string Description { get; set; }
+        public string MerchantTransId { get; set; }
         public string Message { get; set; }
         public string PaymentChannel { get; set; }
     }

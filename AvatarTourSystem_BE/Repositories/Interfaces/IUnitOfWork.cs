@@ -33,6 +33,7 @@ namespace Repositories.Interfaces
         GenericRepository<CustomerSupport> CustomerSupportRepository { get; }
         GenericRepository<RequestType> RequestTypeRepository { get; }
         GenericRepository<PointOfInterest> PointOfInterestRepository { get; }
+        GenericRepository<Payment> PaymentRepository { get; }
         //GenericRepository<POIType> POITypeRepository { get; }
         GenericRepository<Notification> NotificationRepository { get; }
         GenericRepository<DailyTour> DailyTourRepository { get; }

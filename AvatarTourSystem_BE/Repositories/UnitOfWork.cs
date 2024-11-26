@@ -42,6 +42,7 @@ namespace Repositories
         private GenericRepository<TicketType> _ticketTypeRepository;
         private GenericRepository<TourSegment> _tourSegmentRepository;
         private GenericRepository<TransactionsHistory> _transactionsHistoryRepository;
+        private GenericRepository<Payment> _paymentRepository;
 
 
         public UnitOfWork(AvatarTourDBContext context, IMapper mapper)
@@ -371,6 +372,19 @@ namespace Repositories
                 return _transactionsHistoryRepository;
             }
         }
+
+        public GenericRepository<Payment> PaymentRepository
+        {
+            get
+            {
+                if (this._paymentRepository == null)
+                {
+                    this._paymentRepository = new GenericRepository<Payment>(_context);
+                }
+                return _paymentRepository;
+            }
+        }
+
         public int Save() 
         {
            return _context.SaveChanges();

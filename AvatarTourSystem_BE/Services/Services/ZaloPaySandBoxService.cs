@@ -39,8 +39,15 @@ namespace Services.Services
 
                 if (callbackObject != null && callbackObject.Data != null)
                 {
-                    var resultCode = callbackObject.Data.ResultCode;
+                    int resultCode = callbackObject.Data.ResultCode;
                     float totalAmount = (float)callbackObject.Data.Amount;
+                    int transTime = callbackObject.Data.TransTime;
+                    string orderId = callbackObject.Data.OrderId;
+                    string tranId = callbackObject.Data.TransId;
+                    string appId = callbackObject.Data.AppId;
+                    string mechant = callbackObject.Data.MerchantTransId;
+                    string overallMac = callbackObject.overallMac;
+                    string mac = callbackObject.Mac;
                     if (resultCode == 1)  
                     {
                         // Giải mã extradata
@@ -49,7 +56,16 @@ namespace Services.Services
 
                         if (extradataObject != null)
                         {
-                            var createBookingResponse = await CreateBookingFromCallbackData(extradataObject,totalAmount);
+                            var createBookingResponse = await CreateBookingFromCallbackData(extradataObject,
+                                                                                            totalAmount,
+                                                                                            transTime,
+                                                                                            orderId,
+                                                                                            tranId,
+                                                                                            appId,
+                                                                                            mechant,
+                                                                                            overallMac,
+                                                                                            mac,
+                                                                                            resultCode);
 
                             return createBookingResponse;
                             
@@ -69,7 +85,16 @@ namespace Services.Services
             }
         }
 
-        public async Task<APIResponseModel> CreateBookingFromCallbackData(ExtraData extradata, float totalAmount)
+        public async Task<APIResponseModel> CreateBookingFromCallbackData(ExtraData extradata, 
+                                                                          float totalAmount,
+                                                                          int transTime,
+                                                                          string orderId,
+                                                                          string tranId,
+                                                                          string appId,
+                                                                          string mechant,
+                                                                          string overallMac,
+                                                                          string mac,
+                                                                          int resultCode)
         {
             try
             {
@@ -208,6 +233,38 @@ namespace Services.Services
                         }
                     }
                 }
+                var newPaymentId = Guid.NewGuid();
+                var newPayment = new Payment
+                {
+                    PaymentId =newPaymentId.ToString(),
+                    PaymentMethodId ="1",
+                    BookingId = newBooking.BookingId,
+                    AppId = appId, 
+                    OrderId = orderId, 
+                    TransId = tranId, 
+                    TransTime = transTime, 
+                    Amount = totalAmount,
+                    MerchantTransId = mechant, 
+                    Description = overallMac,
+                    ResultCode = resultCode, 
+                    Message = mac,
+                    ExtraData = JsonConvert.SerializeObject(extradata), 
+                    Status = 1,
+                    CreateDate = DateTime.UtcNow,
+                };
+                await _unitOfWork.PaymentRepository.AddAsync(newPayment);
+
+                var newTransactionId = Guid.NewGuid();
+                var transaction = new TransactionsHistory
+                {
+                    TransactionId = newTransactionId.ToString(),
+                    UserId = zaloAccount.Id,
+                    BookingId = newBooking.BookingId,
+                    OrderId= orderId,
+                    CreateDate = DateTime.UtcNow,
+                    Status=1
+                };
+                await _unitOfWork.TransactionsHistoryRepository.AddAsync(transaction);
                 _unitOfWork.Save();
 
                 return new APIResponseModel
