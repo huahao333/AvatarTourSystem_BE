@@ -40,7 +40,6 @@ namespace AvatarTourSystem_BE.Controllers
                     });
                 }
 
-                //var isValid = _zaloPayService.ValidateCallback(callback.Data);
                 var isValid = _zaloPayService.ValidateCallback(callback.Data);
                 if (!isValid)
                 {
@@ -53,6 +52,7 @@ namespace AvatarTourSystem_BE.Controllers
 
                 if (callback.Data.resultCode == 1)
                 {
+
                     return Ok(new ZaloPayCallbackResponse
                     {
                         returnCode = 1,
