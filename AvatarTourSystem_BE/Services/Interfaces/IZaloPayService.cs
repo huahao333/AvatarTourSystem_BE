@@ -1,4 +1,5 @@
-﻿using Services.Common;
+﻿using BusinessObjects.ViewModels.Booking;
+using Services.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
