@@ -24,8 +24,8 @@ namespace BusinessObjects.ViewModels.Booking
         public string TourName { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-        public decimal Discount { get; set; }
-        public decimal DailyTourPrice { get; set; }
+        public int? Discount { get; set; } 
+        public float DailyTourPrice { get; set; }
         public string City { get; set; }
         public string DestinationId { get; set; }
         public string LocationId { get; set; }
@@ -33,10 +33,10 @@ namespace BusinessObjects.ViewModels.Booking
         public string PhoneNumber { get; set; }
         public DateTime BookingDate { get; set; }
         public DateTime ExpirationDate { get; set; }
-        public decimal TotalPrice { get; set; }
+        public float TotalPrice { get; set; }
         public string TicketTypeId { get; set; }
         public string DailyTicketId { get; set; }
         public string TicketName { get; set; }
-        public decimal Price { get; set; }
+        public float Price { get; set; }
     }
 }
