@@ -158,6 +158,7 @@ namespace AvatarTourSystem_BE
             services.AddScoped<IVNPayService, VNPayService>();
 
             services.AddScoped<IZaloPayService, ZaloPayService>();
+            services.AddScoped<IPaymentService, PaymentService>();
 
             services.AddSingleton<VNPayHelper>();
             services.AddSingleton<ZaloPayHelper>();
