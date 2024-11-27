@@ -20,5 +20,6 @@ namespace Services.Interfaces
         Task<APIResponseModel> CountAccountRole();
         Task<APIResponseModel> CountBooking();
         Task<APIResponseModel> CountRequest();
+        Task<APIResponseModel> CountPackageInday();
     }
 }

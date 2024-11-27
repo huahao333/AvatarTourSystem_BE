@@ -267,5 +267,33 @@ namespace Services.Services
             }
         }
 
+
+        public async Task<APIResponseModel> CountPackageInday()
+        {
+            try
+            {
+                var packageIndaysCount = new PackageIndayCountViewModel
+                {
+                    PackageIndayActive = await _unitOfWork.PackageTourRepository.CountAsync(a => a.Status == (int)EStatus.Active),
+                    PackageIndayDelete = await _unitOfWork.PackageTourRepository.CountAsync(a => a.Status == (int)EStatus.IsDeleted),
+                };
+                packageIndaysCount.Total = packageIndaysCount.PackageIndayActive + packageIndaysCount.PackageIndayDelete ;
+
+                return new APIResponseModel
+                {
+                    Message = "Counted PackageInday successfully.",
+                    IsSuccess = true,
+                    Data = packageIndaysCount
+                };
+            }
+            catch (Exception ex)
+            {
+                return new APIResponseModel
+                {
+                    Message = "Error" + ex,
+                    IsSuccess = false,
+                };
+            }
+        }
     }
 }
