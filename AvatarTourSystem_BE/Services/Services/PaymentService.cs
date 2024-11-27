@@ -21,7 +21,7 @@ namespace Services.Services
         }
         public async Task<APIResponseModel> GetAllPayments()
         {
-            var paymentList = await _unitOfWork.PaymentMethodRepository.GetAllAsync();
+            var paymentList = await _unitOfWork.PaymentRepository.GetAllAsync();
             var count = paymentList.Count();
             return new APIResponseModel
             {
@@ -33,7 +33,7 @@ namespace Services.Services
 
         public async Task<APIResponseModel> GetPaymentById(string id)
         {
-            var payment = await _unitOfWork.PaymentMethodRepository.GetByIdStringAsync(id);
+            var payment = await _unitOfWork.PaymentRepository.GetByIdStringAsync(id);
             return new APIResponseModel
             {
                 Message = "Get Payment Successfully",
@@ -45,7 +45,7 @@ namespace Services.Services
 
         public async Task<APIResponseModel> GetPaymentsByStatus()
         {
-            var payment = await _unitOfWork.PaymentMethodRepository.GetByConditionAsync(s => s.Status != -1);
+            var payment = await _unitOfWork.PaymentRepository.GetByConditionAsync(s => s.Status != -1);
             var count = payment.Count();
             return new APIResponseModel
             {
