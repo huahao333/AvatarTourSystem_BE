@@ -11,9 +11,19 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using System.Net.Http.Headers;
+using System.Web;
 using ZXing.Common;
+using static Org.BouncyCastle.Asn1.Cmp.Challenge;
+using static Services.Common.ZaloPayHelper.ZaloPayHelper;
+using System.Net.Http;
+using static Services.Services.ZaloPaySandBoxService;
+using System.Net.Http.Json;
+using CloudinaryDotNet;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Services.Services
 {
@@ -22,11 +32,19 @@ namespace Services.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly CloudinaryService _cloudinaryService;
         private readonly EncryptionHelperService _encryptionHelperService;
-        public ZaloPaySandBoxService(IUnitOfWork unitOfWork, CloudinaryService cloudinaryService, EncryptionHelperService encryptionHelperService)
+        private readonly HttpClient _httpClient;
+        private readonly string appid = "554"; // App ID của bạn
+        private readonly string key1 = "8NdU5pG5R2spGHGhyO99HN1OhD8IQJBn"; // Mac Key của bạn
+        private readonly string refundUrl = "https://sandbox.zalopay.com.vn/v001/tpe/partialrefund"; // URL hoàn tiền của ZaloPa
+        public ZaloPaySandBoxService(IUnitOfWork unitOfWork, 
+            CloudinaryService cloudinaryService, 
+            EncryptionHelperService encryptionHelperService,
+            HttpClient httpClient)
         {
             _unitOfWork = unitOfWork;
             _cloudinaryService = cloudinaryService;
             _encryptionHelperService = encryptionHelperService;
+            _httpClient = httpClient;
         }
 
         public async Task<APIResponseModel> HandleCallback([FromBody] object callbackData)
@@ -444,6 +462,81 @@ namespace Services.Services
             catch
             {
                 return null;
+            }
+        }
+
+        public async Task<APIResponseModel> ProcessRefund(string zptransid, long amount, string description)
+        {
+            try
+            {
+                var timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds().ToString();
+                var rand = new Random();
+                var uid = timestamp + rand.Next(111, 999).ToString();
+                double ammountRe = amount * 0.8;
+                long ammountReLong = (long)ammountRe;
+                var param = new Dictionary<string, string>
+        {
+            { "appid", appid },
+            { "mrefundid", DateTime.Now.ToString("yyMMdd") + "_" + appid + "_" + uid },
+            { "zptransid", zptransid }, 
+            { "amount", ammountReLong.ToString() }, 
+            { "timestamp", timestamp },
+            { "description", description } 
+        };
+
+                var hmacInput = $"{appid}|{param["zptransid"]}|{param["amount"]}|{param["description"]}|{param["timestamp"]}";
+                param.Add("mac", ComputeHMACSHA256(key1, hmacInput));
+
+                var result = await PostFormAsync(refundUrl, param);
+
+                if (result.ContainsKey("returncode") && result["returncode"] == "1")
+                {
+                    return new APIResponseModel
+                    {
+                        IsSuccess = true,
+                        Message = "Refund successful.",
+                        Data = result
+                    };
+                }
+                else
+                {
+                    return new APIResponseModel
+                    {
+                        IsSuccess = false,
+                        Message = result.ContainsKey("returnmessage") ? result["returnmessage"] : "Refund failed.",
+                        Data = result
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new APIResponseModel
+                {
+                    IsSuccess = false,
+                    Message = "Exception: " + ex.Message,
+                    Data = null
+                };
+            }
+        }
+
+        private string ComputeHMACSHA256(string key, string data)
+        {
+            using (var hmacsha256 = new HMACSHA256(Encoding.UTF8.GetBytes(key)))
+            {
+                var hashBytes = hmacsha256.ComputeHash(Encoding.UTF8.GetBytes(data));
+                return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
+            }
+        }
+
+        private async Task<Dictionary<string, string>> PostFormAsync(string url, Dictionary<string, string> formData)
+        {
+            using (var client = new HttpClient())
+            {
+                var content = new FormUrlEncodedContent(formData);
+                var response = await client.PostAsync(url, content);
+                var responseString = await response.Content.ReadAsStringAsync();
+
+                return JsonConvert.DeserializeObject<Dictionary<string, string>>(responseString);
             }
         }
     }
