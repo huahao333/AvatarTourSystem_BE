@@ -764,6 +764,41 @@ namespace Services.Services
                         Message = "Ticket has been used.",
                         IsSuccess = false,
                     };
+                } else if (ticket.Status == 2)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Ticket has been cancelled.",
+                        IsSuccess = false,
+                    };
+                } else if (ticket.Status == -1)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Ticket has been deleted.",
+                        IsSuccess = false,
+                    };
+                } else if (ticket.Status == 5)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Ticket has been refunded.",
+                        IsSuccess = false,
+                    };
+                } else if (ticket.Status == 0)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Ticket has been disabled.",
+                        IsSuccess = false,
+                    };
+                } else if (ticket.Status == 3)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Ticket has been disabled.",
+                        IsSuccess = false,
+                    };
                 }
 
                 bool isDestinationValid = ticketUsageViewModel.Destination

@@ -520,6 +520,20 @@ namespace Services.Services
                         IsSuccess = false,
                         Message = "Booking has been refunded in advance."
                     };
+                } else if (checkStatusBooking.Status == 0)
+                {
+                    return new APIResponseModel
+                    {
+                        IsSuccess = false,
+                        Message = "Booking has been disabled."
+                    };
+                } else if (checkStatusBooking.Status == 3)
+                {
+                    return new APIResponseModel
+                    {
+                        IsSuccess = false,
+                        Message = "Booking has been pending."
+                    };
                 }
                 var currentDate = DateTime.UtcNow.Date;
                 var differenceInDays = (checkStatusBooking.ExpirationDate.Value.Date - currentDate).TotalDays;
