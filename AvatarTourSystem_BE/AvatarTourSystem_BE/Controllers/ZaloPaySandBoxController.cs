@@ -25,5 +25,13 @@ namespace AvatarTourSystem_BE.Controllers
             var result = await _zaloPaySandBoxService.ProcessRefund( zptransid,  amount,  description);
             return Ok(result);
         }
+
+
+        [HttpGet("payment-infor")]
+        public async Task<IActionResult> GetAllPayment()
+        {
+            var result = await _zaloPaySandBoxService.GetAllPayment();
+            return Ok(result);
+        }
     }
 }

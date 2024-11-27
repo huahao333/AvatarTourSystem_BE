@@ -17,5 +17,6 @@ namespace BusinessObjects.Enums
         IsPending = 3,
         InProgress = 9,
         IsCompleted = 4,
+        IsRefund = 5,
     }
 }

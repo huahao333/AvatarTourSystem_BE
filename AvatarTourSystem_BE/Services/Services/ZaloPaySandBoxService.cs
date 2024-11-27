@@ -24,6 +24,7 @@ using static Services.Services.ZaloPaySandBoxService;
 using System.Net.Http.Json;
 using CloudinaryDotNet;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using BusinessObjects.Enums;
 
 namespace Services.Services
 {
@@ -51,6 +52,10 @@ namespace Services.Services
         {
             try
             {
+                if (callbackData == null)
+                {
+                    return new APIResponseModel { Message = "Callback data is null", IsSuccess = false };
+                }
                 // Chuyển đổi callback thành object JSON
                 var callbackJson = callbackData.ToString();
                 var callbackObject = JsonConvert.DeserializeObject<CallbackResponseViewModel>(callbackJson);
@@ -249,6 +254,14 @@ namespace Services.Services
                             };
                             await _unitOfWork.ServiceUsedByTicketRepository.AddAsync(serviceUsedByTicket);
                         }
+                    }
+                    var dailyTicketType = await _unitOfWork.DailyTicketRepository.GetAllAsyncs(query => query.Where(d=> d.DailyTicketId==ticket.DailyTicketId));
+                    var dailyTicketTypeCapa = dailyTicketType.FirstOrDefault();
+                    if (dailyTicketTypeCapa != null)
+                    {
+                        dailyTicketTypeCapa.Capacity -= ticket.TotalQuantity;
+                        dailyTicketTypeCapa.UpdateDate = DateTime.Now;
+                        await _unitOfWork.DailyTicketRepository.UpdateAsync(dailyTicketTypeCapa);
                     }
                 }
                 var newPaymentId = Guid.NewGuid();
@@ -469,6 +482,59 @@ namespace Services.Services
         {
             try
             {
+                var transId = await _unitOfWork.PaymentRepository.GetAllAsyncs(query => query.Where(p => p.MerchantTransId == zptransid));
+                var bookingId = transId.FirstOrDefault();
+                var checkStatusBooking = await _unitOfWork.BookingRepository.GetByIdStringAsync(bookingId.BookingId);
+                if(checkStatusBooking.Status ==9)
+                {
+                    return new APIResponseModel
+                    {
+                        IsSuccess = false,
+                        Message = "Booking is in progress and cannot be refunded."
+                    };
+                }else if(checkStatusBooking.Status ==2)
+                {
+                    return new APIResponseModel
+                    {
+                        IsSuccess = false,
+                        Message = "Booking has been cancelled."
+                    };
+                }else if (checkStatusBooking.Status == -1)
+                {
+                    return new APIResponseModel
+                    {
+                        IsSuccess = false,
+                        Message = "Booking has been deleted, cannot be refunded"
+                    };
+                }else if (checkStatusBooking.Status == 4)
+                {
+                    return new APIResponseModel
+                    {
+                        IsSuccess = false,
+                        Message = "Booking has been used."
+                    };
+                }else if (checkStatusBooking.Status == 5)
+                {
+                    return new APIResponseModel
+                    {
+                        IsSuccess = false,
+                        Message = "Booking has been refunded in advance."
+                    };
+                }
+                var currentDate = DateTime.UtcNow.Date;
+                var differenceInDays = (checkStatusBooking.ExpirationDate.Value.Date - currentDate).TotalDays;
+                if (differenceInDays < 2)
+                {
+                    return new APIResponseModel
+                    {
+                        IsSuccess = false,
+                        Message = "Refund is only allowed within 1 days before expriateDate."
+                    };
+                }
+
+
+                var updateBookingCancel = await UpdateStatusBookingAsync(bookingId.BookingId, 2);
+
                 var timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds().ToString();
                 var rand = new Random();
                 var uid = timestamp + rand.Next(111, 999).ToString();
@@ -489,14 +555,14 @@ namespace Services.Services
 
                 var result = await PostFormAsync(refundUrl, param);
 
-                if (result.ContainsKey("returncode") && result["returncode"] == "1")
+                if (result.ContainsKey("returncode") && result["returncode"] == "2")
                 {
-                    return new APIResponseModel
-                    {
-                        IsSuccess = true,
-                        Message = "Refund successful.",
-                        Data = result
-                    };
+                  //  var transId = await _unitOfWork.PaymentRepository.GetAllAsyncs(query => query.Where(p=> p.MerchantTransId == zptransid));
+                   // var bookingId = transId.FirstOrDefault();
+                    var updateBooking = await UpdateStatusBookingAddCapacityAsync(bookingId.BookingId,5);
+
+                    return updateBooking;
+                    
                 }
                 else
                 {
@@ -539,5 +605,164 @@ namespace Services.Services
                 return JsonConvert.DeserializeObject<Dictionary<string, string>>(responseString);
             }
         }
+
+
+        public async Task<APIResponseModel> GetAllPayment()
+        {
+            try
+            {
+                var payment = await _unitOfWork.PaymentRepository.GetAllAsync();
+                if(payment == null)
+                {
+                    return new APIResponseModel
+                    {
+                        IsSuccess = false,
+                        Message = "No payment",
+                        Data = null
+                    };
+                }
+                return new APIResponseModel
+                {
+                    IsSuccess = true,
+                    Message = "Have payment",
+                    Data = payment
+                };
+            }
+            catch (Exception ex)
+            {
+                return new APIResponseModel
+                {
+                    IsSuccess = false,
+                    Message = "Exception: " + ex.Message,
+                    Data = null
+                };
+            }
+        }
+
+        public async Task<APIResponseModel> UpdateStatusBookingAsync(string bookingId, int status)
+        {
+            try
+            {
+                var booking = await _unitOfWork.BookingRepository.GetFirstsOrDefaultAsync(b => b.BookingId == bookingId);
+                if (booking == null)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Booking not found.",
+                        IsSuccess = false,
+                    };
+                }
+
+                booking.Status = status;
+                booking.UpdateDate = DateTime.Now;
+                await _unitOfWork.BookingRepository.UpdateAsync(booking);
+
+
+                var tickets = await _unitOfWork.TicketRepository.GetAllAsyncs(query => query
+                                                            .Where(t => t.BookingId == bookingId));
+                foreach (var ticket in tickets)
+                {
+                    ticket.Status = status;
+                    ticket.UpdateDate = DateTime.Now;
+                    await _unitOfWork.TicketRepository.UpdateAsync(ticket);
+
+                    var dailyTicketType = await _unitOfWork.DailyTicketRepository.GetAllAsyncs(query => query.Where(d => d.DailyTicketId == ticket.DailyTicketId));
+                    var dailyTicketTypeCapa = dailyTicketType.FirstOrDefault();
+                    if (dailyTicketTypeCapa != null)
+                    {
+                        dailyTicketTypeCapa.Capacity += ticket.Quantity;
+                        dailyTicketTypeCapa.UpdateDate = DateTime.Now;
+                        await _unitOfWork.DailyTicketRepository.UpdateAsync(dailyTicketTypeCapa);
+                    }
+                }
+
+                foreach (var ticket in tickets)
+                {
+                    var servicesUsedByTicket = await _unitOfWork.ServiceUsedByTicketRepository.GetAllAsyncs(query => query
+                                                                                             .Where(s => s.TicketId == ticket.TicketId));
+                    foreach (var serviceUsed in servicesUsedByTicket)
+                    {
+                        serviceUsed.Status = status;
+                        serviceUsed.UpdateDate = DateTime.Now;
+                        await _unitOfWork.ServiceUsedByTicketRepository.UpdateAsync(serviceUsed);
+                    }
+                }
+
+                _unitOfWork.Save();
+
+                return new APIResponseModel
+                {
+                    Message = "Refund successfully and Status updated successfully for booking and related records.",
+                    IsSuccess = true,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new APIResponseModel
+                {
+                    Message = ex.Message,
+                    IsSuccess = false,
+                };
+            }
+        }
+
+        public async Task<APIResponseModel> UpdateStatusBookingAddCapacityAsync(string bookingId, int status)
+        {
+            try
+            {
+                var booking = await _unitOfWork.BookingRepository.GetFirstsOrDefaultAsync(b => b.BookingId == bookingId);
+                if (booking == null)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Booking not found.",
+                        IsSuccess = false,
+                    };
+                }
+
+                booking.Status = status;
+                booking.UpdateDate = DateTime.Now;
+                await _unitOfWork.BookingRepository.UpdateAsync(booking);
+
+
+                var tickets = await _unitOfWork.TicketRepository.GetAllAsyncs(query => query
+                                                            .Where(t => t.BookingId == bookingId));
+                foreach (var ticket in tickets)
+                {
+                    ticket.Status = status;
+                    ticket.UpdateDate = DateTime.Now;
+                    await _unitOfWork.TicketRepository.UpdateAsync(ticket);
+                }
+
+                foreach (var ticket in tickets)
+                {
+                    var servicesUsedByTicket = await _unitOfWork.ServiceUsedByTicketRepository.GetAllAsyncs(query => query
+                                                                                             .Where(s => s.TicketId == ticket.TicketId));
+                    foreach (var serviceUsed in servicesUsedByTicket)
+                    {
+                        serviceUsed.Status = status;
+                        serviceUsed.UpdateDate = DateTime.Now;
+                        await _unitOfWork.ServiceUsedByTicketRepository.UpdateAsync(serviceUsed);
+                    }
+                }
+
+                _unitOfWork.Save();
+
+                return new APIResponseModel
+                {
+                    Message = "Refund successfully and Status updated successfully for booking and related records.",
+                    IsSuccess = true,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new APIResponseModel
+                {
+                    Message = ex.Message,
+                    IsSuccess = false,
+                };
+            }
+        }
+
     }
 }

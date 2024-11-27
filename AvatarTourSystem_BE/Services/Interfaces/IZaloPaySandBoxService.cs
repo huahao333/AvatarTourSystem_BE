@@ -10,6 +10,7 @@ namespace Services.Interfaces
 {
     public interface IZaloPaySandBoxService
     {
+        Task<APIResponseModel> GetAllPayment();
         Task<APIResponseModel> HandleCallback([FromBody] object callbackData);
         Task<APIResponseModel> ProcessRefund(string zptransid, long amount, string description);
     }
