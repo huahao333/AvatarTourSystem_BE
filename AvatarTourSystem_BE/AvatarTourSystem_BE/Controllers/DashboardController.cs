@@ -49,5 +49,17 @@ namespace AvatarTourSystem_BE.Controllers
             var monthlyRevenue = await _dashboardService.GetMonthlyTours(month, year);
             return Ok(monthlyRevenue);
         }
+        [HttpGet("count-account")]
+        public async Task<IActionResult> CountAccountRole()
+        {
+            var monthlyRevenue = await _dashboardService.CountAccountRole();
+            return Ok(monthlyRevenue);
+        }
+        [HttpGet("count-booking")]
+        public async Task<IActionResult> CountBookingRole()
+        {
+            var monthlyRevenue = await _dashboardService.CountBookingRole();
+            return Ok(monthlyRevenue);
+        }
     }
 }

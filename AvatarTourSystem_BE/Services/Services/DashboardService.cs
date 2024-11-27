@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using Azure;
+using BusinessObjects.Enums;
 using BusinessObjects.Models;
 using BusinessObjects.ViewModels.Booking;
+using BusinessObjects.ViewModels.Dashboard;
 using Repositories.Interfaces;
 using Services.Common;
 using Services.Interfaces;
@@ -170,6 +172,68 @@ namespace Services.Services
                 return new APIGenericResponseModel<int>
                 {
                     Message = "No active tickets in month!",
+                    IsSuccess = false,
+                };
+            }
+        }
+
+        public async Task<APIResponseModel> CountAccountRole()
+        {
+            try
+            {
+                var rolesCount = new AccountCountViewModel
+                {
+                    SuperAdmin = await _unitOfWork.AccountRepository.CountAsync(a => a.Roles == (int)ERole.SuperAdmin),
+                    Admin = await _unitOfWork.AccountRepository.CountAsync(a => a.Roles == (int)ERole.Admin),
+                    Staff = await _unitOfWork.AccountRepository.CountAsync(a => a.Roles == (int)ERole.Staff),
+                    Supplier = await _unitOfWork.AccountRepository.CountAsync(a => a.Roles == (int)ERole.Supplier),
+                    Customer = await _unitOfWork.AccountRepository.CountAsync(a => a.Roles == (int)ERole.Customer)
+                };
+                rolesCount.Total = rolesCount.SuperAdmin + rolesCount.Admin + rolesCount.Staff + rolesCount.Supplier + rolesCount.Customer;
+
+                return new APIResponseModel
+                {
+                    Message = "Counted accounts by role successfully.",
+                    IsSuccess = true,
+                    Data = rolesCount
+                };
+            }
+            catch (Exception ex)
+            {
+                return new APIResponseModel
+                {
+                    Message = "Error" +ex,
+                    IsSuccess = false,
+                };
+            }
+        }
+        public async Task<APIResponseModel> CountBookingRole()
+        {
+            try
+            {
+                var bookingsCount = new BookingCountViewModel
+                {
+                    BookingActive = await _unitOfWork.BookingRepository.CountAsync(a => a.Status == (int)EStatus.Active),
+                    BookingOverdue = await _unitOfWork.BookingRepository.CountAsync(a => a.Status == (int)EStatus.Disabled),
+                    BookingCancelled = await _unitOfWork.BookingRepository.CountAsync(a => a.Status == (int)EStatus.IsCancelled),
+                    BookingUsed = await _unitOfWork.BookingRepository.CountAsync(a => a.Status == (int)EStatus.IsCompleted),
+                    BookingRefund = await _unitOfWork.BookingRepository.CountAsync(a => a.Status == (int)EStatus.IsRefund),
+                    BookingInProgress = await _unitOfWork.BookingRepository.CountAsync(a => a.Status == (int)EStatus.InProgress)
+                };
+                bookingsCount.Total = bookingsCount.BookingActive + bookingsCount.BookingOverdue + bookingsCount.BookingCancelled + bookingsCount.BookingUsed + bookingsCount.BookingRefund + bookingsCount.BookingInProgress;
+
+                return new APIResponseModel
+                {
+                    Message = "Counted accounts by role successfully.",
+                    IsSuccess = true,
+                    Data = bookingsCount
+                };
+            }
+            catch (Exception ex)
+            {
+                return new APIResponseModel
+                {
+                    Message = "Error" + ex,
                     IsSuccess = false,
                 };
             }
