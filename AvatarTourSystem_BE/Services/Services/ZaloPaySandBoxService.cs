@@ -25,6 +25,7 @@ using System.Net.Http.Json;
 using CloudinaryDotNet;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using BusinessObjects.Enums;
+using BusinessObjects.ViewModels.Rate;
 
 namespace Services.Services
 {
@@ -143,7 +144,8 @@ namespace Services.Services
                         IsSuccess = false,
                     };
                 }
-
+                var dailyTourExpirationDate = await _unitOfWork.DailyTourRepository.GetFirstOrDefaultAsync(query => query
+                                  .Where(a => a.DailyTourId == extradata.DailyTourId));
                 // Lấy chi tiết về DailyTour
                 var dailyTourDetails = await GetDailyToursDetails(extradata.DailyTourId);
                 if (dailyTourDetails == null)
@@ -179,7 +181,7 @@ namespace Services.Services
                     UserId = zaloAccount.Id,
                     DailyTourId = extradata.DailyTourId,
                     BookingDate = DateTime.Now,
-                    ExpirationDate = DateTime.UtcNow.AddDays(2),
+                    ExpirationDate = dailyTourExpirationDate.ExpirationDate,
                     TotalPrice = totalAmount,
                     Status = 1,
                     CreateDate = DateTime.UtcNow,
