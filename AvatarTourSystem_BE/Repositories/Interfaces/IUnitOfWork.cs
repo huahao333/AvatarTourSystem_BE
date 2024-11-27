@@ -15,6 +15,7 @@ namespace Repositories.Interfaces
         GenericRepository<TicketType> TicketTypeRepository { get; }
         GenericRepository<DailyTicketType> DailyTicketRepository { get; }
         GenericRepository<Ticket> TicketRepository { get; }
+        GenericRepository<Payment> PaymentRepository { get; }
         GenericRepository<PaymentMethod> PaymentMethodRepository { get; }
         GenericRepository<TransactionsHistory> TransactionsHistoryRepository { get; }
         GenericRepository<City> CityRepository { get; }
@@ -33,7 +34,6 @@ namespace Repositories.Interfaces
         GenericRepository<CustomerSupport> CustomerSupportRepository { get; }
         GenericRepository<RequestType> RequestTypeRepository { get; }
         GenericRepository<PointOfInterest> PointOfInterestRepository { get; }
-        GenericRepository<Payment> PaymentRepository { get; }
         //GenericRepository<POIType> POITypeRepository { get; }
         GenericRepository<Notification> NotificationRepository { get; }
         GenericRepository<DailyTour> DailyTourRepository { get; }

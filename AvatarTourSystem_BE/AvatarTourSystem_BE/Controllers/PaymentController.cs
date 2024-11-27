@@ -14,14 +14,35 @@ namespace AvatarTourSystem_BE.Controllers
     {
 
         private readonly IZaloPayService _zaloPayService;
+        private readonly IPaymentService _paymentService;
         private readonly ILogger<PaymentController> _logger;
 
-        public PaymentController(
-            IZaloPayService zaloPayService,
-            ILogger<PaymentController> logger)
+        public PaymentController(IZaloPayService zaloPayService, IPaymentService paymentService, ILogger<PaymentController> logger)
         {
              _zaloPayService = zaloPayService;
+            _paymentService = paymentService;
             _logger = logger;
+        }
+
+        [HttpGet("payments")]
+        public async Task<IActionResult> GetAllPayments()
+        {
+            var result = await _paymentService.GetAllPayments();
+            return Ok(result);
+        }
+
+        [HttpGet("payments-active")]
+        public async Task<IActionResult> GetActivePaymentMethods()
+        {
+            var result = await _paymentService.GetPaymentsByStatus();
+            return Ok(result);
+        }
+
+        [HttpGet("payment/{id}")]
+        public async Task<IActionResult> GetPaymentByIdAsync(string id)
+        {
+            var result = await _paymentService.GetPaymentById(id);
+            return Ok(result);
         }
 
         [HttpPost("zalo-callback")]
