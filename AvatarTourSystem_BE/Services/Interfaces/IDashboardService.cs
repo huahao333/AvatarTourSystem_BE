@@ -18,6 +18,7 @@ namespace Services.Interfaces
       //  public Task<APIGenericResponseModel<decimal>> GetMonthlyRevenue(int month, int year);
         public Task<APIGenericResponseModel<int>> GetMonthlyTicketsByType(string typeId, int month, int year);
         Task<APIResponseModel> CountAccountRole();
-        Task<APIResponseModel> CountBookingRole();
+        Task<APIResponseModel> CountBooking();
+        Task<APIResponseModel> CountRequest();
     }
 }

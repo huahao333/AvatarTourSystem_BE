@@ -207,7 +207,7 @@ namespace Services.Services
                 };
             }
         }
-        public async Task<APIResponseModel> CountBookingRole()
+        public async Task<APIResponseModel> CountBooking()
         {
             try
             {
@@ -224,7 +224,7 @@ namespace Services.Services
 
                 return new APIResponseModel
                 {
-                    Message = "Counted accounts by role successfully.",
+                    Message = "Counted booking successfully.",
                     IsSuccess = true,
                     Data = bookingsCount
                 };
@@ -238,5 +238,34 @@ namespace Services.Services
                 };
             }
         }
+        public async Task<APIResponseModel> CountRequest()
+        {
+            try
+            {
+                var requestsCount = new RequestCountViewModel
+                {
+                    RequestInProgress = await _unitOfWork.CustomerSupportRepository.CountAsync(a => a.Status == (int)EStatus.InProgress),
+                    RequestCompleted = await _unitOfWork.CustomerSupportRepository.CountAsync(a => a.Status == (int)EStatus.IsCompleted),
+                    RequestDeleted = await _unitOfWork.CustomerSupportRepository.CountAsync(a => a.Status == (int)EStatus.IsDeleted)
+                };
+                requestsCount.Total = requestsCount.RequestInProgress + requestsCount.RequestCompleted + requestsCount.RequestDeleted;
+
+                return new APIResponseModel
+                {
+                    Message = "Counted request successfully.",
+                    IsSuccess = true,
+                    Data = requestsCount
+                };
+            }
+            catch (Exception ex)
+            {
+                return new APIResponseModel
+                {
+                    Message = "Error" + ex,
+                    IsSuccess = false,
+                };
+            }
+        }
+
     }
 }

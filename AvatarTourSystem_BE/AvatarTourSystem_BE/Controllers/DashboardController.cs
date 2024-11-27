@@ -56,9 +56,15 @@ namespace AvatarTourSystem_BE.Controllers
             return Ok(monthlyRevenue);
         }
         [HttpGet("count-booking")]
-        public async Task<IActionResult> CountBookingRole()
+        public async Task<IActionResult> CountBooking()
         {
-            var monthlyRevenue = await _dashboardService.CountBookingRole();
+            var monthlyRevenue = await _dashboardService.CountBooking();
+            return Ok(monthlyRevenue);
+        }
+        [HttpGet("count-request")]
+        public async Task<IActionResult> CountRequest()
+        {
+            var monthlyRevenue = await _dashboardService.CountRequest();
             return Ok(monthlyRevenue);
         }
     }
