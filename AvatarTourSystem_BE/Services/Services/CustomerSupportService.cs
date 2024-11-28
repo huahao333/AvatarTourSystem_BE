@@ -190,11 +190,12 @@ namespace Services.Services
         {
             try
             {
-                var requests = await _unitOfWork.CustomerSupportRepository.GetAllAsyncs(query => query.Include(dt=>dt.RequestTypes));
-                var result = requests.Select(request => new
+               var requests = await _unitOfWork.CustomerSupportRepository.GetAllAsyncs(query => query.Include(dt=>dt.RequestTypes).Include(ac=>ac.Accounts));
+               var result = requests.Select(request => new
                 {
                     CusSupportId = request.CusSupportId,
                     UserId = request.UserId,
+                    FullName = request.Accounts.FullName,
                     RequestId = request.RequestTypeId,
                     Type = request.RequestTypes.Type,
                     Priority = request.RequestTypes.Priority,
