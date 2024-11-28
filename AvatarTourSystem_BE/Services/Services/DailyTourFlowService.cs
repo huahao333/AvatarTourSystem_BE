@@ -955,7 +955,7 @@ namespace Services.Services
         {
             try
             {
-                var toDay = DateTime.UtcNow.Date;
+                var toDay = DateTime.Now.Date;
                 var dailyTours = await _unitOfWork.DailyTourRepository.GetAllAsyncs(query => query
                    .Where(dt => dt.Status == 1 && dt.StartDate.Value.Date <=toDay  && dt.EndDate.Value.Date>=toDay )
                     .Include(dt => dt.PackageTours)
@@ -1252,7 +1252,7 @@ namespace Services.Services
         {
             try
             {
-                var toDay = DateTime.UtcNow.Date;
+                var toDay = DateTime.Now.Date;
                 // Query all DailyTours with related entities in one query
                 var dailyTours = await _unitOfWork.DailyTourRepository.GetAllAsyncs(query => query
                    .Where(dt => dt.Status == 1 && dt.Discount>0 && dt.StartDate.Value.Date <= toDay && dt.EndDate.Value.Date >= toDay)
@@ -1405,7 +1405,7 @@ namespace Services.Services
         {
             try
             {
-                var toDay = DateTime.UtcNow.Date;
+                var toDay = DateTime.Now.Date;
                 // Query all DailyTours with related entities in one query
                 var dailyTours = await _unitOfWork.DailyTourRepository.GetAllAsyncs(query => query
                    .Where(dt =>dt.StartDate.Value.Date<=toDay && dt.EndDate.Value.Date >= toDay && dt.PackageTours.TourSegments.Any(c=>c.Destinations.Locations.Any(loca=>loca.PointOfInterests.Any(poi=>poi.LocationId==loca.LocationId && poi.Status==1))))
