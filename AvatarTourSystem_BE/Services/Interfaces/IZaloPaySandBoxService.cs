@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BusinessObjects.ViewModels.Payment;
+using Microsoft.AspNetCore.Mvc;
 using Services.Common;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ namespace Services.Interfaces
     public interface IZaloPaySandBoxService
     {
         Task<APIResponseModel> GetAllPayment();
-        Task<APIResponseModel> HandleCallback([FromBody] object callbackData);
-        Task<APIResponseModel> ProcessRefund(string zptransid, long amount, string description);
+        Task<APIResponseModel> HandleCallback(object callbackData);
+        Task<APIResponseModel> ProcessRefund(RefundModel refundModel);
     }
 }

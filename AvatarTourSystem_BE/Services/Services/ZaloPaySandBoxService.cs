@@ -35,9 +35,9 @@ namespace Services.Services
         private readonly CloudinaryService _cloudinaryService;
         private readonly EncryptionHelperService _encryptionHelperService;
         private readonly HttpClient _httpClient;
-        private readonly string appid = "554"; // App ID của bạn
-        private readonly string key1 = "8NdU5pG5R2spGHGhyO99HN1OhD8IQJBn"; // Mac Key của bạn
-        private readonly string refundUrl = "https://sandbox.zalopay.com.vn/v001/tpe/partialrefund"; // URL hoàn tiền của ZaloPa
+        private readonly string appid = "554"; 
+        private readonly string key1 = "8NdU5pG5R2spGHGhyO99HN1OhD8IQJBn";
+        private readonly string refundUrl = "https://sandbox.zalopay.com.vn/v001/tpe/partialrefund"; 
         public ZaloPaySandBoxService(IUnitOfWork unitOfWork, 
             CloudinaryService cloudinaryService, 
             EncryptionHelperService encryptionHelperService,
@@ -49,7 +49,7 @@ namespace Services.Services
             _httpClient = httpClient;
         }
 
-        public async Task<APIResponseModel> HandleCallback([FromBody] object callbackData)
+        public async Task<APIResponseModel> HandleCallback(object callbackData)
         {
             try
             {
@@ -480,11 +480,12 @@ namespace Services.Services
             }
         }
 
-        public async Task<APIResponseModel> ProcessRefund(string zptransid, long amount, string description)
+        public async Task<APIResponseModel> ProcessRefund(RefundModel refundModel)
         {
             try
             {
-                var transId = await _unitOfWork.PaymentRepository.GetAllAsyncs(query => query.Where(p => p.MerchantTransId == zptransid));
+                string description = "AvatarTour xin phép hoàn tiền cho quý khách, cảm ơn đã sử dụng dịch vụ của chúng tôi";
+                var transId = await _unitOfWork.PaymentRepository.GetAllAsyncs(query => query.Where(p => p.MerchantTransId == refundModel.ZptransId));
                 var bookingId = transId.FirstOrDefault();
                 var checkStatusBooking = await _unitOfWork.BookingRepository.GetByIdStringAsync(bookingId.BookingId);
                 if(checkStatusBooking.Status ==9)
@@ -556,13 +557,13 @@ namespace Services.Services
                 var timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds().ToString();
                 var rand = new Random();
                 var uid = timestamp + rand.Next(111, 999).ToString();
-                double ammountRe = amount * 0.8;
+                double ammountRe = refundModel.Amount * 0.8;
                 long ammountReLong = (long)ammountRe;
                 var param = new Dictionary<string, string>
         {
             { "appid", appid },
             { "mrefundid", DateTime.Now.ToString("yyMMdd") + "_" + appid + "_" + uid },
-            { "zptransid", zptransid }, 
+            { "zptransid", refundModel.ZptransId }, 
             { "amount", ammountReLong.ToString() }, 
             { "timestamp", timestamp },
             { "description", description } 
