@@ -541,7 +541,7 @@ namespace Services.Services
                 }
                 var currentDate = DateTime.UtcNow.Date;
                 var differenceInDays = (checkStatusBooking.ExpirationDate.Value.Date - currentDate).TotalDays;
-                if (differenceInDays < 2)
+                if (differenceInDays < 2 || currentDate >= checkStatusBooking.ExpirationDate.Value.Date)
                 {
                     return new APIResponseModel
                     {
