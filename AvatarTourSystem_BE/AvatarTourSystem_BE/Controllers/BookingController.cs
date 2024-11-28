@@ -80,5 +80,12 @@ namespace AvatarTourSystem_BE.Controllers
             var result = await _bookingService.DeleteBooking(id);
             return Ok(result);
         }
+
+        [HttpGet("booking-ticket")]
+        public async Task<IActionResult> GetAllBookingsAsync()
+        {
+            var result = await _bookingService.GetAllBookingsAsync();
+            return Ok(result);
+        }
     }
 }

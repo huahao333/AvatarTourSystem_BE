@@ -3,6 +3,7 @@ using BusinessObjects.Enums;
 using BusinessObjects.Models;
 using BusinessObjects.ViewModels.Booking;
 using BusinessObjects.ViewModels.ServiceUsedByTicket;
+using Microsoft.EntityFrameworkCore;
 using Repositories.Interfaces;
 using Services.Common;
 using Services.Interfaces;
@@ -11,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ZXing;
 
 namespace Services.Services
 {
@@ -144,6 +146,54 @@ namespace Services.Services
                 IsSuccess = true,
                 Data = booking,
             };
+        }
+
+        public async Task<APIResponseModel> GetAllBookingsAsync()
+        {
+            try
+            {
+                var bookingInfor = await _unitOfWork.BookingRepository.GetAllAsyncs(query=>
+                                                     query.Include(b=>b.Tickets).Include(a=>a.Accounts).Include(p=>p.Payments));
+                var result = bookingInfor.Select(booking => new
+                {
+                    bookingId = booking.BookingId,
+                    UserId = booking.UserId,
+                    FullName = booking.Accounts.FullName,
+                    DailyTourId = booking.DailyTourId,
+                    BookingData = booking.BookingDate,
+                    ExpirationDate = booking.ExpirationDate,
+                    TotalPrice = booking.TotalPrice,
+                    MerchantId = booking.Payments.FirstOrDefault()?.MerchantTransId,
+                    Status = booking.Status,
+                    Tickets = booking.Tickets.Where(c=>c.BookingId == booking.BookingId).Select(t => new
+                    {
+                        TicketId = t.TicketId,
+                        DailyTicketId = t.DailyTicketId,
+                        TicketName = t.TicketName,
+                        Quantity = t.Quantity,
+                        Qr = t.QRImgUrl,
+                        Phone = t.PhoneNumberReference,
+                        Price = t.Price,
+                        CreateDate = t.CreateDate,
+                    }).ToList(),
+                });
+
+
+                return new APIResponseModel
+                {
+                    Message = "Successfully retrieved booking",
+                    IsSuccess = true,
+                    Data = result
+                };
+            }
+            catch (Exception ex)
+            {
+                return new APIResponseModel
+                {
+                    Message = " Error get booking",
+                    IsSuccess = false,
+                };
+            }
         }
     }
 }
