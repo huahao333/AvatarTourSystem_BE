@@ -4,6 +4,7 @@ using BusinessObjects.Models;
 using BusinessObjects.ViewModels.Account;
 using BusinessObjects.ViewModels.CustomerSupport;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Repositories.Interfaces;
 using Services.Common;
 using Services.Interfaces;
@@ -12,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ZXing;
 
 namespace Services.Services
 {
@@ -180,6 +182,74 @@ namespace Services.Services
                 Data = result,
             };
 
+        }
+
+
+
+        public async Task<APIResponseModel> GetAllRequest()
+        {
+            try
+            {
+                var requests = await _unitOfWork.CustomerSupportRepository.GetAllAsyncs(query => query.Include(dt=>dt.RequestTypes));
+                var result = requests.Select(request => new
+                {
+                    CusSupportId = request.CusSupportId,
+                    UserId = request.UserId,
+                    RequestId = request.RequestTypeId,
+                    Type = request.RequestTypes.Type,
+                    Priority = request.RequestTypes.Priority,
+                    Description = request.Description,
+                    CreateDate = request.CreateDate,
+                    DateResolved = request.DateResolved,
+                    Status = request.Status
+                });
+
+                return new APIResponseModel
+                {
+                    Message = "Successfully retrieved requests",
+                    IsSuccess = true,
+                    Data = result
+                };
+            }
+            catch (Exception ex)
+            {
+                return new APIResponseModel
+                {
+                    Message = "Error get request",
+                    IsSuccess = false
+                };
+            }
+        }
+
+        public async Task<APIResponseModel> UpdateStatusCustomerSupport(CustomerSupportStatusViewModel customerSupportStatusViewModel)
+        {
+            try
+            {
+                var updateRequests = await _unitOfWork.CustomerSupportRepository.GetByIdStringAsync(customerSupportStatusViewModel.CusSupportId);
+
+                var createDate = updateRequests.CreateDate;
+                updateRequests.Status= customerSupportStatusViewModel.Status;
+                updateRequests.DateResolved = DateTime.Now;
+                updateRequests.CreateDate = createDate;
+                updateRequests.UpdateDate = DateTime.Now;
+
+                _unitOfWork.CustomerSupportRepository.UpdateAsync(updateRequests);
+                _unitOfWork.Save();
+
+                return new APIResponseModel
+                {
+                    Message = "Successfully retrieved requests",
+                    IsSuccess = true,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new APIResponseModel
+                {
+                    Message = "Error updated request",
+                    IsSuccess = false
+                };
+            }
         }
     }
 }

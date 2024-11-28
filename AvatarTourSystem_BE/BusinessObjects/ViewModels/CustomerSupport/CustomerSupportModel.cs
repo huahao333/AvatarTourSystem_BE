@@ -1,4 +1,5 @@
 ﻿using BusinessObjects.Enums;
+using BusinessObjects.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -26,5 +27,12 @@ namespace BusinessObjects.ViewModels.CustomerSupport
         public DateTime? UpdateDate { get; set; }
       //  [FromForm(Name = "status")]
         public EStatus? Status { get; set; }
+    }
+
+    public class CustomerSupportStatusViewModel
+    {
+        public string CusSupportId { get; set; }
+        public int Status { get; set; }
+
     }
 }

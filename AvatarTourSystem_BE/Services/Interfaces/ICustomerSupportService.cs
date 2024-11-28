@@ -18,5 +18,7 @@ namespace Services.Interfaces
         Task<APIResponseModel> CreateCustomerSupport(CustomerSupportCreateModel createModel);
         Task<APIResponseModel> UpdateCustomerSupport(CustomerSupportUpdateModel updateModel);
         Task<APIResponseModel> DeleteCustomerSupport(string cusId);
+        Task<APIResponseModel> GetAllRequest();
+        Task<APIResponseModel> UpdateStatusCustomerSupport(CustomerSupportStatusViewModel customerSupportStatusViewModel);
     }
 }
