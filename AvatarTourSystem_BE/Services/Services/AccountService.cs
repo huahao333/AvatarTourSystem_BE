@@ -347,7 +347,8 @@ namespace Services.Services
         {
             try
             {
-                var accountZaloExisting = (await _unitOfWork.AccountRepository.GetByConditionAsync(s => s.ZaloUser.ToString() == accountZaloIdModel.ZaloUser))
+                var accountZaloExisting = (await _unitOfWork.AccountRepository.GetByConditionAsync(s => s.ZaloUser.ToString() 
+                                                                                             == accountZaloIdModel.ZaloUser))
                                           .FirstOrDefault();
                 if (accountZaloExisting != null)
                 {
@@ -488,7 +489,8 @@ namespace Services.Services
 
         public async Task<APIResponseModel> GetPhoneInfoAndSaveAsync(AccountZaloCURLModel accountZaloCURLModel)
         {
-            var (phoneInfo, accessToken, phoneToken) = await _zaloServices.CallZaloApiAsync(accountZaloCURLModel.AccessToken, accountZaloCURLModel.PhoneToken);
+            var (phoneInfo, accessToken, phoneToken) = await _zaloServices.CallZaloApiAsync(accountZaloCURLModel.AccessToken, 
+                                                                                              accountZaloCURLModel.PhoneToken);
 
             if (phoneInfo == null)
             {
@@ -504,7 +506,8 @@ namespace Services.Services
                 };
             }
 
-            var accountZaloID = (await _unitOfWork.AccountRepository.GetByConditionAsync(z => z.ZaloUser == accountZaloCURLModel.ZaloId)).FirstOrDefault();
+            var accountZaloID = (await _unitOfWork.AccountRepository.GetByConditionAsync(z => z.ZaloUser == 
+                                                                            accountZaloCURLModel.ZaloId)).FirstOrDefault();
             if (accountZaloID == null || !string.IsNullOrEmpty(accountZaloID.PhoneNumber))
             {
                 return new APIResponseModel

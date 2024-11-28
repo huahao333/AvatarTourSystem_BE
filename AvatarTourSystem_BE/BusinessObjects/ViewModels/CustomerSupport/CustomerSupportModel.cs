@@ -32,7 +32,17 @@ namespace BusinessObjects.ViewModels.CustomerSupport
     public class CustomerSupportStatusViewModel
     {
         public string CusSupportId { get; set; }
+        public string UserId { get; set; }
+        public string NotificationDescription { get; set; }
         public int Status { get; set; }
 
+    }
+
+    public class CustomerSupportRequestCreateModel
+    {
+
+        public string? ZaloUser { get; set; } = "";
+        public string? Description { get; set; } = "";
+        public string? BookingId { get; set; } = "";
     }
 }

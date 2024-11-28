@@ -494,14 +494,16 @@ namespace Services.Services
                         IsSuccess = false,
                         Message = "Booking is in progress and cannot be refunded."
                     };
-                }else if(checkStatusBooking.Status ==2)
-                {
-                    return new APIResponseModel
-                    {
-                        IsSuccess = false,
-                        Message = "Booking has been cancelled."
-                    };
-                }else if (checkStatusBooking.Status == -1)
+                }
+                //else if(checkStatusBooking.Status ==2)
+                //{
+                //    return new APIResponseModel
+                //    {
+                //        IsSuccess = false,
+                //        Message = "Booking has been cancelled."
+                //    };
+                //}
+                else if (checkStatusBooking.Status == -1)
                 {
                     return new APIResponseModel
                     {

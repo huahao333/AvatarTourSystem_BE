@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BusinessObjects.Data;
 using BusinessObjects.Enums;
 using BusinessObjects.Models;
 using BusinessObjects.ViewModels.Account;
@@ -190,19 +191,28 @@ namespace Services.Services
         {
             try
             {
-               var requests = await _unitOfWork.CustomerSupportRepository.GetAllAsyncs(query => query.Include(dt=>dt.RequestTypes).Include(ac=>ac.Accounts));
-               var result = requests.Select(request => new
+                var requests = await _unitOfWork.CustomerSupportRepository.GetAllAsyncs(query =>
+                    query.Include(dt => dt.RequestTypes).Include(ac => ac.Accounts));
+
+                var result = requests.Select(request =>
                 {
-                    CusSupportId = request.CusSupportId,
-                    UserId = request.UserId,
-                    FullName = request.Accounts.FullName,
-                    RequestId = request.RequestTypeId,
-                    Type = request.RequestTypes.Type,
-                    Priority = request.RequestTypes.Priority,
-                    Description = request.Description,
-                    CreateDate = request.CreateDate,
-                    DateResolved = request.DateResolved,
-                    Status = request.Status
+                    var match = System.Text.RegularExpressions.Regex.Match(request.Description, @"ᡣ(.*?)୨ৎ");
+                    var bookingId = match.Success ? match.Groups[1].Value : null;
+                    var sanitizedDescription = System.Text.RegularExpressions.Regex.Replace(request.Description, @"ᡣ(.*?)୨ৎ", string.Empty).Trim(); 
+                    return new
+                    {
+                        CusSupportId = request.CusSupportId,
+                        UserId = request.UserId,
+                        FullName = request.Accounts?.FullName,
+                        RequestId = request.RequestTypeId,
+                        Type = request.RequestTypes?.Type,
+                        Priority = request.RequestTypes?.Priority,
+                        Description = sanitizedDescription,
+                        Booking = bookingId, 
+                        CreateDate = request.CreateDate,
+                        DateResolved = request.DateResolved,
+                        Status = request.Status
+                    };
                 });
 
                 return new APIResponseModel
@@ -233,8 +243,66 @@ namespace Services.Services
                 updateRequests.DateResolved = DateTime.Now;
                 updateRequests.CreateDate = createDate;
                 updateRequests.UpdateDate = DateTime.Now;
+                if (string.IsNullOrEmpty(customerSupportStatusViewModel.NotificationDescription))
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "UserId not found.",
+                        IsSuccess = false
+                    };
+                }
+                var userId = await _unitOfWork.AccountRepository.GetByIdStringAsync(customerSupportStatusViewModel.UserId);
+                if (string.IsNullOrEmpty(customerSupportStatusViewModel.UserId) || userId ==null)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "UserId not found.",
+                        IsSuccess = false
+                    };
+                }
+                string notificationType = "";
+                string notificationTitle = "";
+                var requestType = await _unitOfWork.RequestTypeRepository.GetByIdStringAsync(updateRequests.RequestTypeId);
+                if (customerSupportStatusViewModel.Status == 4)
+                {
+                    if(requestType.Type == "Yêu cầu hoàn tiền")
+                    {
+                        notificationType = "Success";
+                        notificationTitle = "Hoàn tiền thành công";
+                    }
+                    else
+                    {
+                        notificationType = "Default";
+                        notificationTitle = "Xử lý yêu cầu thành công";
+                    }
+                }
+                else if (customerSupportStatusViewModel.Status == -1)
+                {
+                    if (requestType.Type == "Yêu cầu hoàn tiền")
+                    {
+                        notificationType = "Fail";
+                        notificationTitle = "Hoàn tiền thất bại";
+                    }
+                    else
+                    {
+                        notificationType = "Default";
+                        notificationTitle = "Xử lý yêu cầu thất bại";
+                    }
+                }
 
-                _unitOfWork.CustomerSupportRepository.UpdateAsync(updateRequests);
+                var newNotification = new Notification
+                {
+                    NotifyId = Guid.NewGuid().ToString(),
+                    UserId = customerSupportStatusViewModel.UserId,
+                    SendDate = DateTime.Now,
+                    Message= customerSupportStatusViewModel.NotificationDescription,
+                    Type = notificationType,
+                    Title = notificationTitle,
+                    Status = 1,
+                    CreateDate = DateTime.UtcNow
+                };
+                await _unitOfWork.CustomerSupportRepository.UpdateAsync(updateRequests);
+                await _unitOfWork.NotificationRepository.AddAsync(newNotification);
                 _unitOfWork.Save();
 
                 return new APIResponseModel
@@ -249,6 +317,138 @@ namespace Services.Services
                 {
                     Message = "Error updated request",
                     IsSuccess = false
+                };
+            }
+        }
+
+        public async Task<APIResponseModel> CreateRequestCustomerSupportForRefund(CustomerSupportRequestCreateModel customerSupportRequestCreate)
+        {
+            try
+            {
+                var zaloUser = await _unitOfWork.AccountRepository.GetFirstOrDefaultAsync(query => query.Where(c=>c.ZaloUser== customerSupportRequestCreate.ZaloUser));
+                if (string.IsNullOrEmpty(customerSupportRequestCreate.ZaloUser) || zaloUser == null)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "UserId not found.",
+                        IsSuccess = false
+                    };
+                }
+                if (string.IsNullOrEmpty(customerSupportRequestCreate.Description))
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Description are required.",
+                        IsSuccess = false
+                    };
+                }
+                string type = "Yêu cầu hoàn tiền";
+                var requestTypeId = await _unitOfWork.RequestTypeRepository.GetFirstOrDefaultAsync(query => query.Where(c=>c.Type== type.ToString()));
+                if (requestTypeId==null)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "RequestId not found.",
+                        IsSuccess = false
+                    };
+                }
+                var updateBooking = await UpdateStatusBookingAsync(customerSupportRequestCreate.BookingId, 2);
+                var descriptionWithBooking = customerSupportRequestCreate.BookingId != null
+                    ? $"{customerSupportRequestCreate.Description} ᡣ{customerSupportRequestCreate.BookingId}୨ৎ"
+                    : customerSupportRequestCreate.Description;
+
+                var newRequest = new CustomerSupport
+                {
+                    CusSupportId= Guid.NewGuid().ToString(),
+                    UserId = zaloUser.Id,
+                    RequestTypeId = requestTypeId.RequestTypeId,
+                    Description = descriptionWithBooking,
+                    Status = 9, 
+                    CreateDate = DateTime.UtcNow 
+                };
+
+                await _unitOfWork.CustomerSupportRepository.AddAsync(newRequest);
+                _unitOfWork.Save();
+
+                return new APIResponseModel
+                {
+                    Message = "Successfully created request.",
+                    IsSuccess = true,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new APIResponseModel
+                {
+                    Message = "Error create request",
+                    IsSuccess = false
+                };
+            }
+        }
+
+        public async Task<APIResponseModel> UpdateStatusBookingAsync(string bookingId, int status)
+        {
+            try
+            {
+                var booking = await _unitOfWork.BookingRepository.GetFirstsOrDefaultAsync(b => b.BookingId == bookingId);
+                if (booking == null)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Booking not found.",
+                        IsSuccess = false,
+                    };
+                }
+
+                booking.Status = status;
+                booking.UpdateDate = DateTime.Now;
+                await _unitOfWork.BookingRepository.UpdateAsync(booking);
+
+
+                var tickets = await _unitOfWork.TicketRepository.GetAllAsyncs(query => query
+                                                            .Where(t => t.BookingId == bookingId));
+                foreach (var ticket in tickets)
+                {
+                    ticket.Status = status;
+                    ticket.UpdateDate = DateTime.Now;
+                    await _unitOfWork.TicketRepository.UpdateAsync(ticket);
+
+                    var dailyTicketType = await _unitOfWork.DailyTicketRepository.GetAllAsyncs(query => query.Where(d => d.DailyTicketId == ticket.DailyTicketId));
+                    var dailyTicketTypeCapa = dailyTicketType.FirstOrDefault();
+                    if (dailyTicketTypeCapa != null)
+                    {
+                        dailyTicketTypeCapa.Capacity += ticket.Quantity;
+                        dailyTicketTypeCapa.UpdateDate = DateTime.Now;
+                        await _unitOfWork.DailyTicketRepository.UpdateAsync(dailyTicketTypeCapa);
+                    }
+                }
+
+                foreach (var ticket in tickets)
+                {
+                    var servicesUsedByTicket = await _unitOfWork.ServiceUsedByTicketRepository.GetAllAsyncs(query => query
+                                                                                             .Where(s => s.TicketId == ticket.TicketId));
+                    foreach (var serviceUsed in servicesUsedByTicket)
+                    {
+                        serviceUsed.Status = status;
+                        serviceUsed.UpdateDate = DateTime.Now;
+                        await _unitOfWork.ServiceUsedByTicketRepository.UpdateAsync(serviceUsed);
+                    }
+                }
+
+                _unitOfWork.Save();
+
+                return new APIResponseModel
+                {
+                    Message = "Refund successfully and Status updated successfully for booking and related records.",
+                    IsSuccess = true,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new APIResponseModel
+                {
+                    Message = ex.Message,
+                    IsSuccess = false,
                 };
             }
         }

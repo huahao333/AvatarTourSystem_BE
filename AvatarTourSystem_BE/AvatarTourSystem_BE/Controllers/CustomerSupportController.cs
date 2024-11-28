@@ -78,5 +78,11 @@ namespace AvatarTourSystem_BE.Controllers
             var response = await _customerSupportService.UpdateStatusCustomerSupport(customerSupportStatusViewModel);
             return Ok(response);
         }
+        [HttpPost("customer-supports-user-request-refund")]
+        public async Task<IActionResult> CreateRequestCustomerSupportForRefund(CustomerSupportRequestCreateModel customerSupportRequestCreate)
+        {
+            var response = await _customerSupportService.CreateRequestCustomerSupportForRefund(customerSupportRequestCreate);
+            return Ok(response);
+        }
     }
 }

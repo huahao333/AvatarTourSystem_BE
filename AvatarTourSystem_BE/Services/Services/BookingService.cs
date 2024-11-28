@@ -153,7 +153,7 @@ namespace Services.Services
             try
             {
                 var bookingInfor = await _unitOfWork.BookingRepository.GetAllAsyncs(query=>
-                                                     query.Include(b=>b.Tickets).Include(a=>a.Accounts).Include(p=>p.Payments));
+                                                     query.Include(b=>b.Tickets).Include(a=>a.Accounts).ThenInclude(cs=>cs.CustomerSupports).Include(p=>p.Payments));
                 var result = bookingInfor.Select(booking => new
                 {
                     bookingId = booking.BookingId,
@@ -164,6 +164,16 @@ namespace Services.Services
                     ExpirationDate = booking.ExpirationDate,
                     TotalPrice = booking.TotalPrice,
                     MerchantId = booking.Payments.FirstOrDefault()?.MerchantTransId,
+                    DateCreateRequest = booking.Accounts.CustomerSupports.OrderByDescending(t=>t.CreateDate).FirstOrDefault(c =>
+                    {
+                        var match = System.Text.RegularExpressions.Regex.Match(c.Description, @"ᡣ(.*?)୨ৎ");
+                        if (match.Success)
+                        {
+                            var extractedBookingId = match.Groups[1].Value;
+                            return extractedBookingId == booking.BookingId;
+                        }
+                        return false;
+                    })?.CreateDate,
                     Status = booking.Status,
                     Tickets = booking.Tickets.Where(c=>c.BookingId == booking.BookingId).Select(t => new
                     {
