@@ -36,7 +36,7 @@ namespace AvatarTourSystem_BE.Controllers
             return Ok(response);
         }
 
-        [HttpGet("customer-supports")]
+        [HttpGet("customer-support")]
         public async Task<IActionResult> GetAllCustomerSupport()
         {
             var response = await _customerSupportService.GetAllCustomerSupport();
@@ -61,6 +61,27 @@ namespace AvatarTourSystem_BE.Controllers
         public async Task<IActionResult> GetCustomerSupportByStatus()
         {
             var response = await _customerSupportService.GetCustomerSupportByStatus();
+            return Ok(response);
+        }
+
+
+        [HttpGet("customer-supports")]
+        public async Task<IActionResult> GetAllRequest()
+        {
+            var response = await _customerSupportService.GetAllRequest();
+            return Ok(response);
+        }
+
+        [HttpPost("customer-supports-status")]
+        public async Task<IActionResult> UpdateStatusCustomerSupport(CustomerSupportStatusViewModel customerSupportStatusViewModel)
+        {
+            var response = await _customerSupportService.UpdateStatusCustomerSupport(customerSupportStatusViewModel);
+            return Ok(response);
+        }
+        [HttpPost("customer-supports-user-request-refund")]
+        public async Task<IActionResult> CreateRequestCustomerSupportForRefund(CustomerSupportRequestCreateModel customerSupportRequestCreate)
+        {
+            var response = await _customerSupportService.CreateRequestCustomerSupportForRefund(customerSupportRequestCreate);
             return Ok(response);
         }
     }

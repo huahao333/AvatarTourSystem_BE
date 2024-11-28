@@ -135,6 +135,24 @@ namespace AvatarTourSystem_BE.Controllers
                 return StatusCode(StatusCodes.Status404NotFound, result);
             }
         }
+        [Authorize]
+        [HttpPost("create-all-package-tour")]
+        public async Task<IActionResult> CreatePackageTourAsync([FromBody] FPackageTourCreatedModel packageTourFlowModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var result = await _packageTourFlow.CreatePackageTourAsync(packageTourFlowModel);
+            if (result.IsSuccess)
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return StatusCode(StatusCodes.Status400BadRequest, result);
+            }
+        }
 
     }
 }

@@ -1,4 +1,5 @@
 ﻿using BusinessObjects.ViewModels.Booking;
+using BusinessObjects.ViewModels.Dashboard;
 using Services.Common;
 using System;
 using System.Collections.Generic;
@@ -16,5 +17,9 @@ namespace Services.Interfaces
         public Task<APIGenericResponseModel<int>> GetMonthlyTours(int month, int year);
       //  public Task<APIGenericResponseModel<decimal>> GetMonthlyRevenue(int month, int year);
         public Task<APIGenericResponseModel<int>> GetMonthlyTicketsByType(string typeId, int month, int year);
+        Task<APIResponseModel> CountAccountRole();
+        Task<APIResponseModel> CountBooking();
+        Task<APIResponseModel> CountRequest();
+        Task<APIResponseModel> CountPackageInday();
     }
 }

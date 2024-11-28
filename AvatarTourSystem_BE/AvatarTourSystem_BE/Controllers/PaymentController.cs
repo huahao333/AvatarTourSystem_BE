@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BusinessObjects.ViewModels.Booking;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Services.Common;
 using Services.Interfaces;
+using Services.Services;
 using static Services.Common.ZaloPayHelper.ZaloPayHelper;
 
 namespace AvatarTourSystem_BE.Controllers
@@ -12,14 +14,35 @@ namespace AvatarTourSystem_BE.Controllers
     {
 
         private readonly IZaloPayService _zaloPayService;
+        private readonly IPaymentService _paymentService;
         private readonly ILogger<PaymentController> _logger;
 
-        public PaymentController(
-            IZaloPayService zaloPayService,
-            ILogger<PaymentController> logger)
+        public PaymentController(IZaloPayService zaloPayService, IPaymentService paymentService, ILogger<PaymentController> logger)
         {
-            _zaloPayService = zaloPayService;
+             _zaloPayService = zaloPayService;
+            _paymentService = paymentService;
             _logger = logger;
+        }
+
+        [HttpGet("payments")]
+        public async Task<IActionResult> GetAllPayments()
+        {
+            var result = await _paymentService.GetAllPayments();
+            return Ok(result);
+        }
+
+        [HttpGet("payments-active")]
+        public async Task<IActionResult> GetActivePaymentMethods()
+        {
+            var result = await _paymentService.GetPaymentsByStatus();
+            return Ok(result);
+        }
+
+        [HttpGet("payment/{id}")]
+        public async Task<IActionResult> GetPaymentByIdAsync(string id)
+        {
+            var result = await _paymentService.GetPaymentById(id);
+            return Ok(result);
         }
 
         [HttpPost("zalo-callback")]
@@ -38,7 +61,6 @@ namespace AvatarTourSystem_BE.Controllers
                     });
                 }
 
-                //var isValid = _zaloPayService.ValidateCallback(callback.Data);
                 var isValid = _zaloPayService.ValidateCallback(callback.Data);
                 if (!isValid)
                 {
@@ -51,10 +73,11 @@ namespace AvatarTourSystem_BE.Controllers
 
                 if (callback.Data.resultCode == 1)
                 {
+
                     return Ok(new ZaloPayCallbackResponse
                     {
                         returnCode = 1,
-                        returnMessage = callback.Data.message,
+                        returnMessage = callback.Data.extradata,
                     });
 
                 }
@@ -71,5 +94,12 @@ namespace AvatarTourSystem_BE.Controllers
                 return StatusCode(500, new { returncode = 0, returnmessage = "internal server error" });
             }
         }
+
+        //[HttpPost("create-booking")]
+        //public async Task<IActionResult> CreateBookingFlowAsync(BookingFlowCreateModel createModel)
+        //{
+        //    var result = await _zaloPayService.CreateBookingAsync(createModel);
+        //    return Ok(result);
+        //}
     }
 }

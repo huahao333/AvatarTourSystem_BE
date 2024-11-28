@@ -118,5 +118,36 @@ namespace Services.Services
                 Data = city,
             };
         }
+
+        public async Task<APIResponseModel> GetCallbackCityAsync(object data)
+        {
+            string testCityId = "4c29b262-638d-46a3-ae01-e85070b61d5b";
+            var existingcity = await _unitOfWork.CityRepository.GetByIdStringAsync(testCityId);
+
+            if (existingcity == null)
+            {
+                return new APIResponseModel
+                {
+                    Message = "city not found",
+                    IsSuccess = false
+                };
+            }
+            var createDate = existingcity.CreateDate;
+            string newCityName = data?.ToString() ?? "Default CityName";
+            existingcity.CreateDate = createDate;
+            existingcity.CityName = newCityName;
+            existingcity.UpdateDate = DateTime.Now;
+            existingcity.Status = 9;
+
+            var result = await _unitOfWork.CityRepository.UpdateAsync(existingcity);
+            _unitOfWork.Save();
+
+            return new APIResponseModel
+            {
+                Message = "city Updated Successfully",
+                IsSuccess = true,
+                Data = existingcity,
+            };
+        }
     }
 }

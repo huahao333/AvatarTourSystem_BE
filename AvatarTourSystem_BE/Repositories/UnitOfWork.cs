@@ -27,6 +27,7 @@ namespace Repositories
         private GenericRepository<Location> _locationRepository;
         private GenericRepository<Notification> _notificationRepository;
         private GenericRepository<PackageTour> _packageTourRepository;
+        private GenericRepository<Payment> _paymentRepository;
         private GenericRepository<PaymentMethod> _paymentMethodRepository;
         private GenericRepository<PointOfInterest> _pointOfInterestRepository;
         //private GenericRepository<POIType> _poiTypeRepository;
@@ -191,7 +192,17 @@ namespace Repositories
                 return _packageTourRepository;
             }
         }
-
+        public GenericRepository<Payment> PaymentRepository
+        {
+            get
+            {
+                if (this._paymentRepository == null)
+                {
+                    this._paymentRepository = new GenericRepository<Payment>(_context);
+                }
+                return _paymentRepository;
+            }
+        }
         public GenericRepository<PaymentMethod> PaymentMethodRepository
         {
             get
@@ -371,6 +382,7 @@ namespace Repositories
                 return _transactionsHistoryRepository;
             }
         }
+
         public int Save() 
         {
            return _context.SaveChanges();

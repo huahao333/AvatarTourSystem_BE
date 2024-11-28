@@ -269,7 +269,7 @@ namespace Services.Services
                 }
 
 
-                if (dailyTourFlowModel.Discount < 0)
+                if (dailyTourFlowModel.Discount < 0 && dailyTourFlowModel.Discount>100)
                 {
                     return new APIResponseModel
                     {
@@ -489,7 +489,7 @@ namespace Services.Services
                     }
                 }
 
-                if (updateModel.Discount < 0)
+                if (updateModel.Discount < 0 && updateModel.Discount >100)
                 {
                     return new APIResponseModel
                     {
@@ -951,7 +951,157 @@ namespace Services.Services
         }
 
 
+        public async Task<APIResponseModel> GetAllDailyToursForUser()
+        {
+            try
+            {
+                var toDay = DateTime.Now.Date;
+                var dailyTours = await _unitOfWork.DailyTourRepository.GetAllAsyncs(query => query
+                   .Where(dt => dt.Status == 1 && dt.StartDate.Value.Date <=toDay  && dt.EndDate.Value.Date>=toDay )
+                    .Include(dt => dt.PackageTours)
+                        .ThenInclude(pt => pt.TourSegments)
+                           .ThenInclude(des => des.Destinations)
+                                .ThenInclude(lo => lo.Locations)
+                                 .ThenInclude(l => l.Services)
+                                  .ThenInclude(sbt => sbt.ServiceByTourSegments)
+                    .Include(dt => dt.DailyTickets)
+                        .ThenInclude(dt => dt.TicketTypes)
+                );
 
+                if (dailyTours == null || !dailyTours.Any())
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "No Daily Tours Found",
+                        IsSuccess = false,
+                    };
+                }
+
+                var resultList = new List<object>();
+
+                foreach (var dailyTour in dailyTours)
+                {
+                    var pointOfI = await _unitOfWork.PointOfInterestRepository.GetAllAsyncs(query => query);
+                    var result = new
+                    {
+                        DailyTour = new
+                        {
+                            dailyTour.DailyTourId,
+                            dailyTour.PackageTourId,
+                            dailyTour.DailyTourName,
+                            dailyTour.Description,
+                            dailyTour.DailyTourPrice,
+                            dailyTour.ImgUrl,
+                            dailyTour.ExpirationDate,
+                            dailyTour.StartDate,
+                            dailyTour.EndDate,
+                            dailyTour.Discount,
+                            IsSoldOut = dailyTour.DailyTickets.All(tt => tt.Capacity <= 0),
+                            HasDiscount = dailyTour.Discount > 0,
+                            IsHotPOI = dailyTour.PackageTours?.TourSegments
+                                                   .Any(ts => ts.Destinations.Locations
+                                                   .Any(lo => lo.PointOfInterests
+                                                   .Any(poi => poi.Status == 1))),
+                            StatusDailyTour = dailyTour.Status,
+                            TicketTypes = dailyTour.DailyTickets
+                                .Where(c => c.DailyTourId == dailyTour.DailyTourId
+                                           && c.TicketTypes?.PackageTourId == dailyTour.PackageTourId
+                                           && c.Capacity > 0 || c.TicketTypes.TicketTypeName == "Vé người lớn")
+                                .Select(tt => new
+                                {
+                                    tt.DailyTicketId,
+                                    tt.Capacity,
+                                    tt.TicketTypes?.TicketTypeName,
+                                    tt.TicketTypes?.MinBuyTicket,
+                                    tt.DailyTicketPrice,
+                                    tt.CreateDate
+                                }).ToList()
+                        },
+
+                        PackageTour = new
+                        {
+                            dailyTour.PackageTours?.PackageTourId,
+                            dailyTour.PackageTours?.PackageTourName,
+                            // dailyTour.PackageTours?.PackageTourPrice,
+                            dailyTour.PackageTours?.PackageTourImgUrl,
+                            dailyTour.PackageTours?.CityId,
+                            StatusPackageTour = dailyTour.PackageTours?.Status,
+                            dailyTour.PackageTours?.Cities?.CityName,
+                            TourSegments = dailyTour.PackageTours?.TourSegments
+                                .Where(ts => ts.Status == 1 && ts.Destinations?.Status == 1)
+                                .Select(ts => new
+                                {
+                                    ts.TourSegmentId,
+                                    ts.DestinationId,
+                                    ts.Destinations?.DestinationName,
+                                    ts.Destinations?.DestinationAddress,
+                                    ts.Destinations?.DestinationImgUrl,
+                                    ts.Destinations?.DestinationHotline,
+                                    ts.Destinations?.DestinationGoogleMap,
+                                    ts.Destinations?.DestinationOpeningDate,
+                                    ts.Destinations?.DestinationClosingDate,
+                                    ts.Destinations?.DestinationOpeningHours,
+                                    ts.Destinations?.DestinationClosingHours,
+                                    StatusDestinations = ts.Destinations?.Status,
+                                    Locations = ts.Destinations?.Locations
+                                        .Where(c => c.Status == 1 &&
+                                                    c.DestinationId == ts.DestinationId &&
+                                                    dailyTour.PackageTours?.PackageTourId == ts.PackageTourId &&
+                                                    ts.ServiceByTourSegments.Any(sbts => sbts.Services?.LocationId == c.LocationId &&
+                                                                                        sbts.Status == 1))
+                                        .Select(lo => new
+                                        {
+                                            lo.LocationId,
+                                            lo.LocationName,
+                                            lo.LocationImgUrl,
+                                            lo.LocationHotline,
+                                            lo.LocationGoogleMap,
+                                            lo.LocationOpeningHours,
+                                            lo.LocationClosingHours,
+                                            //lo.LocationType,
+                                            lo.DestinationId,
+                                            PointOfInterests = pointOfI.Where(poi => poi.LocationId == lo.LocationId).Select(type => new
+                                            {
+                                                type.PointId,
+                                                type.PointName,
+                                            }),
+                                            StatusLocation = lo.Status,
+                                            Services = ts.ServiceByTourSegments
+                                                .Where(sbts => sbts.Services?.LocationId == lo.LocationId
+                                                               && sbts.Services?.Status == 1)
+                                                .Select(se => new {
+                                                    se.Services?.ServiceId,
+                                                    se.Services?.ServiceName,
+                                                    se.Services?.ServicePrice,
+                                                    se.Services?.Suppliers?.SupplierName,
+                                                    se.Services?.LocationId,
+                                                    se.Services?.ServiceTypes?.ServiceTypeName,
+                                                    StatusServices = se.Services?.Status,
+                                                }).ToList(),
+                                        }).ToList(),
+                                }).ToList(),
+                        }
+                    };
+
+                    resultList.Add(result);
+                }
+
+                return new APIResponseModel
+                {
+                    Message = "Found",
+                    IsSuccess = true,
+                    Data = resultList
+                };
+            }
+            catch (Exception ex)
+            {
+                return new APIResponseModel
+                {
+                    Message = ex.Message,
+                    IsSuccess = false,
+                };
+            }
+        }
 
         public async Task<APIResponseModel> GetAllDailysTours()
         {
@@ -1102,9 +1252,10 @@ namespace Services.Services
         {
             try
             {
+                var toDay = DateTime.Now.Date;
                 // Query all DailyTours with related entities in one query
                 var dailyTours = await _unitOfWork.DailyTourRepository.GetAllAsyncs(query => query
-                   .Where(dt => dt.Status == 1 && dt.Discount>0)
+                   .Where(dt => dt.Status == 1 && dt.Discount>0 && dt.StartDate.Value.Date <= toDay && dt.EndDate.Value.Date >= toDay)
                     .Include(dt => dt.PackageTours)
                         .ThenInclude(pt => pt.TourSegments)
                            .ThenInclude(des => des.Destinations)
@@ -1144,11 +1295,17 @@ namespace Services.Services
                             dailyTour.StartDate,
                             dailyTour.EndDate,
                             dailyTour.Discount,
+                            IsSoldOut = dailyTour.DailyTickets.All(tt => tt.Capacity <= 0),
+                            HasDiscount = dailyTour.Discount > 0,
+                            IsHotPOI = dailyTour.PackageTours?.TourSegments
+                                                   .Any(ts => ts.Destinations.Locations
+                                                   .Any(lo => lo.PointOfInterests
+                                                   .Any(poi => poi.Status == 1))),
                             StatusDailyTour = dailyTour.Status,
                             TicketTypes = dailyTour.DailyTickets
                                 .Where(c => c.DailyTourId == dailyTour.DailyTourId
                                            && c.TicketTypes?.PackageTourId == dailyTour.PackageTourId
-                                           && c.Capacity > 0)
+                                           && c.Capacity > 0 || c.TicketTypes.TicketTypeName == "Vé người lớn")
                                 .Select(tt => new
                                 {
                                     tt.DailyTicketId,
@@ -1248,9 +1405,10 @@ namespace Services.Services
         {
             try
             {
+                var toDay = DateTime.Now.Date;
                 // Query all DailyTours with related entities in one query
                 var dailyTours = await _unitOfWork.DailyTourRepository.GetAllAsyncs(query => query
-                   .Where(dt => dt.PackageTours.TourSegments.Any(c=>c.Destinations.Locations.Any(loca=>loca.PointOfInterests.Any(poi=>poi.LocationId==loca.LocationId && poi.Status==1))))
+                   .Where(dt =>dt.StartDate.Value.Date<=toDay && dt.EndDate.Value.Date >= toDay && dt.PackageTours.TourSegments.Any(c=>c.Destinations.Locations.Any(loca=>loca.PointOfInterests.Any(poi=>poi.LocationId==loca.LocationId && poi.Status==1))))
                     .Include(dt => dt.PackageTours)
                         .ThenInclude(pt => pt.TourSegments)
                            .ThenInclude(des => des.Destinations)
@@ -1289,11 +1447,17 @@ namespace Services.Services
                             dailyTour.StartDate,
                             dailyTour.EndDate,
                             dailyTour.Discount,
+                            IsSoldOut = dailyTour.DailyTickets.All(tt => tt.Capacity <= 0),
+                            HasDiscount = dailyTour.Discount > 0,
+                            IsHotPOI = dailyTour.PackageTours?.TourSegments
+                                                   .Any(ts => ts.Destinations.Locations
+                                                   .Any(lo => lo.PointOfInterests
+                                                   .Any(poi => poi.Status == 1))),
                             StatusDailyTour = dailyTour.Status,
                             TicketTypes = dailyTour.DailyTickets
                                 .Where(c => c.DailyTourId == dailyTour.DailyTourId
                                            && c.TicketTypes?.PackageTourId == dailyTour.PackageTourId
-                                           && c.Capacity > 0)
+                                           && c.Capacity > 0 || c.TicketTypes.TicketTypeName=="Vé người lớn")
                                 .Select(tt => new
                                 {
                                     tt.DailyTicketId,

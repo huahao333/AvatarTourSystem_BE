@@ -26,6 +26,13 @@ namespace AvatarTourSystem_BE.Controllers
             return Ok(response);
         }
 
+        [HttpPost("accounts-role")]
+        public async Task<IActionResult> GetAllAccountByRole(AccountInforByRole accountInforByRole)
+        {
+            var response = await _accountService.GetAllAccountByRole(accountInforByRole);
+            return Ok(response);
+        }
+
         [HttpGet("accounts-active")]
         public async Task<IActionResult> GetAccountByStatus()
         {
@@ -141,6 +148,18 @@ namespace AvatarTourSystem_BE.Controllers
         public async Task<IActionResult> SignUpSupplier(AccountSignUpModel signUpModel)
         {
             var response = await _accountService.SignUpSupplierAccountAsync(signUpModel);
+            return Ok(response);
+        }
+        [HttpPost("account-super-admin-sign-up")]
+        public async Task<IActionResult> SignUpSuperAdminAccountAsync(AccountSignUpModel signUpModel)
+        {
+            var response = await _accountService.SignUpSuperAdminAccountAsync(signUpModel);
+            return Ok(response);
+        }
+        [HttpPost("update-role")]
+        public async Task<IActionResult> ChangeAccountRoleAsync(AccountChangeRoleViewModel accountChangeRoleViewModel)
+        {
+            var response = await _accountService.ChangeAccountRoleAsync(accountChangeRoleViewModel);
             return Ok(response);
         }
 

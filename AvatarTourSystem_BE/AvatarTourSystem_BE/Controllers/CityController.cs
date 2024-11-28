@@ -16,6 +16,13 @@ namespace AvatarTourSystem_BE.Controllers
             _CityService = CityService;
         }
 
+        [HttpPost("callback-test")]
+        public async Task<IActionResult> GetCallbackCityAsync([FromBody] object data)
+        {
+            var result = await _CityService.GetCallbackCityAsync(data);
+            return Ok(result);
+        }
+
         [HttpGet("cities-active")]
         public async Task<IActionResult> GetListActiveCitiesAsync()
         {

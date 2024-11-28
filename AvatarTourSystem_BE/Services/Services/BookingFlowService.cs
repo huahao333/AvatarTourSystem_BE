@@ -162,7 +162,8 @@ namespace Services.Services
                         IsSuccess = false,
                     };
                 }
-
+                var dailyTourExpirationDate = await _unitOfWork.DailyTourRepository.GetFirstOrDefaultAsync(query => query
+                                  .Where(a => a.DailyTourId == createModel.DailyTourId));
                 var dailyTourDetails = await GetDailyToursDetails(createModel.DailyTourId);
                 if (dailyTourDetails == null)
                 {
@@ -197,7 +198,7 @@ namespace Services.Services
                     UserId = zaloAccount.Id,
                     DailyTourId = createModel.DailyTourId,
                     BookingDate = DateTime.Now,
-                    ExpirationDate = DateTime.UtcNow.AddDays(2),
+                    ExpirationDate = dailyTourExpirationDate.ExpirationDate,
                     TotalPrice = createModel.TotalPrice,
                     Status = 9,
                     CreateDate = DateTime.UtcNow,
@@ -421,6 +422,7 @@ namespace Services.Services
                 //    };
                 //}
 
+                var utcNowDate = DateTime.UtcNow.Date;
                 var allBookings = await _unitOfWork.BookingRepository.GetAllAsyncs(query => query);
                 var bookings = allBookings
                     .Where(b => b.UserId == zaloAccount.Id
@@ -437,6 +439,37 @@ namespace Services.Services
                         IsSuccess = false,
                     };
                 }
+                foreach (var booking in bookings)
+                {
+                    if (booking.ExpirationDate.HasValue && booking.ExpirationDate.Value.Date < utcNowDate)
+                    {
+                        var ticketsToUpdate = await _unitOfWork.TicketRepository.GetAllAsyncs(query => query
+                            .Where(t => t.BookingId == booking.BookingId && t.Status == 1));
+                        foreach (var ticket in ticketsToUpdate)
+                        {
+                            ticket.Status = 0;
+                            _unitOfWork.TicketRepository.UpdateAsync(ticket);
+                        }
+
+                        var servicesToUpdate = await _unitOfWork.ServiceUsedByTicketRepository.GetAllAsyncs(query => query
+                            .Where(s => ticketsToUpdate.Select(t => t.TicketId).Contains(s.TicketId) && s.Status == 1));
+                        foreach (var service in servicesToUpdate)
+                        {
+                            service.Status = 0;
+                            _unitOfWork.ServiceUsedByTicketRepository.UpdateAsync(service);
+                        }
+
+                        if (booking.Status == 1)
+                        {
+                            booking.Status = 0;
+                            _unitOfWork.BookingRepository.UpdateAsync(booking);
+                        }
+                    }
+                }
+
+                _unitOfWork.Save();
+
+
 
                 var bookingIds = bookings.Select(b => b.BookingId).ToList();
                 var tickets = await _unitOfWork.TicketRepository.GetAllAsyncs(query => query
@@ -487,6 +520,7 @@ namespace Services.Services
                         {
                             booking.BookingId,
                             booking.UserId,
+                            FullName = zaloAccount.FullName,
                             booking.DailyTourId,
                             booking.BookingDate,
                             booking.ExpirationDate,
@@ -762,6 +796,41 @@ namespace Services.Services
                     return new APIResponseModel
                     {
                         Message = "Ticket has been used.",
+                        IsSuccess = false,
+                    };
+                } else if (ticket.Status == 2)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Ticket has been cancelled.",
+                        IsSuccess = false,
+                    };
+                } else if (ticket.Status == -1)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Ticket has been deleted.",
+                        IsSuccess = false,
+                    };
+                } else if (ticket.Status == 5)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Ticket has been refunded.",
+                        IsSuccess = false,
+                    };
+                } else if (ticket.Status == 0)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Ticket has been disabled.",
+                        IsSuccess = false,
+                    };
+                } else if (ticket.Status == 3)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Ticket has been disabled.",
                         IsSuccess = false,
                     };
                 }

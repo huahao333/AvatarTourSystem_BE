@@ -15,6 +15,7 @@ namespace Repositories.Interfaces
         GenericRepository<TicketType> TicketTypeRepository { get; }
         GenericRepository<DailyTicketType> DailyTicketRepository { get; }
         GenericRepository<Ticket> TicketRepository { get; }
+        GenericRepository<Payment> PaymentRepository { get; }
         GenericRepository<PaymentMethod> PaymentMethodRepository { get; }
         GenericRepository<TransactionsHistory> TransactionsHistoryRepository { get; }
         GenericRepository<City> CityRepository { get; }
