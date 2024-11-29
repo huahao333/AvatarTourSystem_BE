@@ -159,7 +159,40 @@ namespace Services.Services
                  .Include(p => p.Payments)
                  .Include(d=>d.DailyTours));
 
-                var result = bookingInfor.Select(async booking =>
+
+                var utcNowDate = DateTime.Now.Date;
+                foreach (var booking in bookingInfor)
+                {
+                    if (booking.ExpirationDate.HasValue && booking.ExpirationDate.Value.Date < utcNowDate)
+                    {
+                        var ticketsToUpdate = await _unitOfWork.TicketRepository.GetAllAsyncs(query => query
+                            .Where(t => t.BookingId == booking.BookingId && t.Status == 1));
+                        foreach (var ticket in ticketsToUpdate)
+                        {
+                            ticket.Status = 0;
+                            _unitOfWork.TicketRepository.UpdateAsync(ticket);
+                        }
+
+                        var servicesToUpdate = await _unitOfWork.ServiceUsedByTicketRepository.GetAllAsyncs(query => query
+                            .Where(s => ticketsToUpdate.Select(t => t.TicketId).Contains(s.TicketId) && s.Status == 1));
+                        foreach (var service in servicesToUpdate)
+                        {
+                            service.Status = 0;
+                            _unitOfWork.ServiceUsedByTicketRepository.UpdateAsync(service);
+                        }
+
+                        if (booking.Status == 1)
+                        {
+                            booking.Status = 0;
+                            _unitOfWork.BookingRepository.UpdateAsync(booking);
+                        }
+                    }
+                }
+
+                _unitOfWork.Save();
+
+
+                var result = bookingInfor.Select(booking =>
                 {
                     // Lấy DateCreateRequest
                     var dateCreateRequest = booking.Accounts.CustomerSupports
@@ -188,31 +221,6 @@ namespace Services.Services
                             {
                                 isRefundTerms = true;
                             }
-                        }
-                    }
-
-                    var utcNowDate = DateTime.Now.Date;
-                    if (booking.ExpirationDate.HasValue && booking.ExpirationDate.Value.Date < utcNowDate)
-                    {
-                        var ticketsToUpdate = booking.Tickets.Where(t => t.Status == 1).ToList();
-                        foreach (var ticket in ticketsToUpdate)
-                        {
-                            ticket.Status = 0;
-                            _unitOfWork.TicketRepository.UpdateAsync(ticket);
-                        }
-
-                        var servicesToUpdate = await _unitOfWork.ServiceUsedByTicketRepository.GetAllAsyncs(query => query
-                            .Where(s => ticketsToUpdate.Select(t => t.TicketId).Contains(s.TicketId) && s.Status == 1));
-                        foreach (var service in servicesToUpdate)
-                        {
-                            service.Status = 0;
-                            _unitOfWork.ServiceUsedByTicketRepository.UpdateAsync(service);
-                        }
-
-                        if (booking.Status == 1)
-                        {
-                            booking.Status = 0;
-                            _unitOfWork.BookingRepository.UpdateAsync(booking);
                         }
                     }
 
