@@ -156,9 +156,10 @@ namespace Services.Services
             query.Include(b => b.Tickets)
                  .Include(a => a.Accounts)
                  .ThenInclude(cs => cs.CustomerSupports)
-                 .Include(p => p.Payments));
+                 .Include(p => p.Payments)
+                 .Include(d=>d.DailyTours));
 
-                var result = bookingInfor.Select(booking =>
+                var result = bookingInfor.Select(async booking =>
                 {
                     // Lấy DateCreateRequest
                     var dateCreateRequest = booking.Accounts.CustomerSupports
@@ -174,7 +175,7 @@ namespace Services.Services
                             return false;
                         })?.CreateDate;
 
-                    var compareDate = dateCreateRequest ?? DateTime.UtcNow.Date;
+                    var compareDate = dateCreateRequest ?? DateTime.Now.Date;
 
                     var isRefundTerms = false;
 
@@ -190,12 +191,39 @@ namespace Services.Services
                         }
                     }
 
+                    var utcNowDate = DateTime.Now.Date;
+                    if (booking.ExpirationDate.HasValue && booking.ExpirationDate.Value.Date < utcNowDate)
+                    {
+                        var ticketsToUpdate = booking.Tickets.Where(t => t.Status == 1).ToList();
+                        foreach (var ticket in ticketsToUpdate)
+                        {
+                            ticket.Status = 0;
+                            _unitOfWork.TicketRepository.UpdateAsync(ticket);
+                        }
+
+                        var servicesToUpdate = await _unitOfWork.ServiceUsedByTicketRepository.GetAllAsyncs(query => query
+                            .Where(s => ticketsToUpdate.Select(t => t.TicketId).Contains(s.TicketId) && s.Status == 1));
+                        foreach (var service in servicesToUpdate)
+                        {
+                            service.Status = 0;
+                            _unitOfWork.ServiceUsedByTicketRepository.UpdateAsync(service);
+                        }
+
+                        if (booking.Status == 1)
+                        {
+                            booking.Status = 0;
+                            _unitOfWork.BookingRepository.UpdateAsync(booking);
+                        }
+                    }
+
+
                     return new
                     {
                         bookingId = booking.BookingId,
                         UserId = booking.UserId,
                         FullName = booking.Accounts.FullName,
                         DailyTourId = booking.DailyTourId,
+                        DaiLyTourName = booking.DailyTours?.DailyTourName,
                         BookingData = booking.BookingDate,
                         ExpirationDate = booking.ExpirationDate,
                         IsRefundTerms = isRefundTerms,

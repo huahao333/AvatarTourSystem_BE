@@ -299,7 +299,7 @@ namespace Services.Services
                     Type = notificationType,
                     Title = notificationTitle,
                     Status = 1,
-                    CreateDate = DateTime.UtcNow
+                    CreateDate = DateTime.Now
                 };
                 await _unitOfWork.CustomerSupportRepository.UpdateAsync(updateRequests);
                 await _unitOfWork.NotificationRepository.AddAsync(newNotification);
@@ -364,7 +364,7 @@ namespace Services.Services
                     RequestTypeId = requestTypeId.RequestTypeId,
                     Description = descriptionWithBooking,
                     Status = 9, 
-                    CreateDate = DateTime.UtcNow 
+                    CreateDate = DateTime.Now 
                 };
 
                 await _unitOfWork.CustomerSupportRepository.AddAsync(newRequest);

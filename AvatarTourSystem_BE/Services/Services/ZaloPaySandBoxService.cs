@@ -188,7 +188,7 @@ namespace Services.Services
                     ExpirationDate = dailyTourExpirationDate.ExpirationDate,
                     TotalPrice = totalAmount,
                     Status = 1,
-                    CreateDate = DateTime.UtcNow,
+                    CreateDate = DateTime.Now,
                 };
                 await _unitOfWork.BookingRepository.AddAsync(newBooking);
 
@@ -243,7 +243,7 @@ namespace Services.Services
                             PhoneNumberReference = zaloAccount.PhoneNumber,
                             Quantity = 1,  
                             Status = 1,
-                            CreateDate = DateTime.UtcNow,
+                            CreateDate = DateTime.Now,
                         };
                         await _unitOfWork.TicketRepository.AddAsync(newTicket);
 
@@ -289,7 +289,7 @@ namespace Services.Services
                     Message = mac,
                     ExtraData = JsonConvert.SerializeObject(extradata), 
                     Status = 1,
-                    CreateDate = DateTime.UtcNow,
+                    CreateDate = DateTime.Now,
                 };
                 await _unitOfWork.PaymentRepository.AddAsync(newPayment);
 
@@ -300,7 +300,7 @@ namespace Services.Services
                     UserId = zaloAccount.Id,
                     BookingId = newBooking.BookingId,
                     OrderId= orderId,
-                    CreateDate = DateTime.UtcNow,
+                    CreateDate = DateTime.Now,
                     Status=1
                 };
                 await _unitOfWork.TransactionsHistoryRepository.AddAsync(transaction);
@@ -546,7 +546,7 @@ namespace Services.Services
                         Message = "Booking has been pending."
                     };
                 }
-                var currentDate = DateTime.UtcNow.Date;
+                var currentDate = DateTime.Now.Date;
                 var differenceInDays = (checkStatusBooking.ExpirationDate.Value.Date - currentDate).TotalDays;
                 if (differenceInDays < 2 || currentDate >= checkStatusBooking.ExpirationDate.Value.Date)
                 {
@@ -560,7 +560,7 @@ namespace Services.Services
 
                 var updateBookingCancel = await UpdateStatusBookingAsync(bookingId.BookingId, 2);
 
-                var timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds().ToString();
+                var timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString();
                 var rand = new Random();
                 var uid = timestamp + rand.Next(111, 999).ToString();
                 double ammountRe = refundModel.Amount * 0.8;

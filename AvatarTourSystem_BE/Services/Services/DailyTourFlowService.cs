@@ -222,6 +222,33 @@ namespace Services.Services
                     };
                 }
 
+                if (string.IsNullOrEmpty(dailyTourFlowModel.Description))
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Description cannot be left blank.",
+                        IsSuccess = false,
+                    };
+                }
+
+                if (string.IsNullOrEmpty(dailyTourFlowModel.DailyTourName))
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "DailyTourName cannot be left blank.",
+                        IsSuccess = false,
+                    };
+                }
+
+                if (dailyTourFlowModel.DailyTourName.Length < 4 || dailyTourFlowModel.DailyTourName.Length > 20)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "DailyTourName must be between 5 and 20 characters.",
+                        IsSuccess = false,
+                    };
+                }
+
                 if (dailyTourFlowModel.DailyTourPrice <= 0)
                 {
                     return new APIResponseModel
