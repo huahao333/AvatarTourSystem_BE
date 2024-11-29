@@ -156,7 +156,8 @@ namespace Services.Services
             query.Include(b => b.Tickets)
                  .Include(a => a.Accounts)
                  .ThenInclude(cs => cs.CustomerSupports)
-                 .Include(p => p.Payments));
+                 .Include(p => p.Payments)
+                 .Include(d=>d.DailyTours));
 
                 var result = bookingInfor.Select(booking =>
                 {
@@ -196,6 +197,7 @@ namespace Services.Services
                         UserId = booking.UserId,
                         FullName = booking.Accounts.FullName,
                         DailyTourId = booking.DailyTourId,
+                        DaiLyTourName = booking.DailyTours?.DailyTourName,
                         BookingData = booking.BookingDate,
                         ExpirationDate = booking.ExpirationDate,
                         IsRefundTerms = isRefundTerms,
