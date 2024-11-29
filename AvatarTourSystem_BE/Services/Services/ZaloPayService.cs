@@ -138,10 +138,10 @@ namespace Services.Services
                     UserId = zaloAccount.Id,
                     DailyTourId = createModel.DailyTourId,
                     BookingDate = DateTime.Now,
-                    ExpirationDate = DateTime.UtcNow.AddDays(2),
+                    ExpirationDate = DateTime.Now.AddDays(2),
                     TotalPrice = createModel.TotalPrice,
                     Status = 9,
-                    CreateDate = DateTime.UtcNow,
+                    CreateDate = DateTime.Now,
                 };
                 await _unitOfWork.BookingRepository.AddAsync(newBooking);
 
@@ -213,7 +213,7 @@ namespace Services.Services
                             PhoneNumberReference = zaloAccount.PhoneNumber,
                             Quantity = 1,
                             Status = 9,
-                            CreateDate = DateTime.UtcNow,
+                            CreateDate = DateTime.Now,
                         };
                         await _unitOfWork.TicketRepository.AddAsync(newTicket);
 
