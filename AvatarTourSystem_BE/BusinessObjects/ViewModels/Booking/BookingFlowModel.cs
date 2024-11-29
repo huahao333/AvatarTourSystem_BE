@@ -33,6 +33,7 @@ namespace BusinessObjects.ViewModels.Booking
         public string ServiceId { get; set; }
         public string PhoneNumber { get; set; }
         public DateTime BookingDate { get; set; }
+        public float PriceOfTicket { get; set; }
         public DateTime ExpirationDate { get; set; }
         public float TotalPrice { get; set; }
         public string TicketTypeId { get; set; }
