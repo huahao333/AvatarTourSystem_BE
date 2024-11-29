@@ -152,8 +152,9 @@ namespace Services.Services
                 n.SendDate,
                 n.Title,
                 n.Type,
-                n.Status
-            }).ToList();
+                n.Status,
+                n.CreateDate,
+            }).ToList().OrderByDescending(n=>n.CreateDate);
             return new APIResponseModel
             {
                 Message = "Get Notificaiton Successfully",
