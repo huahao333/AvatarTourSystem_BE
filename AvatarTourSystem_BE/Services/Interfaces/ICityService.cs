@@ -17,5 +17,6 @@ namespace Services.Interfaces
         Task<APIResponseModel> UpdateCityAsync(CityUpdateModel updateModel);
         Task<APIResponseModel> DeleteCity(string CityId);
         Task<APIResponseModel> GetCallbackCityAsync(object data);
+        Task<APIResponseModel> GetCitiesForUser();
     }
 }

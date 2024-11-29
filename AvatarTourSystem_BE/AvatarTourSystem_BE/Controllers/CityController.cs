@@ -30,6 +30,14 @@ namespace AvatarTourSystem_BE.Controllers
             return Ok(result);
         }
 
+
+        [HttpGet("cities-zalo-mini-app")]
+        public async Task<IActionResult> GetCitiesForUser()
+        {
+            var result = await _CityService.GetCitiesForUser();
+            return Ok(result);
+        }
+
         [HttpGet("cities")]
         public async Task<IActionResult> GetListCitiesAsync()
         {
