@@ -29,6 +29,10 @@ using BusinessObjects.ViewModels.Service;
 using BusinessObjects.ViewModels.TicketType;
 using BusinessObjects.ViewModels.TourSegment;
 using Newtonsoft.Json;
+using Microsoft.Extensions.Options;
+using Twilio;
+using Twilio.Rest.Api.V2010.Account;
+using Twilio.Types;
 //using SixLabors.ImageSharp.Formats.Png;
 
 namespace Services.Services
@@ -39,12 +43,14 @@ namespace Services.Services
         private readonly IMapper _mapper;
         private readonly CloudinaryService _cloudinaryService;
         private readonly EncryptionHelperService _encryptionHelperService;
+      //  private readonly TwilioSettings _twilioSettings;
         public BookingFlowService(IUnitOfWork unitOfWork, IMapper mapper, CloudinaryService cloudinaryService, EncryptionHelperService encryptionHelperService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _cloudinaryService = cloudinaryService;
             _encryptionHelperService = encryptionHelperService;
+        //    _twilioSettings = twilioSettings.Value;
         }
         //public async Task<APIResponseModel> CreateBookingFlowAsync(BookingCreateModel createModel)
         //{
@@ -602,6 +608,12 @@ namespace Services.Services
                 var result = await _unitOfWork.TicketRepository.UpdateAsync(ticket);
                 _unitOfWork.Save();
 
+                //var userId = await _unitOfWork.BookingRepository.GetFirstOrDefaultAsync(query => 
+                //                                                 query.Include(a=>a.Accounts).Include(d => d.DailyTours)
+                //                                                      .Where(c=>c.BookingId== ticket.BookingId));
+
+              //  SendSMSNotification(formattedPhoneNumber, userId.Accounts.PhoneNumber, userId.Accounts.FullName, userId.DailyTours.DailyTourName);
+
                 return new APIResponseModel
                 {
                     Message = "Ticket Updated Successfully",
@@ -617,6 +629,21 @@ namespace Services.Services
                 };
             }
         }
+        //private void SendSMSNotification(string phoneNumberReceive, string phoneNumberSend,string fullName, string dailyTourName)
+        //{
+        //    var accountSid = _twilioSettings.AccountSID;
+        //    var authToken = _twilioSettings.AuthToken;
+        //    var twilioPhoneNumber = _twilioSettings.TwilioPhoneNumber;
+
+        //    TwilioClient.Init(accountSid, authToken);
+
+        //    var message = MessageResource.Create(
+        //        to: new PhoneNumber("+"+phoneNumberReceive),
+        //        from: new PhoneNumber(twilioPhoneNumber),
+        //        body: $"AvatarTour xin thông báo cho bạn đã có anh {fullName} với số điện thoại {phoneNumberSend} vừa gửi cho bạn vé đi tham quan du lịch{dailyTourName}");
+
+        //    Console.WriteLine($"SMS sent to {phoneNumberReceive}: {message.Sid}");
+        //}
 
         public async Task<APIResponseModel> UpdateBookingStatusAsync(BookingFlowModel updateModel)
         {
@@ -1183,4 +1210,11 @@ namespace Services.Services
             throw new NotImplementedException();
         }
     }
+
+    //public class TwilioSettings
+    //{
+    //    public string AccountSID { get; set; }
+    //    public string AuthToken { get; set; }
+    //    public string TwilioPhoneNumber { get; set; }
+    //}
 }
