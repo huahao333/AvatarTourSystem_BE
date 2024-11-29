@@ -207,7 +207,7 @@ namespace Services.Services
                     ExpirationDate = dailyTourExpirationDate.ExpirationDate,
                     TotalPrice = createModel.TotalPrice,
                     Status = 9,
-                    CreateDate = DateTime.UtcNow,
+                    CreateDate = DateTime.Now,
                 };
                 await _unitOfWork.BookingRepository.AddAsync(newBooking);
 
@@ -279,7 +279,7 @@ namespace Services.Services
                             PhoneNumberReference = zaloAccount.PhoneNumber,
                             Quantity = 1,  
                             Status = 9,
-                            CreateDate = DateTime.UtcNow,
+                            CreateDate = DateTime.Now,
                         };
                         await _unitOfWork.TicketRepository.AddAsync(newTicket);
 
@@ -416,19 +416,7 @@ namespace Services.Services
                     };
                 }
 
-                //var bookings = await _unitOfWork.BookingRepository.GetAllAsyncs(query => query
-                //           .Where(b => b.UserId == zaloAccount.Id));
-
-                //if (bookings == null || !bookings.Any())
-                //{
-                //    return new APIResponseModel
-                //    {
-                //        Message = "No bookings found for this user.",
-                //        IsSuccess = false,
-                //    };
-                //}
-
-                var utcNowDate = DateTime.UtcNow.Date;
+                var utcNowDate = DateTime.Now.Date;
                 var allBookings = await _unitOfWork.BookingRepository.GetAllAsyncs(query => query);
                 var bookings = allBookings
                     .Where(b => b.UserId == zaloAccount.Id
@@ -1192,7 +1180,7 @@ namespace Services.Services
             booking.ExpirationDate = updateModel.ExpirationDate;
             booking.TotalPrice = updateModel.TotalPrice;
             booking.Status = updateModel.Status;
-            booking.UpdateDate = DateTime.UtcNow;
+            booking.UpdateDate = DateTime.Now;
 
             _unitOfWork.BookingRepository.UpdateAsync(booking);
             _unitOfWork.Save();
