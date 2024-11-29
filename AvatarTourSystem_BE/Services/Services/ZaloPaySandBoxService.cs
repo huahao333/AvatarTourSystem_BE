@@ -160,6 +160,9 @@ namespace Services.Services
                 var destinationId = dailyTourDetails?.PackageTour?.TourSegments?
                                         .SelectMany(l => l.DestinationId)
                                         .ToList();
+                var destinationName = dailyTourDetails?.PackageTour?.TourSegments?
+                                         .Select(l => l.DestinationName)
+                                         .ToList();
                 var destination = dailyTourDetails.PackageTour?.TourSegments?.ToList();
                 var location = destination.SelectMany(l => l.Locations)
                                            .Select(c => c.LocationId).ToList();
@@ -170,6 +173,7 @@ namespace Services.Services
 
                 // Chuyển các thông tin về Destination, Location, và Services thành JSON
                 var destinationIdJson = JsonConvert.SerializeObject(destinationId);
+                var destinationNameJson = JsonConvert.SerializeObject(destinationName);
                 var locationJson = JsonConvert.SerializeObject(location);
                 var servicesJson = JsonConvert.SerializeObject(services);
 
@@ -190,13 +194,13 @@ namespace Services.Services
 
                 List<string> ticketIds = new List<string>();
 
-                // Tạo vé (Tickets) cho mỗi ticket trong extradata
                 foreach (var ticket in extradata.Tickets)
                 {
                     for (int i = 0; i < ticket.TotalQuantity; i++)
                     {
                         var newTicketId = Guid.NewGuid().ToString();
-
+                        var priceByTicket = await _unitOfWork.DailyTicketRepository.
+                                                              GetFirstOrDefaultAsync(query=>query.Where(c=>c.DailyTicketId== ticket.DailyTicketId));
                         // Tạo dữ liệu QR code
                         var qrData = new
                         {
@@ -210,6 +214,7 @@ namespace Services.Services
                             DailyTourPrice = dailyTourDetails.DailyTourPrice,
                             City = dailyTourDetails.PackageTour?.CityId,
                             DestinationId = destinationIdJson,
+                            DestinationName = destinationNameJson,
                             LocationId = locationJson,
                             ServiceId = servicesJson,
                             PhoneNumber = zaloAccount.PhoneNumber,
@@ -232,7 +237,7 @@ namespace Services.Services
                             BookingId = newBooking.BookingId,
                             DailyTicketId = ticket.DailyTicketId,
                             TicketName = ticket.TicketName,
-                            Price = ticket.TotalPrice,
+                            Price = priceByTicket.DailyTicketPrice,
                             QRImgUrl = qrImageUrl,
                             PhoneNumberReference = zaloAccount.PhoneNumber,
                             Quantity = 1,  
