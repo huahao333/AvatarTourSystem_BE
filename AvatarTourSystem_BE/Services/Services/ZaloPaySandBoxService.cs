@@ -219,6 +219,7 @@ namespace Services.Services
                             ServiceId = servicesJson,
                             PhoneNumber = zaloAccount.PhoneNumber,
                             BookingDate = newBooking.BookingDate,
+                            PriceOfTicket = priceByTicket.DailyTicketPrice,
                             ExpirationDate = newBooking.ExpirationDate,
                             TotalPrice = newBooking.TotalPrice,
                             TicketTypeId = newTicketId,
