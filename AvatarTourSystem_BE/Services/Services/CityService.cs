@@ -22,6 +22,60 @@ namespace Services.Services
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
+        public async Task<APIResponseModel> GetCitiesForUser()
+        {
+            try
+            {
+                var today = DateTime.Now.Date;
+                var activeCities = await _unitOfWork.CityRepository.GetAllAsyncs(query =>
+                    query.Where(city => city.Status != -1 &&
+                                        city.PackageTours.Any(pt =>
+                                            pt.Status == 1 &&
+                                            pt.DailyTours.Any(dt =>
+                                                dt.Status == 1 &&
+                                                dt.StartDate.Value.Date <= today &&
+                                                dt.EndDate.Value.Date >= today)))
+                );
+
+                var result = activeCities.Select(city => new
+                {
+                    city.CityId,
+                    city.CityName,
+                    city.Status,
+                    PackageTourCount = city.PackageTours.Count(pt =>
+                        pt.Status == 1 &&
+                        pt.DailyTours.Any(dt =>
+                            dt.Status == 1 &&
+                            dt.StartDate.Value.Date <= today &&
+                            dt.EndDate.Value.Date >= today))
+                }).ToList();
+
+                if (!result.Any())
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "No active cities found.",
+                        IsSuccess = false,
+                        Data = null
+                    };
+                }
+
+                return new APIResponseModel
+                {
+                    Message = $"Found {result.Count} active cities.",
+                    IsSuccess = true,
+                    Data = result
+                };
+            }
+            catch (Exception ex)
+            {
+                return new APIResponseModel
+                {
+                    Message = ex.Message,
+                    IsSuccess = false
+                };
+            }
+        }
         public async Task<APIResponseModel> GetActiveCitiesAsync()
         {
             var list = await _unitOfWork.CityRepository.GetByConditionAsync(s => s.Status != -1);
