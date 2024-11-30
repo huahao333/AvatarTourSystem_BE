@@ -147,6 +147,7 @@ namespace Services.Services
 
         public async Task<APIResponseModel> CreateBookingFlowAsync(BookingFlowCreateModel createModel)
         {
+            using var transaction = _unitOfWork.BeginTransaction();
             try
             {
                 var zaloAccount = await _unitOfWork.AccountRepository.GetFirstOrDefaultAsync(query => query
@@ -215,11 +216,21 @@ namespace Services.Services
                     CreateDate = DateTime.Now,
                 };
                 await _unitOfWork.BookingRepository.AddAsync(newBooking);
-
+                _unitOfWork.Save();
                 List<string> ticketIds = new List<string>();
 
                 foreach (var ticket in createModel.Tickets)
                 {
+                    var dailyTicketType = await _unitOfWork.DailyTicketRepository.GetFirstOrDefaultAsync(query =>
+                                                       query.Where(d => d.DailyTicketId == ticket.DailyTicketId));
+                    if (dailyTicketType == null || dailyTicketType.Capacity < ticket.TotalQuantity)
+                    {
+                        throw new InvalidOperationException($"Not enough capacity for ticket type {dailyTicketType?.TicketTypes?.TicketTypeName}.");
+                    }
+                    dailyTicketType.Capacity -= ticket.TotalQuantity;
+                    dailyTicketType.UpdateDate = DateTime.Now;
+                    await _unitOfWork.DailyTicketRepository.UpdateAsync(dailyTicketType);
+
                     for (int i = 0; i < ticket.TotalQuantity; i++)
                     {
                         var newTicketId = Guid.NewGuid().ToString();
@@ -283,35 +294,35 @@ namespace Services.Services
                             await _unitOfWork.ServiceUsedByTicketRepository.AddAsync(serviceUsedByTicket);
                         }
                     }
+                    //var dailyTicketType = await _unitOfWork.DailyTicketRepository.GetFirstOrDefaultAsync(query =>
+                    //                                   query.Where(d => d.DailyTicketId == ticket.DailyTicketId));
+                    //if (dailyTicketType == null || dailyTicketType.Capacity < ticket.TotalQuantity)
+                    //{
+                    //    throw new InvalidOperationException($"Not enough capacity for ticket type {dailyTicketType.TicketTypes.TicketTypeName}.");
+                    //}
+                    //dailyTicketType.Capacity -= ticket.TotalQuantity;
+                    //dailyTicketType.UpdateDate = DateTime.Now;
+                    //await _unitOfWork.DailyTicketRepository.UpdateAsync(dailyTicketType);
                 }
                 _unitOfWork.Save();
-
-                //var qrContent = $"BookingId: {newBooking.BookingId}, TicketIds: {string.Join(",", ticketIds)}";
-                //var qrImageUrl = await GenerateQRCode(qrContent);
-
-                //foreach (var ticketId in ticketIds)
-                //{
-                //    var ticket = await _unitOfWork.TicketRepository.GetFirstsOrDefaultAsync(t => t.TicketId == ticketId);
-                //    if (ticket != null)
-                //    {
-                //        ticket.QRImgUrl = qrImageUrl;
-                //        await _unitOfWork.TicketRepository.UpdateAsync(ticket);
-                //    }
-                //}
-                //_unitOfWork.Save();
+                transaction.Commit();
 
                 return new APIResponseModel
                 {
                     Message = "Booking and tickets created successfully.",
                     IsSuccess = true,
-                    Data = newBookingId
+                    Data = new
+                    {
+                        BookingId = newBookingId
+                    }
                 };
             }
             catch (Exception ex)
             {
+                transaction.Rollback();
                 return new APIResponseModel
                 {
-                    Message = ex.Message,
+                    Message = $"Booking and ticket creation failed: {ex.Message}",
                     IsSuccess = false,
                 };
             }
@@ -619,6 +630,64 @@ namespace Services.Services
         //    Console.WriteLine($"SMS sent to {phoneNumberReceive}: {message.Sid}");
         //}
 
+        public async Task<APIResponseModel> UpdateBookingStatusFailPaymentAsync(BookingFlowModel updateModel)
+        {
+            try
+            {
+                var booking = await _unitOfWork.BookingRepository.GetFirstsOrDefaultAsync(b => b.BookingId == updateModel.BookingId);
+                if (booking == null)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Booking not found.",
+                        IsSuccess = false,
+                    };
+                }
+
+                booking.Status = -1;
+                booking.UpdateDate = DateTime.Now;
+                await _unitOfWork.BookingRepository.UpdateAsync(booking);
+
+
+                var tickets = await _unitOfWork.TicketRepository.GetAllAsyncs(query => query
+                                                            .Where(t => t.BookingId == updateModel.BookingId));
+                foreach (var ticket in tickets)
+                {
+                    ticket.Status = -1;
+                    ticket.UpdateDate = DateTime.Now;
+                    await _unitOfWork.TicketRepository.UpdateAsync(ticket);
+                }
+
+                foreach (var ticket in tickets)
+                {
+                    var servicesUsedByTicket = await _unitOfWork.ServiceUsedByTicketRepository.GetAllAsyncs(query => query
+                                                                                             .Where(s => s.TicketId == ticket.TicketId));
+                    foreach (var serviceUsed in servicesUsedByTicket)
+                    {
+                        serviceUsed.Status = -1;
+                        serviceUsed.UpdateDate = DateTime.Now;
+                        await _unitOfWork.ServiceUsedByTicketRepository.UpdateAsync(serviceUsed);
+                    }
+                }
+
+                _unitOfWork.Save();
+
+                return new APIResponseModel
+                {
+                    Message = "Status updated successfully for booking and related records.",
+                    IsSuccess = true,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new APIResponseModel
+                {
+                    Message = ex.Message,
+                    IsSuccess = false,
+                };
+            }
+        }
+
         public async Task<APIResponseModel> UpdateBookingStatusAsync(BookingFlowModel updateModel)
         {
             try
@@ -810,7 +879,7 @@ namespace Services.Services
                 {
                     return new APIResponseModel
                     {
-                        Message = "Ticket has been deleted.",
+                        Message = "Ticket cannot be used because booking payment failed.",
                         IsSuccess = false,
                     };
                 } else if (ticket.Status == 5)

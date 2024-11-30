@@ -306,8 +306,9 @@ namespace Services.Services
 
              var authClaims = new List<Claim>
                {
-                    new Claim(ClaimTypes.Name, account.Email),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                    new Claim(ClaimTypes.Name, account.UserName),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    new Claim("UserId",account.Id.ToString())
                 };
 
             if (!string.IsNullOrEmpty(account.Roles.ToString()))

@@ -1,6 +1,8 @@
 ﻿using BusinessObjects.Models;
+using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -38,6 +40,8 @@ namespace Repositories.Interfaces
         GenericRepository<Notification> NotificationRepository { get; }
         GenericRepository<DailyTour> DailyTourRepository { get; }
         //làm table nào thêm repo của table đó 
+
+        IDbContextTransaction BeginTransaction(IsolationLevel isolationLevel = IsolationLevel.ReadCommitted);
         int Save();
     }
 }
