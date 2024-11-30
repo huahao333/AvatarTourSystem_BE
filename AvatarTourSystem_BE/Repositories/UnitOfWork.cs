@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Azure.Core;
 using BusinessObjects.Models;
+using Microsoft.EntityFrameworkCore.Storage;
 using Repositories.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,8 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using System.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Repositories
 {
@@ -403,6 +406,19 @@ namespace Repositories
         {
             Dispose(true);
             GC.SuppressFinalize(this);
+        }
+        public IDbContextTransaction BeginTransaction(IsolationLevel isolationLevel = IsolationLevel.ReadCommitted)
+        {
+            var connection = _context.Database.GetDbConnection();
+
+            if (connection.State != ConnectionState.Open)
+            {
+                connection.Open();
+            }
+
+            var transaction = connection.BeginTransaction(isolationLevel);
+
+            return _context.Database.UseTransaction(transaction);
         }
     }
     //This method dynamically combines two LINQ expressions with a logical AND (gộp 2 thằng linq = method AND)

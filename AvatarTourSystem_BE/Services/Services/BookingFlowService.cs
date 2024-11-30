@@ -147,6 +147,7 @@ namespace Services.Services
 
         public async Task<APIResponseModel> CreateBookingFlowAsync(BookingFlowCreateModel createModel)
         {
+            using var transaction = _unitOfWork.BeginTransaction();
             try
             {
                 var zaloAccount = await _unitOfWork.AccountRepository.GetFirstOrDefaultAsync(query => query
@@ -215,11 +216,21 @@ namespace Services.Services
                     CreateDate = DateTime.Now,
                 };
                 await _unitOfWork.BookingRepository.AddAsync(newBooking);
-
+                _unitOfWork.Save();
                 List<string> ticketIds = new List<string>();
 
                 foreach (var ticket in createModel.Tickets)
                 {
+                    var dailyTicketType = await _unitOfWork.DailyTicketRepository.GetFirstOrDefaultAsync(query =>
+                                                       query.Where(d => d.DailyTicketId == ticket.DailyTicketId));
+                    if (dailyTicketType == null || dailyTicketType.Capacity < ticket.TotalQuantity)
+                    {
+                        throw new InvalidOperationException($"Not enough capacity for ticket type {dailyTicketType?.TicketTypes?.TicketTypeName}.");
+                    }
+                    dailyTicketType.Capacity -= ticket.TotalQuantity;
+                    dailyTicketType.UpdateDate = DateTime.Now;
+                    await _unitOfWork.DailyTicketRepository.UpdateAsync(dailyTicketType);
+
                     for (int i = 0; i < ticket.TotalQuantity; i++)
                     {
                         var newTicketId = Guid.NewGuid().ToString();
@@ -283,22 +294,18 @@ namespace Services.Services
                             await _unitOfWork.ServiceUsedByTicketRepository.AddAsync(serviceUsedByTicket);
                         }
                     }
+                    //var dailyTicketType = await _unitOfWork.DailyTicketRepository.GetFirstOrDefaultAsync(query =>
+                    //                                   query.Where(d => d.DailyTicketId == ticket.DailyTicketId));
+                    //if (dailyTicketType == null || dailyTicketType.Capacity < ticket.TotalQuantity)
+                    //{
+                    //    throw new InvalidOperationException($"Not enough capacity for ticket type {dailyTicketType.TicketTypes.TicketTypeName}.");
+                    //}
+                    //dailyTicketType.Capacity -= ticket.TotalQuantity;
+                    //dailyTicketType.UpdateDate = DateTime.Now;
+                    //await _unitOfWork.DailyTicketRepository.UpdateAsync(dailyTicketType);
                 }
                 _unitOfWork.Save();
-
-                //var qrContent = $"BookingId: {newBooking.BookingId}, TicketIds: {string.Join(",", ticketIds)}";
-                //var qrImageUrl = await GenerateQRCode(qrContent);
-
-                //foreach (var ticketId in ticketIds)
-                //{
-                //    var ticket = await _unitOfWork.TicketRepository.GetFirstsOrDefaultAsync(t => t.TicketId == ticketId);
-                //    if (ticket != null)
-                //    {
-                //        ticket.QRImgUrl = qrImageUrl;
-                //        await _unitOfWork.TicketRepository.UpdateAsync(ticket);
-                //    }
-                //}
-                //_unitOfWork.Save();
+                transaction.Commit();
 
                 return new APIResponseModel
                 {
@@ -312,9 +319,10 @@ namespace Services.Services
             }
             catch (Exception ex)
             {
+                transaction.Rollback();
                 return new APIResponseModel
                 {
-                    Message = ex.Message,
+                    Message = $"Booking and ticket creation failed: {ex.Message}",
                     IsSuccess = false,
                 };
             }
