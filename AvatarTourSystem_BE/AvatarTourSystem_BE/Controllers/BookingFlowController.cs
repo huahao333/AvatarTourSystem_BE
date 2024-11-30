@@ -48,6 +48,13 @@ namespace AvatarTourSystem_BE.Controllers
             return Ok(result);
         }
 
+        [HttpPost("booking-status-payment-fail")]
+        public async Task<IActionResult> UpdateBookingStatusFailPaymentAsync(BookingFlowModel updateModel)
+        {
+            var result = await _bookingFlowService.UpdateBookingStatusFailPaymentAsync(updateModel);
+            return Ok(result);
+        }
+
         [HttpPost("qr-ticket-status")]
         public async Task<IActionResult> UpdateTicketByQR(TicketUsageViewModel ticketUsageViewModel)
         {
