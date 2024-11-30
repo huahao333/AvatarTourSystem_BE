@@ -3,6 +3,23 @@ WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
+RUN apt-get update && \
+    apt-get install -y \
+        apt-utils \
+        libc6-dev \
+        libgdiplus \
+        libx11-dev \
+        libxext-dev \
+        libxt-dev \
+        libpng-dev \
+        libjpeg-dev \
+        libgif-dev \
+        libfreetype6-dev \
+        libwebp-dev \
+        libatlas-base-dev \
+        gfortran \
+        && rm -rf /var/lib/apt/lists/*
+
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
@@ -15,7 +32,6 @@ COPY ["Services/Services.csproj", "Services/"]
 # Restore packages
 RUN dotnet restore "AvatarTourSystem_BE/AvatarTourSystem_BE.csproj"
 
-# Copy everything else
 COPY . .
 
 # Build the project
