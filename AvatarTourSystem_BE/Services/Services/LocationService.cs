@@ -68,19 +68,76 @@ namespace Services.Services
 
         public async Task<APIResponseModel> CreateLocationAsync(LocationCreateModel createModel)
         {
-            //var location = _mapper.Map<Location>(createModel);
-            //location.LocationId = Guid.NewGuid().ToString();
-            //location.CreateDate = DateTime.Now;
-            //var result = await _unitOfWork.LocationRepository.AddAsync(location);
-            //_unitOfWork.Save();
-            //return new APIResponseModel
-            //{
-            //    Message = " Location Created Successfully",
-            //    IsSuccess = true,
-            //    Data = location,
-            //};
-            if (!string.IsNullOrEmpty(createModel.LocationAddress))
+            try
             {
+                var destinationId = await _unitOfWork.DestinationRepository.GetFirstOrDefaultAsync(query => query.Where(d=>d.DestinationId==createModel.DestinationId));
+                if (destinationId == null)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "destinationId not found",
+                        IsSuccess = false
+                    };
+                }
+
+                if (string.IsNullOrEmpty(createModel.LocationAddress))
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Address cannot be left blank",
+                        IsSuccess = false
+                    };
+                }
+                if (string.IsNullOrEmpty(createModel.LocationName))
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Name location cannot be left blank",
+                        IsSuccess = false
+                    };
+                }
+
+                if (!createModel.LocationClosingHours.HasValue)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Location closing hours cannot be left blank",
+                        IsSuccess = false
+                    };
+                }
+
+                if (!createModel.LocationOpeningHours.HasValue)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Location open hours cannot be left blank",
+                        IsSuccess = false
+                    };
+                }
+
+                var destinationOpeningHours = destinationId.DestinationOpeningHours?.TimeOfDay;
+                var destinationClosingHours = destinationId.DestinationClosingHours?.TimeOfDay;
+                var locationOpeningHours = createModel.LocationOpeningHours?.TimeOfDay;
+                var locationClosingHours = createModel.LocationClosingHours?.TimeOfDay;
+
+                if (locationOpeningHours < destinationOpeningHours || locationOpeningHours > destinationClosingHours)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "LocationOpeningHours must be within the Destination's opening hours",
+                        IsSuccess = false
+                    };
+                }
+
+                if (locationClosingHours < destinationOpeningHours || locationClosingHours > destinationClosingHours)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "LocationClosingHours must be within the Destination's closing hours",
+                        IsSuccess = false
+                    };
+                }
+
                 var embedCode = await _googleMapsService.GetEmbedCodesAsync(createModel.LocationAddress);
 
                 var locationGGMap = embedCode;
@@ -96,7 +153,6 @@ namespace Services.Services
                     LocationClosingHours = createModel.LocationClosingHours,
                     Status = (int)EStatus.Active,
                     CreateDate = DateTime.Now,
-                    UpdateDate = DateTime.Now
                 };
                 await _unitOfWork.LocationRepository.AddAsync(location);
                 _unitOfWork.Save();
@@ -107,13 +163,15 @@ namespace Services.Services
                     Data = location,
                 };
             }
-           return new APIResponseModel
-           {
-               Message = "Location Google Map is required",
-               IsSuccess = false
-           };
-
-
+            catch (Exception ex)
+            {
+                return new APIResponseModel
+                {
+                    Message = "Location Google Map is required",
+                    IsSuccess = false
+                };
+            }  
+            
         }
         public async Task<APIResponseModel> UpdateLocationAsync(LocationUpdateModel updateModel)
         {

@@ -31,6 +31,12 @@ namespace BusinessObjects.ViewModels.Payment
     public class ExtraData
     {
         public string ZaloId { get; set; }
+        public string BookingId { get; set; }
+    }
+
+    public class ExtraDatas
+    {
+        public string ZaloId { get; set; }
         public string DailyTourId { get; set; }
         public List<TicketExtraModel> Tickets { get; set; }
     }
