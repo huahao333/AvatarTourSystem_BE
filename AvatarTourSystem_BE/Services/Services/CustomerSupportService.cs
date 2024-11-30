@@ -368,6 +368,18 @@ namespace Services.Services
                 };
 
                 await _unitOfWork.CustomerSupportRepository.AddAsync(newRequest);
+
+                var notification = new BusinessObjects.Models.Notification
+                {
+                    NotifyId = Guid.NewGuid().ToString(),
+                    UserId = zaloUser.Id,
+                    SendDate = DateTime.Now,
+                    Message = $"Bạn đã gửi yêu câu hoàn tiền thành công chúng tôi sẽ cố gắng phản hồi cho quý khách sớm nhất",
+                    Title = "Success",
+                    Type = "Thành công",
+                    Status = 1,
+                };
+                await _unitOfWork.NotificationRepository.AddAsync(notification);
                 _unitOfWork.Save();
 
                 return new APIResponseModel

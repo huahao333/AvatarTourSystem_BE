@@ -705,6 +705,18 @@ namespace Services.Services
                     Status=1
                 };
                 await _unitOfWork.TransactionsHistoryRepository.AddAsync(transaction);
+
+                var notification = new BusinessObjects.Models.Notification
+                {
+                    NotifyId = Guid.NewGuid().ToString(),
+                    UserId = zaloAccount.Id,
+                    SendDate = DateTime.Now,
+                    Message = $"Bạn đã đặt tour du lịch thành công",
+                    Title = "Success",
+                    Type = "Thành công",
+                    Status = 1,
+                };
+                await _unitOfWork.NotificationRepository.AddAsync(notification);
                 _unitOfWork.Save();
 
                 return new APIResponseModel

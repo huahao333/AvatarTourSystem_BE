@@ -670,15 +670,32 @@ namespace Services.Services
                 var userId = await _unitOfWork.TicketRepository.GetFirstOrDefaultAsync(query => query.Where(t=>t.TicketId==ticket.TicketId).
                                                            Include(b=>b.Bookings).ThenInclude(a=>a.Accounts));
 
-                var notification = new NotificationCreateModel
+                var notification = new BusinessObjects.Models.Notification
                 {
+                    NotifyId = Guid.NewGuid().ToString(),
                     UserId = userId?.Bookings?.Accounts?.Id,
                     SendDate = DateTime.Now,
-                    Message = "",
-                    Title= "",
-                    Type = "",
-                    Status = EStatus.Active,
+                    Message = $"Bạn đã chia sẻ thành công vé cho số điện thoại {updateModel.PhoneNumber}" ,
+                    Title= "Success",
+                    Type = "Thành công",
+                    Status = 1,
                 };
+                await _unitOfWork.NotificationRepository.AddAsync(notification);
+
+                var userIdReceive = await _unitOfWork.AccountRepository.GetFirstOrDefaultAsync(query => query.Where(a=>a.PhoneNumber== formattedPhoneNumber));
+                var notificationRe = new BusinessObjects.Models.Notification
+                {
+                    NotifyId = Guid.NewGuid().ToString(),
+                    UserId = userIdReceive.Id,
+                    SendDate = DateTime.Now,
+                    Message = $"Bạn đã nhận được vé do số điện thoại {userId?.Bookings?.Accounts?.PhoneNumber} chia sẻ",
+                    Title = "Success",
+                    Type = "Thành công",
+                    Status = 1,
+                };
+                await _unitOfWork.NotificationRepository.AddAsync(notificationRe);
+
+
                 _unitOfWork.Save();
 
                 //var userId = await _unitOfWork.BookingRepository.GetFirstOrDefaultAsync(query => 
