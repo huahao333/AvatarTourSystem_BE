@@ -182,6 +182,12 @@ namespace Services.Services
 
                 foreach (var ticket in tickets)
                 {
+                    var dailyTicket = await _unitOfWork.DailyTicketRepository.GetFirstOrDefaultAsync(query => query.Where(dt => dt.DailyTicketId == ticket.DailyTicketId));
+                    if (dailyTicket != null)
+                    {
+                        dailyTicket.Capacity += ticket.Quantity;
+                        await _unitOfWork.DailyTicketRepository.UpdateAsync(dailyTicket);
+                    }
                     var servicesUsedByTicket = await _unitOfWork.ServiceUsedByTicketRepository.GetAllAsyncs(query => query.Where(s => s.TicketId == ticket.TicketId));
                     foreach (var service in servicesUsedByTicket)
                     {
