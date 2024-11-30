@@ -41,6 +41,13 @@ namespace AvatarTourSystem_BE.Controllers
             return Ok(result);
         }
 
+        [HttpPost("roll-back-booking")]
+        public async Task<IActionResult> RollBackBookingFlowAsync(RollBackBookingFlowModel rollBackBookingFlowModel)
+        {
+            var result = await _bookingFlowService.RollBackBookingFlowAsync(rollBackBookingFlowModel);
+            return Ok(result);
+        }
+
         [HttpPost("booking-status")]
         public async Task<IActionResult> UpdateBookingStatusAsync(BookingFlowModel updateModel)
         {
