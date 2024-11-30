@@ -145,6 +145,74 @@ namespace Services.Services
             }
         }
 
+        public async Task<APIResponseModel> RollBackBookingFlowAsync(RollBackBookingFlowModel rollBackBookingFlowModel)
+        {
+            using var transaction = _unitOfWork.BeginTransaction();
+            try
+            {
+                var orderId = await _unitOfWork.PaymentRepository.GetFirstOrDefaultAsync(query => query.Where(p=>p.OrderId == rollBackBookingFlowModel.OrderId
+                                                                                                                 && p.BookingId == rollBackBookingFlowModel.BookingId));
+                if (orderId != null)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Order already exists",
+                        IsSuccess = false,
+                    };
+                }
+                var booking = await _unitOfWork.BookingRepository.GetFirstOrDefaultAsync(query => query.Where(b=>b.BookingId==rollBackBookingFlowModel.BookingId));
+                if (booking == null)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "BookingId does not exist",
+                        IsSuccess = false,
+                    };
+                }
+
+                var tickets = await _unitOfWork.TicketRepository.GetAllAsyncs(query => query.Where(t => t.BookingId == booking.BookingId));
+                if (tickets == null || !tickets.Any())
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "No tickets found for the booking.",
+                        IsSuccess = false,
+                    };
+                }
+
+                foreach (var ticket in tickets)
+                {
+                    var servicesUsedByTicket = await _unitOfWork.ServiceUsedByTicketRepository.GetAllAsyncs(query => query.Where(s => s.TicketId == ticket.TicketId));
+                    foreach (var service in servicesUsedByTicket)
+                    {
+                        await _unitOfWork.ServiceUsedByTicketRepository.DeleteAsync(service);
+                    }
+
+                    await _unitOfWork.TicketRepository.DeleteAsync(ticket);
+                }
+
+                await _unitOfWork.BookingRepository.DeleteAsync(booking);
+                _unitOfWork.Save();
+                transaction.Commit();
+
+                return new APIResponseModel
+                {
+                    Message = "Rollback successfully",
+                    IsSuccess = true,
+                };
+
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+                return new APIResponseModel
+                {
+                    Message = $"Booking and ticket creation failed: {ex.Message}",
+                    IsSuccess = false,
+                };
+            }
+        }
+
         public async Task<APIResponseModel> CreateBookingFlowAsync(BookingFlowCreateModel createModel)
         {
             using var transaction = _unitOfWork.BeginTransaction();

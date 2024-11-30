@@ -22,6 +22,7 @@ namespace Services.Interfaces
         Task<APIResponseModel> UpdateBookingStatusAsync(BookingFlowModel updateModel);
         Task<APIResponseModel> UpdateBookingStatusFailPaymentAsync(BookingFlowModel updateModel);
         Task<APIResponseModel> DecryptBookingFlowAsync(DecryptBooking encryptedQrData);
+        Task<APIResponseModel> RollBackBookingFlowAsync(RollBackBookingFlowModel rollBackBookingFlowModel);
         Task<APIResponseModel> UpdateTicketByQR(TicketUsageViewModel ticketUsageViewModel);
     }
 }

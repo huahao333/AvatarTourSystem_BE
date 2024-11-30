@@ -12,6 +12,11 @@ namespace BusinessObjects.ViewModels.Booking
        // public string? UserId { get; set; }
     }
 
+    public class RollBackBookingFlowModel
+    {
+        public string? BookingId { get; set; }
+        public string? OrderId { get; set; }
+    }
     public class DecryptBooking
     {
         public string EncryptedQr { get; set; }
