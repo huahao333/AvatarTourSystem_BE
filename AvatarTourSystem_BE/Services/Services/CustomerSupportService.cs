@@ -213,7 +213,7 @@ namespace Services.Services
                         DateResolved = request.DateResolved,
                         Status = request.Status
                     };
-                });
+                }).OrderByDescending(r=>r.CreateDate);
 
                 return new APIResponseModel
                 {
