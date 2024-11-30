@@ -33,6 +33,7 @@ using Microsoft.Extensions.Options;
 using Twilio;
 using Twilio.Rest.Api.V2010.Account;
 using Twilio.Types;
+using BusinessObjects.ViewModels.Payment;
 //using SixLabors.ImageSharp.Formats.Png;
 
 namespace Services.Services
@@ -182,6 +183,9 @@ namespace Services.Services
                 var destinationId = dailyTourDetails?.PackageTour?.TourSegments?
                                         .SelectMany(l => l.DestinationId)
                                         .ToList();
+                var destinationName = dailyTourDetails?.PackageTour?.TourSegments?
+                                        .Select(l => l.DestinationName)
+                                        .ToList();
                 var destination = dailyTourDetails.PackageTour?.TourSegments?.ToList();
                 var location = destination.SelectMany(l => l.Locations)
                                            .Select(c=>c.LocationId).ToList();
@@ -194,6 +198,7 @@ namespace Services.Services
                 //var locationId = string.Join("; ", location);
                 //var servicesId = string.Join("; ", services);
                 var destinationIdJson = JsonConvert.SerializeObject(destinationId);
+                var destinationNameJson = JsonConvert.SerializeObject(destinationName);
                 var locationJson = JsonConvert.SerializeObject(location);
                 var servicesJson = JsonConvert.SerializeObject(services);
 
@@ -218,46 +223,26 @@ namespace Services.Services
                     for (int i = 0; i < ticket.TotalQuantity; i++)
                     {
                         var newTicketId = Guid.NewGuid().ToString();
-                        //var qrContent = $"BookingId: {newBooking.BookingId}\n" +
-                        //                $"ZaloUser: {createModel.ZaloId}\n" +
-                        //                $"DailyTourId: {newBooking.DailyTourId}\n" +
-                        //                $"TourName: {dailyTourDetails.DailyTourName}\n" +
-                        //                $"ExpirationDate: {dailyTourDetails.ExpirationDate}\n" +
-                        //                $"StartDate: {dailyTourDetails.StartDate}\n" +
-                        //                $"EndDate: {dailyTourDetails.EndDate}\n" +
-                        //                $"Discount: {dailyTourDetails.Discount}\n" +
-                        //                $"DailyTourPrice: {dailyTourDetails.DailyTourPrice}\n" +
-                        //                $"City: {dailyTourDetails.PackageTour?.CityId}\n" +
-                        //                $"DestinationId: {destinationIdString}\n" +
-                        //                $"LocationId: {locationId}\n" +
-                        //                $"ServiceId: {servicesId}\n" +
-
-                        //                $"PhoneNumber: {zaloAccount.PhoneNumber}\n" +
-                        //                $"BookingDate: {newBooking.BookingDate}\n" +
-                        //                $"ExpirationDate: {newBooking.ExpirationDate}\n" +
-                        //                $"TotalPrice: {newBooking.TotalPrice}\n" +
-                        //                $"TicketTypeId: {newTicketId} \n" +
-                        //                $"DailyTicketId:{ticket.DailyTicketId} \n" +
-                        //                $"TicketName:{ticket.TicketName} \n" +
-                        //                $"Price:{ticket.TotalPrice} \n";
-
+                        var priceByTicket = await _unitOfWork.DailyTicketRepository.
+                                                              GetFirstOrDefaultAsync(query => query.Where(c => c.DailyTicketId == ticket.DailyTicketId));
                         var qrData = new
                         {
                             BookingId = newBooking.BookingId,
                             ZaloUser = createModel.ZaloId,
                             DailyTourId = newBooking.DailyTourId,
                             TourName = dailyTourDetails.DailyTourName,
-                         //   ExpirationDate = dailyTourDetails.ExpirationDate,
                             StartDate = dailyTourDetails.StartDate,
                             EndDate = dailyTourDetails.EndDate,
                             Discount = dailyTourDetails.Discount,
                             DailyTourPrice = dailyTourDetails.DailyTourPrice,
                             City = dailyTourDetails.PackageTour?.CityId,
-                            DestinationId = destinationIdJson, 
-                            LocationId = locationJson, 
-                            ServiceId = servicesJson, 
+                            DestinationId = destinationIdJson,
+                            DestinationName = destinationNameJson,
+                            LocationId = locationJson,
+                            ServiceId = servicesJson,
                             PhoneNumber = zaloAccount.PhoneNumber,
                             BookingDate = newBooking.BookingDate,
+                            PriceOfTicket = priceByTicket.DailyTicketPrice,
                             ExpirationDate = newBooking.ExpirationDate,
                             TotalPrice = newBooking.TotalPrice,
                             TicketTypeId = newTicketId,
@@ -274,7 +259,7 @@ namespace Services.Services
                             BookingId = newBooking.BookingId,
                             DailyTicketId = ticket.DailyTicketId,
                             TicketName = ticket.TicketName,
-                            Price = ticket.TotalPrice,
+                            Price = priceByTicket.DailyTicketPrice,
                             QRImgUrl = qrImageUrl,
                             PhoneNumberReference = zaloAccount.PhoneNumber,
                             Quantity = 1,  
