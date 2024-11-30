@@ -72,15 +72,18 @@ namespace Services.Services
                     string mechant = callbackObject.Data.MerchantTransId;
                     string overallMac = callbackObject.overallMac;
                     string mac = callbackObject.Mac;
+
+                    var extradataJson = Uri.UnescapeDataString(callbackObject.Data.Extradata);
+                    var extradataObject = JsonConvert.DeserializeObject<ExtraData>(extradataJson);
                     if (resultCode == 1)  
                     {
                         // Giải mã extradata
-                        var extradataJson = Uri.UnescapeDataString(callbackObject.Data.Extradata);
-                        var extradataObject = JsonConvert.DeserializeObject<ExtraData>(extradataJson);
+                        //var extradataJson = Uri.UnescapeDataString(callbackObject.Data.Extradata);
+                        //var extradataObject = JsonConvert.DeserializeObject<ExtraData>(extradataJson);
 
                         if (extradataObject != null)
                         {
-                            var createBookingResponse = await CreateBookingFromCallbackData(extradataObject,
+                            var updateBookingResponse = await UpdateBookingFromCallbackData(extradataObject,
                                                                                             totalAmount,
                                                                                             transTime,
                                                                                             orderId,
@@ -91,14 +94,20 @@ namespace Services.Services
                                                                                             mac,
                                                                                             resultCode);
 
-                            return createBookingResponse;
-                            
+
+
+                             return updateBookingResponse;
+
+
+
                         }
                         return new APIResponseModel { Message = "Invalid extradata", IsSuccess = false };
                     }
                     else
                     {
-                        return new APIResponseModel { Message = $"Transaction failed. ResultCode: {resultCode}", IsSuccess = false };
+                        var rollBackBooing = await RollBackBookingsFlowAsync(extradataObject.BookingId);
+                        return rollBackBooing;
+                       // return new APIResponseModel { Message = $"Transaction failed. ResultCode: {resultCode}", IsSuccess = false };
                     }
                 }
                 return new APIResponseModel { Message = "Invalid callback data", IsSuccess = false };
@@ -108,8 +117,174 @@ namespace Services.Services
                 return new APIResponseModel { Message = "Error handling callback", IsSuccess = false };
             }
         }
+        public async Task<APIResponseModel> RollBackBookingsFlowAsync(string bookingId)
+        {
+            using var transaction = _unitOfWork.BeginTransaction();
+            try
+            {
+                var booking = await _unitOfWork.BookingRepository.GetFirstOrDefaultAsync(query => query.Where(b => b.BookingId == bookingId));
+                if (booking == null)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "BookingId does not exist",
+                        IsSuccess = false,
+                    };
+                }
 
-        public async Task<APIResponseModel> CreateBookingFromCallbackData(ExtraData extradata, 
+                var tickets = await _unitOfWork.TicketRepository.GetAllAsyncs(query => query.Where(t => t.BookingId == booking.BookingId));
+                if (tickets == null || !tickets.Any())
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "No tickets found for the booking.",
+                        IsSuccess = false,
+                    };
+                }
+
+                foreach (var ticket in tickets)
+                {
+                    var servicesUsedByTicket = await _unitOfWork.ServiceUsedByTicketRepository.GetAllAsyncs(query => query.Where(s => s.TicketId == ticket.TicketId));
+                    foreach (var service in servicesUsedByTicket)
+                    {
+                        await _unitOfWork.ServiceUsedByTicketRepository.DeleteAsync(service);
+                    }
+
+                    await _unitOfWork.TicketRepository.DeleteAsync(ticket);
+                }
+
+                await _unitOfWork.BookingRepository.DeleteAsync(booking);
+                _unitOfWork.Save();
+                transaction.Commit();
+
+                return new APIResponseModel
+                {
+                    Message = "Rollback successfully",
+                    IsSuccess = true,
+                };
+
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+                return new APIResponseModel
+                {
+                    Message = $"Booking and ticket creation failed: {ex.Message}",
+                    IsSuccess = false,
+                };
+            }
+        }
+        public async Task<APIResponseModel> UpdateBookingFromCallbackData(ExtraData extradata,
+                                                                           float totalAmount,
+                                                                           int transTime,
+                                                                           string orderId,
+                                                                           string tranId,
+                                                                           string appId,
+                                                                           string mechant,
+                                                                           string overallMac,
+                                                                           string mac,
+                                                                           int resultCode)
+        {
+            try
+            {
+                var booking = await _unitOfWork.BookingRepository.GetFirstsOrDefaultAsync(b => b.BookingId == extradata.BookingId);
+                if (booking == null)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Booking not found.",
+                        IsSuccess = false,
+                    };
+                }
+
+                booking.Status = 1;
+                booking.UpdateDate = DateTime.Now;
+                await _unitOfWork.BookingRepository.UpdateAsync(booking);
+
+
+                var tickets = await _unitOfWork.TicketRepository.GetAllAsyncs(query => query
+                                                            .Where(t => t.BookingId == booking.BookingId));
+                foreach (var ticket in tickets)
+                {
+                    ticket.Status = 1;
+                    ticket.UpdateDate = DateTime.Now;
+                    await _unitOfWork.TicketRepository.UpdateAsync(ticket);
+
+                    var dailyTicketType = await _unitOfWork.DailyTicketRepository.GetAllAsyncs(query => query.Where(d => d.DailyTicketId == ticket.DailyTicketId));
+                    var dailyTicketTypeCapa = dailyTicketType.FirstOrDefault();
+                    if (dailyTicketTypeCapa != null)
+                    {
+                        dailyTicketTypeCapa.Capacity += ticket.Quantity;
+                        dailyTicketTypeCapa.UpdateDate = DateTime.Now;
+                        await _unitOfWork.DailyTicketRepository.UpdateAsync(dailyTicketTypeCapa);
+                    }
+                }
+
+                foreach (var ticket in tickets)
+                {
+                    var servicesUsedByTicket = await _unitOfWork.ServiceUsedByTicketRepository.GetAllAsyncs(query => query
+                                                                                             .Where(s => s.TicketId == ticket.TicketId));
+                    foreach (var serviceUsed in servicesUsedByTicket)
+                    {
+                        serviceUsed.Status = 1;
+                        serviceUsed.UpdateDate = DateTime.Now;
+                        await _unitOfWork.ServiceUsedByTicketRepository.UpdateAsync(serviceUsed);
+                    }
+                }
+                var newPaymentId = Guid.NewGuid();
+                var newPayment = new Payment
+                {
+                    PaymentId = newPaymentId.ToString(),
+                    PaymentMethodId = "1",
+                    BookingId = booking.BookingId,
+                    AppId = appId,
+                    OrderId = orderId,
+                    TransId = tranId,
+                    TransTime = transTime,
+                    Amount = totalAmount,
+                    MerchantTransId = mechant,
+                    Description = overallMac,
+                    ResultCode = resultCode,
+                    Message = mac,
+                    ExtraData = JsonConvert.SerializeObject(extradata),
+                    Status = 1,
+                    CreateDate = DateTime.Now,
+                };
+                await _unitOfWork.PaymentRepository.AddAsync(newPayment);
+
+                var zaloId = await _unitOfWork.AccountRepository.GetFirstOrDefaultAsync(query => query.Where(a=>a.ZaloUser == extradata.ZaloId));
+                var newTransactionId = Guid.NewGuid();
+                var transaction = new TransactionsHistory
+                {
+                    TransactionId = newTransactionId.ToString(),
+                    UserId = zaloId.Id,
+                    BookingId = booking.BookingId,
+                    OrderId = orderId,
+                    CreateDate = DateTime.Now,
+                    Status = 1
+                };
+                await _unitOfWork.TransactionsHistoryRepository.AddAsync(transaction);
+                _unitOfWork.Save();
+
+                return new APIResponseModel
+                {
+                    Message = "Update Status updated successfully for booking and related records.",
+                    IsSuccess = true,
+                };
+
+
+            }
+            catch (Exception ex)
+            {
+                return new APIResponseModel
+                {
+                    Message = $"Error update booking: {ex.Message}",
+                    IsSuccess = false,
+                };
+            }
+        }
+
+        public async Task<APIResponseModel> CreateBookingFromCallbackData(ExtraDatas extradata, 
                                                                           float totalAmount,
                                                                           int transTime,
                                                                           string orderId,
