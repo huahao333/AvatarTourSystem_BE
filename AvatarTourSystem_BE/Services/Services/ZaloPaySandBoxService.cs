@@ -83,7 +83,7 @@ namespace Services.Services
 
                         if (extradataObject != null)
                         {
-                            var updateBookingResponse = await UpdateBookingFromCallbackData(extradataObject,
+                            var createBookingResponse = await CreateBookingFromCallbackData(extradataObject,
                                                                                             totalAmount,
                                                                                             transTime,
                                                                                             orderId,
@@ -96,7 +96,7 @@ namespace Services.Services
 
 
 
-                             return updateBookingResponse;
+                             return createBookingResponse;
 
 
 
@@ -105,7 +105,16 @@ namespace Services.Services
                     }
                     else
                     {
-                        var rollBackBooing = await RollBackBookingsFlowAsync(extradataObject.BookingId);
+                        var rollBackBooing = await RollbackBookingsFlowAsync(extradataObject,
+                                                                             totalAmount,
+                                                                             transTime,
+                                                                             orderId,
+                                                                             tranId,
+                                                                             appId,
+                                                                             mechant,
+                                                                             overallMac,
+                                                                             mac,
+                                                                             resultCode);
                         return rollBackBooing;
                        // return new APIResponseModel { Message = $"Transaction failed. ResultCode: {resultCode}", IsSuccess = false };
                     }
@@ -117,6 +126,217 @@ namespace Services.Services
                 return new APIResponseModel { Message = "Error handling callback", IsSuccess = false };
             }
         }
+
+        public async Task<APIResponseModel> RollbackBookingsFlowAsync(ExtraData extradata,
+                                                                           float totalAmount,
+                                                                           int transTime,
+                                                                           string orderId,
+                                                                           string tranId,
+                                                                           string appId,
+                                                                           string mechant,
+                                                                           string overallMac,
+                                                                           string mac,
+                                                                           int resultCode)
+        {
+            try
+            {
+                var zaloAccount = await _unitOfWork.AccountRepository.GetFirstOrDefaultAsync(query => query
+                                  .Where(a => a.ZaloUser == extradata.ZaloId));
+                if (zaloAccount == null)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Account not found.",
+                        IsSuccess = false,
+                    };
+                }
+
+                var serviceIds = await GetServiceIdsByDailyTourId(extradata.DailyTourId);
+                if (serviceIds == null || !serviceIds.Any())
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "No Service IDs found.",
+                        IsSuccess = false,
+                    };
+                }
+                var dailyTourExpirationDate = await _unitOfWork.DailyTourRepository.GetFirstOrDefaultAsync(query => query
+                                  .Where(a => a.DailyTourId == extradata.DailyTourId));
+               
+                var dailyTourDetails = await GetDailyToursDetails(extradata.DailyTourId);
+                if (dailyTourDetails == null)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Tour details not found.",
+                        IsSuccess = false,
+                    };
+                }
+
+                var destinationId = dailyTourDetails?.PackageTour?.TourSegments?
+                                        .SelectMany(l => l.DestinationId)
+                                        .ToList();
+                var destinationName = dailyTourDetails?.PackageTour?.TourSegments?
+                                         .Select(l => l.DestinationName)
+                                         .ToList();
+                var destination = dailyTourDetails.PackageTour?.TourSegments?.ToList();
+                var location = destination.SelectMany(l => l.Locations)
+                                           .Select(c => c.LocationId).ToList();
+
+                var services = destination.SelectMany(l => l.Locations)
+                                           .SelectMany(s => s.Services)
+                                           .Select(c => c.ServiceId).ToList();
+
+                // Chuyển các thông tin về Destination, Location, và Services thành JSON
+                var destinationIdJson = JsonConvert.SerializeObject(destinationId);
+                var destinationNameJson = JsonConvert.SerializeObject(destinationName);
+                var locationJson = JsonConvert.SerializeObject(location);
+                var servicesJson = JsonConvert.SerializeObject(services);
+
+                // Tạo Booking mới
+                //  var newBookingId = Guid.NewGuid();
+                var newBooking = new Booking
+                {
+                    BookingId = extradata.BookingId,
+                    UserId = zaloAccount.Id,
+                    DailyTourId = extradata.DailyTourId,
+                    BookingDate = DateTime.Now,
+                    ExpirationDate = dailyTourExpirationDate.ExpirationDate,
+                    TotalPrice = totalAmount,
+                    Status = -1,
+                    CreateDate = DateTime.Now,
+                };
+                await _unitOfWork.BookingRepository.AddAsync(newBooking);
+
+                List<string> ticketIds = new List<string>();
+
+                foreach (var ticket in extradata.Tickets)
+                {
+                    for (int i = 0; i < ticket.TotalQuantity; i++)
+                    {
+                        var newTicketId = Guid.NewGuid().ToString();
+                        var priceByTicket = await _unitOfWork.DailyTicketRepository.
+                                                              GetFirstOrDefaultAsync(query => query.Where(c => c.DailyTicketId == ticket.DailyTicketId));
+                        // Tạo dữ liệu QR code
+                        var qrData = new
+                        {
+                            BookingId = newBooking.BookingId,
+                            ZaloUser = extradata.ZaloId,
+                            DailyTourId = newBooking.DailyTourId,
+                            TourName = dailyTourDetails.DailyTourName,
+                            StartDate = dailyTourDetails.StartDate,
+                            EndDate = dailyTourDetails.EndDate,
+                            Discount = dailyTourDetails.Discount,
+                            DailyTourPrice = dailyTourDetails.DailyTourPrice,
+                            City = dailyTourDetails.PackageTour?.CityId,
+                            DestinationId = destinationIdJson,
+                            DestinationName = destinationNameJson,
+                            LocationId = locationJson,
+                            ServiceId = servicesJson,
+                            PhoneNumber = zaloAccount.PhoneNumber,
+                            BookingDate = newBooking.BookingDate,
+                            PriceOfTicket = priceByTicket.DailyTicketPrice,
+                            ExpirationDate = newBooking.ExpirationDate,
+                            TotalPrice = newBooking.TotalPrice,
+                            TicketTypeId = newTicketId,
+                            DailyTicketId = ticket.DailyTicketId,
+                            TicketName = ticket.TicketName,
+                            Price = ticket.TotalPrice
+                        };
+
+                        var qrContent = _encryptionHelperService.EncryptString(JsonConvert.SerializeObject(qrData));
+                        var qrImageUrl = await GenerateQRCode(qrContent);
+
+                        var newTicket = new Ticket
+                        {
+                            TicketId = newTicketId,
+                            BookingId = newBooking.BookingId,
+                            DailyTicketId = ticket.DailyTicketId,
+                            TicketName = ticket.TicketName,
+                            Price = priceByTicket.DailyTicketPrice,
+                            QRImgUrl = qrImageUrl,
+                            PhoneNumberReference = zaloAccount.PhoneNumber,
+                            Quantity = 1,
+                            Status = -1,
+                            CreateDate = DateTime.Now,
+                        };
+                        await _unitOfWork.TicketRepository.AddAsync(newTicket);
+
+                        ticketIds.Add(newTicket.TicketId);
+
+                        foreach (var serviceId in serviceIds)
+                        {
+                            var serviceUsedByTicket = new ServiceUsedByTicket
+                            {
+                                SUBTId = Guid.NewGuid().ToString(),
+                                TicketId = newTicket.TicketId,
+                                ServiceId = serviceId,
+                                CreateDate = DateTime.Now,
+                                Status = 1
+                            };
+                            await _unitOfWork.ServiceUsedByTicketRepository.AddAsync(serviceUsedByTicket);
+                        }
+                    }
+                    //var dailyTicketType = await _unitOfWork.DailyTicketRepository.GetAllAsyncs(query => query.Where(d => d.DailyTicketId == ticket.DailyTicketId));
+                    //var dailyTicketTypeCapa = dailyTicketType.FirstOrDefault();
+                    //if (dailyTicketTypeCapa != null)
+                    //{
+                    //    dailyTicketTypeCapa.Capacity -= ticket.TotalQuantity;
+                    //    dailyTicketTypeCapa.UpdateDate = DateTime.Now;
+                    //    await _unitOfWork.DailyTicketRepository.UpdateAsync(dailyTicketTypeCapa);
+                    //}
+                }
+                var newPaymentId = Guid.NewGuid();
+                var newPayment = new Payment
+                {
+                    PaymentId = newPaymentId.ToString(),
+                    PaymentMethodId = "1",
+                    BookingId = newBooking.BookingId,
+                    AppId = appId,
+                    OrderId = orderId,
+                    TransId = tranId,
+                    TransTime = transTime,
+                    Amount = totalAmount,
+                    MerchantTransId = mechant,
+                    Description = overallMac,
+                    ResultCode = resultCode,
+                    Message = mac,
+                    ExtraData = JsonConvert.SerializeObject(extradata),
+                    Status = -1,
+                    CreateDate = DateTime.Now,
+                };
+                await _unitOfWork.PaymentRepository.AddAsync(newPayment);
+
+                var newTransactionId = Guid.NewGuid();
+                var transaction = new TransactionsHistory
+                {
+                    TransactionId = newTransactionId.ToString(),
+                    UserId = zaloAccount.Id,
+                    BookingId = newBooking.BookingId,
+                    OrderId = orderId,
+                    CreateDate = DateTime.Now,
+                    Status = -1
+                };
+                await _unitOfWork.TransactionsHistoryRepository.AddAsync(transaction);
+                _unitOfWork.Save();
+
+                return new APIResponseModel
+                {
+                    Message = "Booking payment failed.",
+                    IsSuccess = true,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new APIResponseModel
+                {
+                    Message = $"Error payment booking: {ex.Message}",
+                    IsSuccess = false,
+                };
+            }
+        }
+
+
         public async Task<APIResponseModel> RollBackBookingsFlowAsync(string bookingId)
         {
             using var transaction = _unitOfWork.BeginTransaction();
@@ -290,7 +510,7 @@ namespace Services.Services
             }
         }
 
-        public async Task<APIResponseModel> CreateBookingFromCallbackData(ExtraDatas extradata, 
+        public async Task<APIResponseModel> CreateBookingFromCallbackData(ExtraData extradata, 
                                                                           float totalAmount,
                                                                           int transTime,
                                                                           string orderId,
@@ -359,10 +579,10 @@ namespace Services.Services
                 var servicesJson = JsonConvert.SerializeObject(services);
 
                 // Tạo Booking mới
-                var newBookingId = Guid.NewGuid();
+              //  var newBookingId = Guid.NewGuid();
                 var newBooking = new Booking
                 {
-                    BookingId = newBookingId.ToString(),
+                    BookingId = extradata.BookingId,
                     UserId = zaloAccount.Id,
                     DailyTourId = extradata.DailyTourId,
                     BookingDate = DateTime.Now,
