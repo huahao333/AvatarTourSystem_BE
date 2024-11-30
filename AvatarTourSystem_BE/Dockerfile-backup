@@ -1,0 +1,17 @@
+RUN apt-get update && \
+    apt-get install -y \
+        apt-utils \
+        libc6-dev \
+        libgdiplus \
+        libgdiplus \
+        libx11-dev \
+        libxext-dev \
+        libxt-dev \
+        libpng-dev \
+        libjpeg-dev \
+        libgif-dev \
+        libfreetype6-dev \
+        libwebp-dev \
+        libatlas-base-dev \
+        gfortran \
+        && rm -rf /var/lib/apt/lists/*
