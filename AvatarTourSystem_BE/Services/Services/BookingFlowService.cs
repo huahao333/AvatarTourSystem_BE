@@ -34,6 +34,7 @@ using Twilio;
 using Twilio.Rest.Api.V2010.Account;
 using Twilio.Types;
 using BusinessObjects.ViewModels.Payment;
+using BusinessObjects.ViewModels.Notification;
 //using SixLabors.ImageSharp.Formats.Png;
 
 namespace Services.Services
@@ -665,6 +666,19 @@ namespace Services.Services
                 ticket.UpdateDate = DateTime.Now;
 
                 var result = await _unitOfWork.TicketRepository.UpdateAsync(ticket);
+
+                var userId = await _unitOfWork.TicketRepository.GetFirstOrDefaultAsync(query => query.Where(t=>t.TicketId==ticket.TicketId).
+                                                           Include(b=>b.Bookings).ThenInclude(a=>a.Accounts));
+
+                var notification = new NotificationCreateModel
+                {
+                    UserId = userId?.Bookings?.Accounts?.Id,
+                    SendDate = DateTime.Now,
+                    Message = "",
+                    Title= "",
+                    Type = "",
+                    Status = EStatus.Active,
+                };
                 _unitOfWork.Save();
 
                 //var userId = await _unitOfWork.BookingRepository.GetFirstOrDefaultAsync(query => 

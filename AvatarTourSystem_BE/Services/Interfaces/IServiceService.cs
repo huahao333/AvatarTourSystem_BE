@@ -16,5 +16,6 @@ namespace Services.Interfaces
         Task<APIResponseModel> CreateServiceAsync(ServiceCreateModel createModel);
         Task<APIResponseModel> UpdateServiceAsync(ServiceUpdateModel updateModel);
         Task<APIResponseModel> DeleteService(string id);
+        Task<APIResponseModel> GetServicesByLocation(ServiceByLocationModel serviceByLocationModel);
     }
 }

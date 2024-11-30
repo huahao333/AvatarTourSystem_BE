@@ -34,4 +34,9 @@ namespace BusinessObjects.ViewModels.Service
      //   [FromForm(Name = "status")]
         public EStatus? Status { get; set; }
     }
+
+    public class ServiceByLocationModel
+    {
+        public string LocatonId { get; set; }
+    }
 }
