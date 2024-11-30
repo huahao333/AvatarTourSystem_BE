@@ -304,6 +304,7 @@ namespace Services.Services
                 {
                     Message = "Booking and tickets created successfully.",
                     IsSuccess = true,
+                    Data = newBookingId
                 };
             }
             catch (Exception ex)
