@@ -239,6 +239,34 @@ namespace Services.Services
                 {
                     return new APIResponseModel { IsSuccess = false, Message = "Account already exists" };
                 }
+                
+                if (signUpModel.FullName.Length < 3 || signUpModel.FullName.Length > 50)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "FullName must be between 3 and 50 characters.",
+                        IsSuccess = false
+                    };
+                }
+
+                if (signUpModel.BirthDate == default || signUpModel.BirthDate.Date >= DateTime.Now.Date)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Date of Birth is invalid.",
+                        IsSuccess = false
+                    };
+                }
+
+
+                if (signUpModel.Address.Length < 5 || signUpModel.Address.Length > 120)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Address must be between 5 and 120 characters.",
+                        IsSuccess = false
+                    };
+                }
 
                 var user = new Account
                 {
@@ -249,6 +277,7 @@ namespace Services.Services
                     UserName = signUpModel.AccountEmail,
                     Email = signUpModel.AccountEmail,
                     PhoneNumber = signUpModel.AccountPhone,
+                    AvatarUrl = "http://res.cloudinary.com/dhovknfgb/image/upload/v1732960399/uzewxkbhnv0xyvahpuj0.jpg",
                     CreateDate = DateTime.Now,
                     Status = 1,
                     Roles= (int)ERole.Admin,
@@ -656,7 +685,33 @@ namespace Services.Services
                 {
                     return new APIResponseModel { IsSuccess = false, Message = "Account already exists" };
                 }
+                if (signUpModel.FullName.Length < 3 || signUpModel.FullName.Length > 50)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "FullName must be between 3 and 50 characters.",
+                        IsSuccess = false
+                    };
+                }
 
+                if (signUpModel.BirthDate == default || signUpModel.BirthDate.Date >= DateTime.Now.Date)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Date of Birth is invalid.",
+                        IsSuccess = false
+                    };
+                }
+
+
+                if (signUpModel.Address.Length < 5 || signUpModel.Address.Length > 120)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Address must be between 5 and 120 characters.",
+                        IsSuccess = false
+                    };
+                }
                 var user = new Account
                 {
                     FullName = signUpModel.FullName,
@@ -666,6 +721,7 @@ namespace Services.Services
                     UserName = signUpModel.AccountEmail,
                     Email = signUpModel.AccountEmail,
                     PhoneNumber = signUpModel.AccountPhone,
+                    AvatarUrl = "http://res.cloudinary.com/dhovknfgb/image/upload/v1732960399/uzewxkbhnv0xyvahpuj0.jpg",
                     CreateDate = DateTime.Now,
                     Status = 1,
                     Roles = (int)ERole.Staff,
@@ -702,7 +758,33 @@ namespace Services.Services
                 {
                     return new APIResponseModel { IsSuccess = false, Message = "Account already exists" };
                 }
+                if (signUpModel.FullName.Length < 3 || signUpModel.FullName.Length > 50)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "FullName must be between 3 and 50 characters.",
+                        IsSuccess = false
+                    };
+                }
 
+                if (signUpModel.BirthDate == default || signUpModel.BirthDate.Date >= DateTime.Now.Date)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Date of Birth is invalid.",
+                        IsSuccess = false
+                    };
+                }
+
+
+                if (signUpModel.Address.Length < 5 || signUpModel.Address.Length > 120)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Address must be between 5 and 120 characters.",
+                        IsSuccess = false
+                    };
+                }
                 var user = new Account
                 {
                     FullName = signUpModel.FullName,
@@ -712,6 +794,7 @@ namespace Services.Services
                     UserName = signUpModel.AccountEmail,
                     Email = signUpModel.AccountEmail,
                     PhoneNumber = signUpModel.AccountPhone,
+                    AvatarUrl = "http://res.cloudinary.com/dhovknfgb/image/upload/v1732960399/uzewxkbhnv0xyvahpuj0.jpg",
                     CreateDate = DateTime.Now,
                     Status = 1,
                     Roles = (int)ERole.Supplier,
@@ -748,7 +831,33 @@ namespace Services.Services
                 {
                     return new APIResponseModel { IsSuccess = false, Message = "Account already exists" };
                 }
+                if (signUpModel.FullName.Length < 3 || signUpModel.FullName.Length > 50)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "FullName must be between 3 and 50 characters.",
+                        IsSuccess = false
+                    };
+                }
 
+                if (signUpModel.BirthDate == default || signUpModel.BirthDate.Date >= DateTime.Now.Date)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Date of Birth is invalid.",
+                        IsSuccess = false
+                    };
+                }
+
+
+                if (signUpModel.Address.Length < 5 || signUpModel.Address.Length > 120)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Address must be between 5 and 120 characters.",
+                        IsSuccess = false
+                    };
+                }
                 var user = new Account
                 {
                     FullName = signUpModel.FullName,
@@ -758,6 +867,7 @@ namespace Services.Services
                     UserName = signUpModel.AccountEmail,
                     Email = signUpModel.AccountEmail,
                     PhoneNumber = signUpModel.AccountPhone,
+                    AvatarUrl = "http://res.cloudinary.com/dhovknfgb/image/upload/v1732960399/uzewxkbhnv0xyvahpuj0.jpg",
                     CreateDate = DateTime.Now,
                     Status = 1,
                     Roles = (int)ERole.SuperAdmin,
@@ -1004,6 +1114,7 @@ namespace Services.Services
                 userId.FullName = updateProfile.FullName;
                 userId.PhoneNumber = updateProfile.PhoneNumber;
                 userId.AvatarUrl = updateProfile.AvatarUrl;
+                userId.UpdateDate = DateTime.Now;
 
                 _unitOfWork.AccountRepository.UpdateAsync(userId);
                 _unitOfWork.Save();
