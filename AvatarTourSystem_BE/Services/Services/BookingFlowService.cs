@@ -571,7 +571,7 @@ namespace Services.Services
                             t.CreateDate,
                             QR = t.QRImgUrl
                         }).ToList();
-
+                    var FullName = await _unitOfWork.AccountRepository.GetFirstOrDefaultAsync(query=>query.Where(a=>a.Id == booking.UserId));
                     var hasFeedbacks = await _unitOfWork.FeedbackRepository.GetAllAsyncs(query => query
                                             .Where(f=>f.BookingId == booking.BookingId &&f.Status==1));
                     var hasRates = await _unitOfWork.RateRepository.GetAllAsyncs(query => query
@@ -585,7 +585,7 @@ namespace Services.Services
                         {
                             booking.BookingId,
                             booking.UserId,
-                            FullName = zaloAccount.FullName,
+                            FullName = FullName.FullName,
                             booking.DailyTourId,
                             booking.BookingDate,
                             booking.ExpirationDate,
