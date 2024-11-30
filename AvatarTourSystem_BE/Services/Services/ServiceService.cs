@@ -139,5 +139,37 @@ namespace Services.Services
                 Data = service,
             };
         }
+
+        public async Task<APIResponseModel> GetServicesByLocation(ServiceByLocationModel serviceByLocationModel)
+        {
+            try
+            {
+                var services = await _unitOfWork.ServiceRepository.GetAllAsyncs(query=> query.Where(c=>c.LocationId == serviceByLocationModel.LocatonId));
+                if (services == null)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Not found",
+                        IsSuccess = false
+                    };
+                }
+
+                return new APIResponseModel
+                {
+                    Message = "Found services",
+                    IsSuccess = true,
+                    Data = services
+                };
+
+            }
+            catch(Exception ex)
+            {
+                return new APIResponseModel
+                {
+                    Message = "Error get services" + ex,
+                    IsSuccess = false
+                };
+            }
+        }
     }
 }
