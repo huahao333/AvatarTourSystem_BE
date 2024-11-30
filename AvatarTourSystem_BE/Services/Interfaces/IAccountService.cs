@@ -28,5 +28,6 @@ namespace Services.Interfaces
         Task<APIResponseModel> UpdatePhoneNumberByZaloId(AccountUpdatePhoneWithZaloIdModel updatePhoneWithZaloIdModel);
         Task<APIResponseModel> ChangeAccountRoleAsync(AccountChangeRoleViewModel accountChangeRoleViewModel);
         Task<APIResponseModel> GetAllAccountByRole(AccountInforByRole accountInforByRole);
+        Task<APIResponseModel> UpdateProfile(UpdateProfile updateProfile);
     }
 }

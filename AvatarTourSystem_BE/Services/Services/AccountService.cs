@@ -22,6 +22,7 @@ using Microsoft.Extensions.Configuration;
 using System.Security.Cryptography;
 using System.Net.Http;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 
 namespace Services.Services
 {
@@ -903,6 +904,120 @@ namespace Services.Services
             catch (Exception ex)
             {
                 Console.WriteLine($"Exception: {ex.Message}");
+                return new APIResponseModel
+                {
+                    Message = "An error occurred while retrieving accounts.",
+                    IsSuccess = false,
+                    Data = null
+                };
+            }
+        }
+
+        public async Task<APIResponseModel> UpdateProfile(UpdateProfile updateProfile)
+        {
+            using var transaction = _unitOfWork.BeginTransaction();
+            try
+            {
+                var userId = await _unitOfWork.AccountRepository.GetByIdStringAsync(updateProfile.UserId);
+                if (userId == null)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Account not found",
+                        IsSuccess = false
+                    };
+                }
+                if (string.IsNullOrEmpty(updateProfile.FullName))
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "FullName cannot be empty.",
+                        IsSuccess = false
+                    };
+                }
+
+                if (updateProfile.FullName.Length < 3 || updateProfile.FullName.Length > 50)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "FullName must be between 3 and 50 characters.",
+                        IsSuccess = false
+                    };
+                }
+
+                if (string.IsNullOrEmpty(updateProfile.PhoneNumber))
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "PhoneNumber cannot be empty.",
+                        IsSuccess = false
+                    };
+                }
+
+                if (!Regex.IsMatch(updateProfile.PhoneNumber, @"^0\d{9,14}$"))
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "PhoneNumber must start with '0' and be a valid number with 10 to 15 digits.",
+                        IsSuccess = false
+                    };
+                }
+
+                if (updateProfile.Dob == default || updateProfile.Dob.Value >= DateTime.Now.Date)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Date of Birth is invalid.",
+                        IsSuccess = false
+                    };
+                }
+
+                if (string.IsNullOrEmpty(updateProfile.Address))
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Address cannot be empty.",
+                        IsSuccess = false
+                    };
+                }
+
+                if (updateProfile.Address.Length < 5 || updateProfile.Address.Length > 120)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Address must be between 5 and 120 characters.",
+                        IsSuccess = false
+                    };
+                }
+
+                if (string.IsNullOrEmpty(updateProfile.AvatarUrl))
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "AvatarUrl is not a valid.",
+                        IsSuccess = false
+                    };
+                }
+
+                userId.Dob = updateProfile.Dob;
+                userId.Address = updateProfile.Address;
+                userId.FullName = updateProfile.FullName;
+                userId.PhoneNumber = updateProfile.PhoneNumber;
+                userId.AvatarUrl = updateProfile.AvatarUrl;
+
+                _unitOfWork.AccountRepository.UpdateAsync(userId);
+                _unitOfWork.Save();
+                transaction.Commit();
+
+                return new APIResponseModel
+                {
+                    Message = "Get All Account Successfully",
+                    IsSuccess = true,
+                };
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
                 return new APIResponseModel
                 {
                     Message = "An error occurred while retrieving accounts.",

@@ -190,5 +190,12 @@ namespace AvatarTourSystem_BE.Controllers
             var response = await _accountService.UpdatePhoneNumberByZaloId(updatePhoneWithZaloIdModel);
             return Ok(response);
         }
+
+        [HttpPost("change-profile")]
+        public async Task<IActionResult> UpdateProfile(UpdateProfile updateProfile)
+        {
+            var response = await _accountService.UpdateProfile(updateProfile);
+            return Ok(response);
+        }
     }
 }
