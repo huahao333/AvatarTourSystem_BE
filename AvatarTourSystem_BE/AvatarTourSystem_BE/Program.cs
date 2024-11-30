@@ -9,6 +9,7 @@ using Repositories.Interfaces;
 using Repositories.Repositories;
 using Services.Common;
 using Services.Interfaces;
+using Services.RealTime;
 using Services.Services;
 using System.Security.AccessControl;
 using System.Text.Json.Serialization;
@@ -50,6 +51,8 @@ var SecretKeyZalo = builder.Configuration.GetSection("ZaloAPI:SecretKeyZalo").Va
 builder.Services.Configure<CloudinaryOptions>(builder.Configuration.GetSection("Cloudinary"));
 builder.Services.AddScoped<CloudinaryService>();
 
+builder.Services.AddSignalR();
+
 builder.Services.AddHttpClient();
 builder.Services.AddSingleton(sp =>
 {
@@ -79,7 +82,7 @@ app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
-
+app.MapHub<NotificationHub>("/notificationHub");
 app.MapControllers();
 
 app.Run();

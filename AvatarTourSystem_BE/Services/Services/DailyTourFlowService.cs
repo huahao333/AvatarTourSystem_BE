@@ -2,11 +2,13 @@
 using BusinessObjects.Models;
 using BusinessObjects.ViewModels.DailyTour;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Repositories.Interfaces;
 using Services.Common;
 using Services.Interfaces;
+using Services.RealTime;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,10 +21,12 @@ namespace Services.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+       // private readonly IHubContext<NotificationHub> _hubContext;
         public DailyTourFlowService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+          //  _hubContext = hubContext;
         }
 
         //public async Task<APIResponseModel> CreateDailyTourFlow(DailyTourFlowModel dailyTourFlowModel)
@@ -369,7 +373,7 @@ namespace Services.Services
                 }
 
                 _unitOfWork.Save();
-
+          //      await _hubContext.Clients.All.SendAsync("ReceiveNewDailyTour", dailyTour.DailyTourId, dailyTour.DailyTourName);
                 return new APIResponseModel
                 {
                     Message = "DailyTour and Tickets created successfully",
