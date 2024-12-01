@@ -322,6 +322,15 @@ namespace Services.Services
                 };
             }
 
+            if (account.Status == -1)
+            {
+                return new APIAuthenticationResponseModel
+                {
+                    Status = false,
+                    Message = "Account is disabled. Please contact support for assistance."
+                };
+            }
+
             var passwordHasher = new PasswordHasher<Account>();
             var passwordVerificationResult = passwordHasher.VerifyHashedPassword(account, account.PasswordHash, signInModel.AccountPassword);
 
