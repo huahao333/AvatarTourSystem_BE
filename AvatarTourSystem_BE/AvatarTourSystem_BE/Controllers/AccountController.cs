@@ -197,5 +197,12 @@ namespace AvatarTourSystem_BE.Controllers
             var response = await _accountService.UpdateProfile(updateProfile);
             return Ok(response);
         }
+
+        [HttpPost("block-account")]
+        public async Task<IActionResult> BlockAndUnblockAccount(UpdateStatusViewModel updateStatusViewModel)
+        {
+            var response = await _accountService.BlockAndUnblockAccount(updateStatusViewModel);
+            return Ok(response);
+        }
     }
 }

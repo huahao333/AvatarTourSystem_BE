@@ -29,5 +29,6 @@ namespace Services.Interfaces
         Task<APIResponseModel> ChangeAccountRoleAsync(AccountChangeRoleViewModel accountChangeRoleViewModel);
         Task<APIResponseModel> GetAllAccountByRole(AccountInforByRole accountInforByRole);
         Task<APIResponseModel> UpdateProfile(UpdateProfile updateProfile);
+        Task<APIResponseModel> BlockAndUnblockAccount(UpdateStatusViewModel updateStatusViewModel);
     }
 }
