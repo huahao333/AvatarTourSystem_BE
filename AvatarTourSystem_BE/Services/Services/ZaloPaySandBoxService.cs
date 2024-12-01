@@ -304,6 +304,7 @@ namespace Services.Services
                     ExtraData = JsonConvert.SerializeObject(extradata),
                     Status = -1,
                     CreateDate = DateTime.Now,
+                    UpdateDate =DateTime.Now,
                 };
                 await _unitOfWork.PaymentRepository.AddAsync(newPayment);
 
@@ -315,6 +316,7 @@ namespace Services.Services
                     BookingId = newBooking.BookingId,
                     OrderId = orderId,
                     CreateDate = DateTime.Now,
+                    UpdateDate = DateTime.Now,
                     Status = -1
                 };
                 await _unitOfWork.TransactionsHistoryRepository.AddAsync(transaction);
@@ -1103,14 +1105,14 @@ namespace Services.Services
                     ticket.UpdateDate = DateTime.Now;
                     await _unitOfWork.TicketRepository.UpdateAsync(ticket);
 
-                    var dailyTicketType = await _unitOfWork.DailyTicketRepository.GetAllAsyncs(query => query.Where(d => d.DailyTicketId == ticket.DailyTicketId));
-                    var dailyTicketTypeCapa = dailyTicketType.FirstOrDefault();
-                    if (dailyTicketTypeCapa != null)
-                    {
-                        dailyTicketTypeCapa.Capacity += ticket.Quantity;
-                        dailyTicketTypeCapa.UpdateDate = DateTime.Now;
-                        await _unitOfWork.DailyTicketRepository.UpdateAsync(dailyTicketTypeCapa);
-                    }
+                    //var dailyTicketType = await _unitOfWork.DailyTicketRepository.GetAllAsyncs(query => query.Where(d => d.DailyTicketId == ticket.DailyTicketId));
+                    //var dailyTicketTypeCapa = dailyTicketType.FirstOrDefault();
+                    //if (dailyTicketTypeCapa != null)
+                    //{
+                    //    dailyTicketTypeCapa.Capacity += ticket.Quantity;
+                    //    dailyTicketTypeCapa.UpdateDate = DateTime.Now;
+                    //    await _unitOfWork.DailyTicketRepository.UpdateAsync(dailyTicketTypeCapa);
+                    //}
                 }
 
                 foreach (var ticket in tickets)
@@ -1157,6 +1159,18 @@ namespace Services.Services
                         IsSuccess = false,
                     };
                 }
+                var transactionHis = await _unitOfWork.TransactionsHistoryRepository.GetFirstOrDefaultAsync(query=>query.Where(c=>c.BookingId == booking.BookingId));
+                if(transactionHis == null)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Transaction not found.",
+                        IsSuccess = false,
+                    };
+                }
+
+                transactionHis.Status = 5;
+                await _unitOfWork.TransactionsHistoryRepository.UpdateAsync(transactionHis);
 
                 booking.Status = status;
                 booking.UpdateDate = DateTime.Now;
@@ -1171,7 +1185,7 @@ namespace Services.Services
                     ticket.UpdateDate = DateTime.Now;
                     await _unitOfWork.TicketRepository.UpdateAsync(ticket);
                 }
-
+  
                 foreach (var ticket in tickets)
                 {
                     var servicesUsedByTicket = await _unitOfWork.ServiceUsedByTicketRepository.GetAllAsyncs(query => query

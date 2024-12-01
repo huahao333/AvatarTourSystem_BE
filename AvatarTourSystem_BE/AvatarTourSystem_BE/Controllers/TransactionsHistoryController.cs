@@ -94,5 +94,19 @@ namespace AvatarTourSystem_BE.Controllers
             var result = await _transactionsHistoryService.DeleteTransactionsHistory(id);
             return Ok(result);
         }
+
+        [HttpPost("transaction-histories")]
+        public async Task<IActionResult> GetTransactionsHistoryByZaloId(GetTransactionHistory getTransactionHistory)
+        {
+            var result = await _transactionsHistoryService.GetTransactionsHistoryByZaloId(getTransactionHistory);
+            return Ok(result);
+        }
+
+        [HttpPost("transaction-histories-refund")]
+        public async Task<IActionResult> GetTransactionsHistoryRefundByZaloId(GetTransactionHistory getTransactionHistory)
+        {
+            var result = await _transactionsHistoryService.GetTransactionsHistoryRefundByZaloId(getTransactionHistory);
+            return Ok(result);
+        }
     }
 }

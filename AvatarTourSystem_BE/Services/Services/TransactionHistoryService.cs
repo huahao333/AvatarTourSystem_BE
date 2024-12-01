@@ -3,6 +3,7 @@ using BusinessObjects.Enums;
 using BusinessObjects.Models;
 using BusinessObjects.ViewModels.PaymentMethod;
 using BusinessObjects.ViewModels.TransactionHistory;
+using Microsoft.EntityFrameworkCore;
 using Repositories.Interfaces;
 using Services.Common;
 using Services.Interfaces;
@@ -11,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ZXing;
 
 namespace Services.Services
 {
@@ -42,7 +44,7 @@ namespace Services.Services
         public async Task<APIResponseModel> DeleteTransactionsHistory(string id)
         {
             var transactionsHistory = await _unitOfWork.TransactionsHistoryRepository.GetByIdStringAsync(id);
-            if(transactionsHistory == null)
+            if (transactionsHistory == null)
             {
                 return new APIResponseModel
                 {
@@ -140,10 +142,10 @@ namespace Services.Services
             }
             return new APIResponseModel
             {
-                 Message = "Transaction history not found.",
-                 IsSuccess = false,
-                 Data = null
-            };      
+                Message = "Transaction history not found.",
+                IsSuccess = false,
+                Data = null
+            };
         }
 
         public async Task<APIResponseModel> GetTransactionsHistoryByUserId(string userId)
@@ -163,7 +165,7 @@ namespace Services.Services
             {
                 Message = "Found transactions history successfully.",
                 IsSuccess = true,
-                Data = transactionHistoryViewModels,  
+                Data = transactionHistoryViewModels,
             };
         }
 
@@ -192,6 +194,122 @@ namespace Services.Services
                 IsSuccess = true,
                 Data = result,
             };
+        }
+
+        public async Task<APIResponseModel> GetTransactionsHistoryByZaloId(GetTransactionHistory getTransactionHistory)
+        {
+            try
+            {
+                var user = await _unitOfWork.AccountRepository.GetFirstOrDefaultAsync(query => query.Where(a => a.ZaloUser == getTransactionHistory.ZaloId));
+                if (user == null)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "User not found",
+                        IsSuccess = false
+                    };
+                }
+
+                var transactions = await _unitOfWork.TransactionsHistoryRepository.GetAllAsyncs(query => query
+                                                                 .Where(t => t.UserId == user.Id && t.Status != 5)
+                                                                     .Include(b => b.Bookings)
+                                                                          .ThenInclude(p => p.Payments)
+                                                                     .Include(b => b.Bookings)
+                                                                           .ThenInclude(d => d.DailyTours));
+
+                var result = transactions.Select(t => new
+                {
+                    TransactionId = t.TransactionId,
+                    UserId = t.UserId,
+                    FullName = user.FullName,
+                    StatusTransaction = t.Status,
+                    OrderId = t.OrderId,
+                    UpdateTime = t.UpdateDate,
+                    BookingId = t.BookingId,
+                    DailyTourId = t.Bookings.DailyTourId,
+                    DailyTourName = t.Bookings.DailyTours.DailyTourName,
+                    Bookings = t.Bookings.Payments.Where(c => c.BookingId == t.BookingId && c.Status!=5).Select(c => new
+                    {
+                        TotalAmount = c.Amount,
+                        ResultCode = c.ResultCode,
+
+                    }),
+                }).ToList();
+
+                return new APIResponseModel
+                {
+                    Message = "Find Transaction",
+                    IsSuccess = true,
+                    Data = result
+                };
+
+            }
+            catch (Exception ex)
+            {
+                return new APIResponseModel
+                {
+                    Message = "Error Transaction",
+                    IsSuccess = false
+                };
+            }
+        }
+
+        public async Task<APIResponseModel> GetTransactionsHistoryRefundByZaloId(GetTransactionHistory getTransactionHistory)
+        {
+            try
+            {
+                var user = await _unitOfWork.AccountRepository.GetFirstOrDefaultAsync(query => query.Where(a => a.ZaloUser == getTransactionHistory.ZaloId));
+                if (user == null)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "User not found",
+                        IsSuccess = false
+                    };
+                }
+
+                var transactions = await _unitOfWork.TransactionsHistoryRepository.GetAllAsyncs(query => query
+                                                                 .Where(t => t.UserId == user.Id && t.Status == 5)
+                                                                     .Include(b => b.Bookings)
+                                                                          .ThenInclude(p => p.Payments)
+                                                                     .Include(b => b.Bookings)
+                                                                           .ThenInclude(d => d.DailyTours));
+
+                var result = transactions.Select(t => new
+                {
+                    TransactionId = t.TransactionId,
+                    UserId = t.UserId,
+                    FullName = user.FullName,
+                    StatusTransaction = t.Status,
+                    OrderId = t.OrderId,
+                    UpdateTime = t.UpdateDate,
+                    BookingId = t.BookingId,
+                    DailyTourId = t.Bookings.DailyTourId,
+                    DailyTourName = t.Bookings.DailyTours.DailyTourName,
+                    Bookings = t.Bookings.Payments.Where(c => c.BookingId == t.BookingId && c.Status == 5).Select(c => new
+                    {
+                        TotalAmount = c.Amount,
+                        ResultCode = c.ResultCode,
+
+                    }),
+                }).ToList();
+
+                return new APIResponseModel
+                {
+                    Message = "Find Transaction",
+                    IsSuccess = true,
+                    Data = result
+                };
+
+            }
+            catch (Exception ex)
+            {
+                return new APIResponseModel
+                {
+                    Message = "Error Transaction",
+                    IsSuccess = false
+                };
+            }
         }
     }
 }

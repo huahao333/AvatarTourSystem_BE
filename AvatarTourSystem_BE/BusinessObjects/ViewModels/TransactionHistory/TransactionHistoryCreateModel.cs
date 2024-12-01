@@ -19,4 +19,8 @@ namespace BusinessObjects.ViewModels.TransactionHistory
         //   [FromForm(Name = "status")]
         public EStatus? Status { get; set; }
     }
+    public class GetTransactionHistory
+    {
+        public string ZaloId { get; set;}
+    }
 }
