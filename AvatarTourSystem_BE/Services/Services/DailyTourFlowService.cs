@@ -263,7 +263,7 @@ namespace Services.Services
                     };
                 }
 
-                if (dailyTourFlowModel.StartDate <= DateTime.Now)
+                if (dailyTourFlowModel.StartDate.Value <= DateTime.Now.Date)
                 {
                     return new APIResponseModel
                     {
@@ -272,7 +272,7 @@ namespace Services.Services
                     };
                 }
 
-                if (dailyTourFlowModel.EndDate <= DateTime.Now || dailyTourFlowModel.EndDate <= dailyTourFlowModel.StartDate)
+                if (dailyTourFlowModel.EndDate <= DateTime.Now.Date || dailyTourFlowModel.EndDate <= dailyTourFlowModel.StartDate)
                 {
                     return new APIResponseModel
                     {
