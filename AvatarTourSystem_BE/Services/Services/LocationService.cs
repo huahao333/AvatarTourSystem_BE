@@ -124,7 +124,7 @@ namespace Services.Services
                 {
                     return new APIResponseModel
                     {
-                        Message = "LocationOpeningHours must be within the Destination's opening hours",
+                        Message = "Location Opening Hours must be within the Destination's opening hours",
                         IsSuccess = false
                     };
                 }
@@ -133,7 +133,7 @@ namespace Services.Services
                 {
                     return new APIResponseModel
                     {
-                        Message = "LocationClosingHours must be within the Destination's closing hours",
+                        Message = "Location Closing Hours must be within the Destination's closing hours",
                         IsSuccess = false
                     };
                 }
@@ -173,6 +173,122 @@ namespace Services.Services
             }  
             
         }
+
+
+        public async Task<APIResponseModel> UpdateLocation(LocationUpdateViewModel locationUpdateViewModel)
+        {
+            try
+            {
+                var locationId = await _unitOfWork.LocationRepository.GetFirstOrDefaultAsync(query => query.Where(l=> l.LocationId==locationUpdateViewModel.LocationId));
+                if (locationId == null)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "LocationId not found",
+                        IsSuccess = false
+                    };
+                }
+
+                var destinationId = await _unitOfWork.DestinationRepository.GetFirstOrDefaultAsync(query => query.Where(d => d.DestinationId == locationUpdateViewModel.DestinationId));
+                if (destinationId == null)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "destinationId not found",
+                        IsSuccess = false
+                    };
+                }
+
+                if (string.IsNullOrEmpty(locationUpdateViewModel.LocationAddress))
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Address cannot be left blank",
+                        IsSuccess = false
+                    };
+                }
+                if (string.IsNullOrEmpty(locationUpdateViewModel.LocationName))
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Name location cannot be left blank",
+                        IsSuccess = false
+                    };
+                }
+
+                if (!locationUpdateViewModel.LocationClosingHours.HasValue)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Location closing hours cannot be left blank",
+                        IsSuccess = false
+                    };
+                }
+
+                if (!locationUpdateViewModel.LocationOpeningHours.HasValue)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Location open hours cannot be left blank",
+                        IsSuccess = false
+                    };
+                }
+
+                var destinationOpeningHours = destinationId.DestinationOpeningHours?.TimeOfDay;
+                var destinationClosingHours = destinationId.DestinationClosingHours?.TimeOfDay;
+                var locationOpeningHours = locationUpdateViewModel.LocationOpeningHours?.TimeOfDay;
+                var locationClosingHours = locationUpdateViewModel.LocationClosingHours?.TimeOfDay;
+
+                if (locationOpeningHours < destinationOpeningHours || locationOpeningHours > destinationClosingHours)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Location Opening Hours must be within the Destination's opening hours",
+                        IsSuccess = false
+                    };
+                }
+
+                if (locationClosingHours < destinationOpeningHours || locationClosingHours > destinationClosingHours)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Location Closing Hours must be within the Destination's closing hours",
+                        IsSuccess = false
+                    };
+                }
+
+                var embedCode = await _googleMapsService.GetEmbedCodesAsync(locationUpdateViewModel.LocationAddress);
+
+                var locationGGMap = embedCode;
+                
+                locationId.LocationName = locationUpdateViewModel.LocationName;
+                locationId.LocationGoogleMap = locationGGMap;
+                locationId.LocationImgUrl = locationUpdateViewModel.LocationImgUrl;
+                locationId.LocationHotline = locationUpdateViewModel.LocationHotline;
+                locationId.DestinationId = locationUpdateViewModel.DestinationId;
+                locationId.LocationClosingHours = locationUpdateViewModel.LocationClosingHours;
+                locationId.LocationOpeningHours = locationUpdateViewModel.LocationOpeningHours;
+                locationId.Status = locationUpdateViewModel.Status;
+
+                await _unitOfWork.LocationRepository.UpdateAsync(locationId);
+                _unitOfWork.Save();
+                return new APIResponseModel
+                {
+                    Message = " Location updated Successfully",
+                    IsSuccess = true,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new APIResponseModel
+                {
+                    Message = "Location Google Map is required",
+                    IsSuccess = false
+                };
+            }
+
+        }
+
         public async Task<APIResponseModel> UpdateLocationAsync(LocationUpdateModel updateModel)
         {
             var existinglocation = await _unitOfWork.LocationRepository.GetByIdGuidAsync(updateModel.LocationId);

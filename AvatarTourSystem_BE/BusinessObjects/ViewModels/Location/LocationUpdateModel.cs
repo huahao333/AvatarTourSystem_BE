@@ -24,4 +24,18 @@ namespace BusinessObjects.ViewModels.Location
         //   [FromForm(Name = "status")]
         public EStatus? Status { get; set; }
     }
+
+    public class LocationUpdateViewModel
+    {
+        public string LocationId { get; set; }
+        public string? LocationName { get; set; }
+        public string? LocationImgUrl { get; set; }
+        public string? LocationHotline { get; set; }
+        public string? LocationAddress { get; set; }
+        public string? DestinationId { get; set; }
+        public DateTime? LocationOpeningHours { get; set; }
+        public DateTime? LocationClosingHours { get; set; }
+        public int Status { get; set; }
+
+    }
 }
