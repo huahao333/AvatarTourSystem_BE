@@ -7,6 +7,7 @@ using Repositories.Interfaces;
 using Services.Common;
 using Services.Interfaces;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -31,44 +32,57 @@ namespace Services.Services
             try
             {
                 var list = await _unitOfWork.LocationRepository.GetAllAsync();
-                var embedCodeCache = new Dictionary<string, string>();
+                var embedCodeCache = new ConcurrentDictionary<string, string>();
 
-                var embedTasks = list.Select(async location =>
+                // Sử dụng SemaphoreSlim để giới hạn số lượng task song song
+                var semaphore = new SemaphoreSlim(10);  // Giới hạn 10 task song song
+                var tasks = new List<Task>();
+
+                var listLocation = new List<LocationInforViewModel>();
+
+                foreach (var location in list)
                 {
-                    string embedCode;
-
-                    if (!embedCodeCache.TryGetValue(location.LocationGoogleMap, out embedCode))
+                    tasks.Add(Task.Run(async () =>
                     {
-                        embedCode = await _googleMapsService.GetEmbedCodesAsync(location.LocationGoogleMap);
-                        embedCodeCache[location.LocationGoogleMap] = embedCode;
-                    }
+                        await semaphore.WaitAsync(); // Đảm bảo rằng chỉ có tối đa 10 task chạy song song
+                        try
+                        {
+                            string embedCode;
 
-                    return new
-                    {
-                        Location = location,
-                        EmbedCode = embedCode
-                    };
-                }).ToList();
+                            // Kiểm tra cache trước khi gọi API
+                            if (!embedCodeCache.TryGetValue(location.LocationGoogleMap, out embedCode))
+                            {
+                                embedCode = await _googleMapsService.GetEmbedCodesAsync(location.LocationGoogleMap);
+                                embedCodeCache[location.LocationGoogleMap] = embedCode; // Lưu vào cache
+                            }
 
-                var embedResults = await Task.WhenAll(embedTasks);
+                            var locationInfo = new LocationInforViewModel
+                            {
+                                LocationId = location.LocationId,
+                                LocationName = location.LocationName,
+                                LocationImgUrl = location.LocationImgUrl,
+                                LocationHotline = location.LocationHotline,
+                                Address = location.LocationGoogleMap,
+                                LocationGoogleMap = embedCode,
+                                LocationClosingHours = location.LocationClosingHours,
+                                LocationOpeningHours = location.LocationOpeningHours,
+                                DestinationId = location.DestinationId,
+                                Status = location.Status,
+                            };
 
-                var listLocation = embedResults.Select(result =>
-                {
-                    var location = result.Location;
-                    return new LocationInforViewModel
-                    {
-                        LocationId = location.LocationId,
-                        LocationName = location.LocationName,
-                        LocationImgUrl = location.LocationImgUrl,
-                        LocationHotline = location.LocationHotline,
-                        Address = location.LocationGoogleMap,
-                        LocationGoogleMap = result.EmbedCode,
-                        LocationClosingHours = location.LocationClosingHours,
-                        LocationOpeningHours = location.LocationOpeningHours,
-                        DestinationId = location.DestinationId,
-                        Status = location.Status,
-                    };
-                }).ToList();
+                            lock (listLocation)  // Dùng lock để đảm bảo không có vấn đề về đồng bộ khi thêm vào list
+                            {
+                                listLocation.Add(locationInfo);
+                            }
+                        }
+                        finally
+                        {
+                            semaphore.Release(); // Giải phóng semaphore sau khi task hoàn thành
+                        }
+                    }));
+                }
+
+                await Task.WhenAll(tasks); // Đợi tất cả các task hoàn thành
 
                 return new APIResponseModel
                 {
