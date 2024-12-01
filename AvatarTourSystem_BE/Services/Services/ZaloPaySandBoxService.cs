@@ -997,8 +997,7 @@ namespace Services.Services
                 {
                   //  var transId = await _unitOfWork.PaymentRepository.GetAllAsyncs(query => query.Where(p=> p.MerchantTransId == zptransid));
                    // var bookingId = transId.FirstOrDefault();
-                    var updateBooking = await UpdateStatusBookingAddCapacityAsync(bookingId.BookingId,5);
-
+                    var updateBooking = await UpdateStatusBookingAddCapacityAsync(bookingId.BookingId,5, bookingId.PaymentId);
                     return updateBooking;
                     
                 }
@@ -1144,8 +1143,9 @@ namespace Services.Services
             }
         }
 
-        public async Task<APIResponseModel> UpdateStatusBookingAddCapacityAsync(string bookingId, int status)
+        public async Task<APIResponseModel> UpdateStatusBookingAddCapacityAsync(string bookingId, int status, string paymentId)
         {
+            using var transaction = _unitOfWork.BeginTransaction();
             try
             {
                 var booking = await _unitOfWork.BookingRepository.GetFirstsOrDefaultAsync(b => b.BookingId == bookingId);
@@ -1183,8 +1183,20 @@ namespace Services.Services
                         await _unitOfWork.ServiceUsedByTicketRepository.UpdateAsync(serviceUsed);
                     }
                 }
-
+                var paymentUpdate = await _unitOfWork.PaymentRepository.GetFirstOrDefaultAsync(query => query.Where(p => p.BookingId == paymentId));
+                if (paymentUpdate == null)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Payment not found.",
+                        IsSuccess = false,
+                    };
+                }
+                paymentUpdate.Status = 5;
+                paymentUpdate.UpdateDate = DateTime.Now;
+                await _unitOfWork.PaymentRepository.UpdateAsync(paymentUpdate);
                 _unitOfWork.Save();
+                transaction.Commit();
 
                 return new APIResponseModel
                 {
@@ -1194,6 +1206,7 @@ namespace Services.Services
             }
             catch (Exception ex)
             {
+                transaction.Rollback();
                 return new APIResponseModel
                 {
                     Message = ex.Message,
