@@ -1011,20 +1011,6 @@ namespace Services.Services
 
                 var resultList = new List<object>();
 
-                var allLocations = dailyTours.SelectMany(dt => dt.PackageTours?.TourSegments
-                                    .SelectMany(ts => ts.Destinations?.Locations)
-                                   ).Where(lo => lo.Status == 1).ToList();
-
-                var locationGoogleMapEmbedCodes = new Dictionary<string, string>();
-                var locationTasks = allLocations.Select(async location =>
-                {
-                    if (!locationGoogleMapEmbedCodes.ContainsKey(location.LocationId))
-                    {
-                        var embedCode = await _googleMapsService.GetEmbedCodesAsync(location.LocationGoogleMap);
-                        locationGoogleMapEmbedCodes[location.LocationId] = embedCode;
-                    }
-                });
-                await Task.WhenAll(locationTasks);
                 foreach (var dailyTour in dailyTours)
                 {
                     var pointOfI = await _unitOfWork.PointOfInterestRepository.GetAllAsyncs(query => query);
@@ -1101,7 +1087,7 @@ namespace Services.Services
                                             lo.LocationName,
                                             lo.LocationImgUrl,
                                             lo.LocationHotline,
-                                            locationGoogleMap = locationGoogleMapEmbedCodes.ContainsKey(lo.LocationId) ? locationGoogleMapEmbedCodes[lo.LocationId] : null,
+                                            lo.LocationGoogleMap,
                                             lo.LocationOpeningHours,
                                             lo.LocationClosingHours,
                                             //lo.LocationType,
@@ -1175,21 +1161,7 @@ namespace Services.Services
                 }
 
                 var resultList = new List<object>();
-
-               var allLocations = dailyTours.SelectMany(dt => dt.PackageTours?.TourSegments
-                                    .SelectMany(ts => ts.Destinations?.Locations)
-                                   ).Where(lo => lo.Status == 1).ToList();
-
-                var locationGoogleMapEmbedCodes = new Dictionary<string, string>();
-                var locationTasks = allLocations.Select(async location =>
-                {
-                    if (!locationGoogleMapEmbedCodes.ContainsKey(location.LocationId))
-                    {
-                        var embedCode = await _googleMapsService.GetEmbedCodesAsync(location.LocationGoogleMap);
-                        locationGoogleMapEmbedCodes[location.LocationId] = embedCode;
-                    }
-                });
-                await Task.WhenAll(locationTasks);
+             
 
                 foreach (var dailyTour in dailyTours)
                 {
@@ -1261,7 +1233,7 @@ namespace Services.Services
                                             lo.LocationName,
                                             lo.LocationImgUrl,
                                             lo.LocationHotline,
-                                            locationGoogleMap = locationGoogleMapEmbedCodes.ContainsKey(lo.LocationId) ? locationGoogleMapEmbedCodes[lo.LocationId] : null,
+                                            lo.LocationGoogleMap,
                                             lo.LocationOpeningHours,
                                             lo.LocationClosingHours,
                                             //lo.LocationType,
@@ -1337,20 +1309,6 @@ namespace Services.Services
                 }
 
                 var resultList = new List<object>();
-                var allLocations = dailyTours.SelectMany(dt => dt.PackageTours?.TourSegments
-                                    .SelectMany(ts => ts.Destinations?.Locations)
-                                   ).Where(lo => lo.Status == 1).ToList();
-
-                var locationGoogleMapEmbedCodes = new Dictionary<string, string>();
-                var locationTasks = allLocations.Select(async location =>
-                {
-                    if (!locationGoogleMapEmbedCodes.ContainsKey(location.LocationId))
-                    {
-                        var embedCode = await _googleMapsService.GetEmbedCodesAsync(location.LocationGoogleMap);
-                        locationGoogleMapEmbedCodes[location.LocationId] = embedCode;
-                    }
-                });
-                await Task.WhenAll(locationTasks);
                 foreach (var dailyTour in dailyTours)
                 {
                     var pointOfI = await _unitOfWork.PointOfInterestRepository.GetAllAsyncs(query => query);
@@ -1428,7 +1386,7 @@ namespace Services.Services
                                             lo.LocationName,
                                             lo.LocationImgUrl,
                                             lo.LocationHotline,
-                                            locationGoogleMap = locationGoogleMapEmbedCodes.ContainsKey(lo.LocationId) ? locationGoogleMapEmbedCodes[lo.LocationId] : null,
+                                            lo.LocationGoogleMap,
                                             lo.LocationOpeningHours,
                                             lo.LocationClosingHours,
                                             //lo.LocationType,
@@ -1503,20 +1461,7 @@ namespace Services.Services
                 }
 
                 var resultList = new List<object>();
-                var allLocations = dailyTours.SelectMany(dt => dt.PackageTours?.TourSegments
-                                      .SelectMany(ts => ts.Destinations?.Locations)
-                                     ).Where(lo => lo.Status == 1).ToList();
-
-                var locationGoogleMapEmbedCodes = new Dictionary<string, string>();
-                var locationTasks = allLocations.Select(async location =>
-                {
-                    if (!locationGoogleMapEmbedCodes.ContainsKey(location.LocationId))
-                    {
-                        var embedCode = await _googleMapsService.GetEmbedCodesAsync(location.LocationGoogleMap);
-                        locationGoogleMapEmbedCodes[location.LocationId] = embedCode;
-                    }
-                });
-                await Task.WhenAll(locationTasks);
+              
                 foreach (var dailyTour in dailyTours)
                 {
                     var pointOfI = await _unitOfWork.PointOfInterestRepository.GetAllAsyncs(query => query);
@@ -1593,7 +1538,7 @@ namespace Services.Services
                                             lo.LocationName,
                                             lo.LocationImgUrl,
                                             lo.LocationHotline,
-                                            locationGoogleMap = locationGoogleMapEmbedCodes.ContainsKey(lo.LocationId) ? locationGoogleMapEmbedCodes[lo.LocationId] : null,
+                                            lo.LocationGoogleMap,
                                             lo.LocationOpeningHours,
                                             lo.LocationClosingHours,
                                             //lo.LocationType,

@@ -19,6 +19,7 @@ namespace BusinessObjects.Models
         //public int? LocationType { get; set; }
         public string? LocationImgUrl { get; set; }
         public string? LocationHotline { get; set; }
+        public string? LocationAddress { get; set; }
         public string? LocationGoogleMap { get; set; }
         public DateTime? LocationOpeningHours{ get; set; }
         public DateTime? LocationClosingHours { get; set; }
