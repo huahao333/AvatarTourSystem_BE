@@ -18,6 +18,7 @@ namespace Services.Interfaces
         Task<APIResponseModel> CreateTransactionsHistory(TransactionHistoryCreateModel transactionsHistoryCreateModel);
         Task<APIResponseModel> UpdateTransactionsHistory(TransactionHistoryUpdateModel transactionsHistoryUpdateModel);
         Task<APIResponseModel> DeleteTransactionsHistory(string id);
-
+        Task<APIResponseModel> GetTransactionsHistoryByZaloId(GetTransactionHistory getTransactionHistory);
+        Task<APIResponseModel> GetTransactionsHistoryRefundByZaloId(GetTransactionHistory getTransactionHistory);
     }
 }
