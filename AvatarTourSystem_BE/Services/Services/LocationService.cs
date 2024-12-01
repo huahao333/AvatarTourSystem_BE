@@ -2,6 +2,7 @@
 using BusinessObjects.Enums;
 using BusinessObjects.Models;
 using BusinessObjects.ViewModels.Location;
+using BusinessObjects.ViewModels.Rate;
 using Repositories.Interfaces;
 using Services.Common;
 using Services.Interfaces;
@@ -27,14 +28,49 @@ namespace Services.Services
 
         public async Task<APIResponseModel> GetLocationsAsync()
         {
-            var list = await _unitOfWork.LocationRepository.GetAllAsync();
-            var count = list.Count();
-            return new APIResponseModel
+           try
             {
-                Message = $" Found {count} Location ",
-                IsSuccess = true,
-                Data = list,
-            };
+                var list = await _unitOfWork.LocationRepository.GetAllAsync();
+
+                var embedTasks = list.Select(location =>
+                                       _googleMapsService.GetEmbedCodesAsync(location.LocationGoogleMap)
+                                       .ContinueWith(task => new { Location = location, EmbedCode = task.Result })
+                                       ).ToList();
+                var embedResults = await Task.WhenAll(embedTasks);
+
+                var listLocation = embedResults.Select(result =>
+                {
+                    var location = result.Location;
+                    return new LocationInforViewModel
+                    {
+                        LocationId = location.LocationId,
+                        LocationName = location.LocationName,
+                        LocationImgUrl = location.LocationImgUrl,
+                        LocationHotline = location.LocationHotline,
+                        Address = location.LocationGoogleMap,
+                        LocationGoogleMap = result.EmbedCode,
+                        LocationClosingHours = location.LocationClosingHours,
+                        LocationOpeningHours = location.LocationOpeningHours,
+                        DestinationId = location.DestinationId,
+                        Status = location.Status,
+                    };
+                }).ToList();
+
+                return new APIResponseModel
+                {
+                    Message = $" Found Location ",
+                    IsSuccess = true,
+                    Data = listLocation,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new APIResponseModel
+                {
+                    Message = $" Error get Location ",
+                    IsSuccess = false,
+                };
+            }
         }
         public async Task<APIResponseModel> GetActiveLocationsAsync()
         {
@@ -138,14 +174,14 @@ namespace Services.Services
                     };
                 }
 
-                var embedCode = await _googleMapsService.GetEmbedCodesAsync(createModel.LocationAddress);
+            //    var embedCode = await _googleMapsService.GetEmbedCodesAsync(createModel.LocationAddress);
 
-                var locationGGMap = embedCode;
+             //   var locationGGMap = embedCode;
                 var location = new Location
                 {
                     LocationId = Guid.NewGuid().ToString(),
                     LocationName = createModel.LocationName,
-                    LocationGoogleMap = locationGGMap,
+                    LocationGoogleMap = createModel.LocationAddress,
                     LocationImgUrl = createModel.LocationImgUrl,
                     LocationHotline = createModel.LocationHotline,
                     DestinationId = createModel.DestinationId,
