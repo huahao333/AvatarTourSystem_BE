@@ -174,7 +174,7 @@ namespace Services.Services
                 }
 
                 var destinationId = dailyTourDetails?.PackageTour?.TourSegments?
-                                        .SelectMany(l => l.DestinationId)
+                                        .Select(l => l.DestinationId)
                                         .ToList();
                 var destinationName = dailyTourDetails?.PackageTour?.TourSegments?
                                          .Select(l => l.DestinationName)
@@ -561,7 +561,7 @@ namespace Services.Services
                 }
 
                 var destinationId = dailyTourDetails?.PackageTour?.TourSegments?
-                                        .SelectMany(l => l.DestinationId)
+                                        .Select(l => l.DestinationId)
                                         .ToList();
                 var destinationName = dailyTourDetails?.PackageTour?.TourSegments?
                                          .Select(l => l.DestinationName)

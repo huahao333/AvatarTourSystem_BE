@@ -257,7 +257,7 @@ namespace Services.Services
                     };
                 }
                 var destinationId = dailyTourDetails?.PackageTour?.TourSegments?
-                                        .SelectMany(l => l.DestinationId)
+                                        .Select(l => l.DestinationId.ToString())
                                         .ToList();
                 var destinationName = dailyTourDetails?.PackageTour?.TourSegments?
                                         .Select(l => l.DestinationName)
