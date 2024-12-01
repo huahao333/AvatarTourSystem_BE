@@ -28,14 +28,28 @@ namespace Services.Services
 
         public async Task<APIResponseModel> GetLocationsAsync()
         {
-           try
+            try
             {
                 var list = await _unitOfWork.LocationRepository.GetAllAsync();
+                var embedCodeCache = new Dictionary<string, string>();
 
-                var embedTasks = list.Select(location =>
-                                       _googleMapsService.GetEmbedCodesAsync(location.LocationGoogleMap)
-                                       .ContinueWith(task => new { Location = location, EmbedCode = task.Result })
-                                       ).ToList();
+                var embedTasks = list.Select(async location =>
+                {
+                    string embedCode;
+
+                    if (!embedCodeCache.TryGetValue(location.LocationGoogleMap, out embedCode))
+                    {
+                        embedCode = await _googleMapsService.GetEmbedCodesAsync(location.LocationGoogleMap);
+                        embedCodeCache[location.LocationGoogleMap] = embedCode;
+                    }
+
+                    return new
+                    {
+                        Location = location,
+                        EmbedCode = embedCode
+                    };
+                }).ToList();
+
                 var embedResults = await Task.WhenAll(embedTasks);
 
                 var listLocation = embedResults.Select(result =>
@@ -58,7 +72,7 @@ namespace Services.Services
 
                 return new APIResponseModel
                 {
-                    Message = $" Found Location ",
+                    Message = $"Found Locations",
                     IsSuccess = true,
                     Data = listLocation,
                 };
@@ -67,7 +81,7 @@ namespace Services.Services
             {
                 return new APIResponseModel
                 {
-                    Message = $" Error get Location ",
+                    Message = $"Error getting Locations: {ex.Message}",
                     IsSuccess = false,
                 };
             }
