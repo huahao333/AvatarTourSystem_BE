@@ -321,12 +321,12 @@ namespace Services.Services
                     };
                 }
 
-                var embedCode = await _googleMapsService.GetEmbedCodesAsync(locationUpdateViewModel.LocationAddress);
+                //var embedCode = await _googleMapsService.GetEmbedCodesAsync(locationUpdateViewModel.LocationAddress);
 
-                var locationGGMap = embedCode;
+                //var locationGGMap = embedCode;
                 
                 locationId.LocationName = locationUpdateViewModel.LocationName;
-                locationId.LocationGoogleMap = locationGGMap;
+                locationId.LocationGoogleMap = locationUpdateViewModel.LocationAddress;
                 locationId.LocationImgUrl = locationUpdateViewModel.LocationImgUrl;
                 locationId.LocationHotline = locationUpdateViewModel.LocationHotline;
                 locationId.DestinationId = locationUpdateViewModel.DestinationId;
