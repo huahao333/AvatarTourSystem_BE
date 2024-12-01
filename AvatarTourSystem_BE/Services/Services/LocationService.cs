@@ -3,6 +3,7 @@ using BusinessObjects.Enums;
 using BusinessObjects.Models;
 using BusinessObjects.ViewModels.Location;
 using BusinessObjects.ViewModels.Rate;
+using Microsoft.CodeAnalysis;
 using Repositories.Interfaces;
 using Services.Common;
 using Services.Interfaces;
@@ -12,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Twilio.Rest.Api.V2010.Account;
 
 namespace Services.Services
 {
@@ -31,58 +33,21 @@ namespace Services.Services
         {
             try
             {
-                var list = await _unitOfWork.LocationRepository.GetAllAsync();
-                var embedCodeCache = new ConcurrentDictionary<string, string>();
+               var location = await  _unitOfWork.LocationRepository.GetAllAsync();
 
-                // Sử dụng SemaphoreSlim để giới hạn số lượng task song song
-                var semaphore = new SemaphoreSlim(10);  // Giới hạn 10 task song song
-                var tasks = new List<Task>();
-
-                var listLocation = new List<LocationInforViewModel>();
-
-                foreach (var location in list)
+                var listLocation = location.Select(location => new LocationInforViewModel
                 {
-                    tasks.Add(Task.Run(async () =>
-                    {
-                        await semaphore.WaitAsync(); // Đảm bảo rằng chỉ có tối đa 10 task chạy song song
-                        try
-                        {
-                            string embedCode;
-
-                            // Kiểm tra cache trước khi gọi API
-                            if (!embedCodeCache.TryGetValue(location.LocationGoogleMap, out embedCode))
-                            {
-                                embedCode = await _googleMapsService.GetEmbedCodesAsync(location.LocationGoogleMap);
-                                embedCodeCache[location.LocationGoogleMap] = embedCode; // Lưu vào cache
-                            }
-
-                            var locationInfo = new LocationInforViewModel
-                            {
-                                LocationId = location.LocationId,
-                                LocationName = location.LocationName,
-                                LocationImgUrl = location.LocationImgUrl,
-                                LocationHotline = location.LocationHotline,
-                                Address = location.LocationGoogleMap,
-                                LocationGoogleMap = embedCode,
-                                LocationClosingHours = location.LocationClosingHours,
-                                LocationOpeningHours = location.LocationOpeningHours,
-                                DestinationId = location.DestinationId,
-                                Status = location.Status,
-                            };
-
-                            lock (listLocation)  // Dùng lock để đảm bảo không có vấn đề về đồng bộ khi thêm vào list
-                            {
-                                listLocation.Add(locationInfo);
-                            }
-                        }
-                        finally
-                        {
-                            semaphore.Release(); // Giải phóng semaphore sau khi task hoàn thành
-                        }
-                    }));
-                }
-
-                await Task.WhenAll(tasks); // Đợi tất cả các task hoàn thành
+                    LocationId = location.LocationId,
+                    LocationName = location.LocationName,
+                    LocationImgUrl = location.LocationImgUrl,
+                    LocationHotline = location.LocationHotline,
+                    LocationGoogleMap = location.LocationGoogleMap,
+                    Address = location.LocationAddress,
+                    LocationOpeningHours = location.LocationOpeningHours,
+                    LocationClosingHours = location.LocationClosingHours,
+                    DestinationId = location.DestinationId,
+                    Status = location.Status
+                }).ToList();
 
                 return new APIResponseModel
                 {
@@ -202,14 +167,15 @@ namespace Services.Services
                     };
                 }
 
-            //    var embedCode = await _googleMapsService.GetEmbedCodesAsync(createModel.LocationAddress);
+                var embedCode = await _googleMapsService.GetEmbedCodesAsync(createModel.LocationAddress);
 
-             //   var locationGGMap = embedCode;
-                var location = new Location
+                var locationGGMap = embedCode;
+                var location = new BusinessObjects.Models.Location
                 {
                     LocationId = Guid.NewGuid().ToString(),
                     LocationName = createModel.LocationName,
-                    LocationGoogleMap = createModel.LocationAddress,
+                    LocationAddress = createModel.LocationAddress,
+                    LocationGoogleMap = embedCode,
                     LocationImgUrl = createModel.LocationImgUrl,
                     LocationHotline = createModel.LocationHotline,
                     DestinationId = createModel.DestinationId,
@@ -321,12 +287,13 @@ namespace Services.Services
                     };
                 }
 
-                //var embedCode = await _googleMapsService.GetEmbedCodesAsync(locationUpdateViewModel.LocationAddress);
+                var embedCode = await _googleMapsService.GetEmbedCodesAsync(locationUpdateViewModel.LocationAddress);
 
-                //var locationGGMap = embedCode;
+                var locationGGMap = embedCode;
                 
                 locationId.LocationName = locationUpdateViewModel.LocationName;
-                locationId.LocationGoogleMap = locationUpdateViewModel.LocationAddress;
+                locationId.LocationAddress = locationUpdateViewModel.LocationAddress;
+                locationId.LocationGoogleMap = embedCode;
                 locationId.LocationImgUrl = locationUpdateViewModel.LocationImgUrl;
                 locationId.LocationHotline = locationUpdateViewModel.LocationHotline;
                 locationId.DestinationId = locationUpdateViewModel.DestinationId;

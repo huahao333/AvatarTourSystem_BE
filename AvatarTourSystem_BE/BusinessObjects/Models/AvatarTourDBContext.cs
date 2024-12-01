@@ -52,7 +52,7 @@ namespace BusinessObjects.Models
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            SeedData.Initialize(modelBuilder);
+        //    SeedData.Initialize(modelBuilder);
             modelBuilder.Entity<Account>(entity =>
             {
                 //entity.HasKey(e => e.UserId)
