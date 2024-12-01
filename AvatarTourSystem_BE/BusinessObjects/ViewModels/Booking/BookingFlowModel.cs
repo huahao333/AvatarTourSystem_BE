@@ -23,22 +23,22 @@ namespace BusinessObjects.ViewModels.Booking
     }
     public class BookingFlowDataModel
     {
-        public string BookingId { get; set; }
-        public string ZaloUser { get; set; }
+      //  public string BookingId { get; set; }
+     //   public string ZaloUser { get; set; }
         public string DailyTourId { get; set; }
         public string TourName { get; set; }
-        public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
-        public int? Discount { get; set; } 
-        public float DailyTourPrice { get; set; }
-        public string City { get; set; }
+        //public DateTime StartDate { get; set; }
+        //public DateTime EndDate { get; set; }
+        //public int? Discount { get; set; } 
+        //public float DailyTourPrice { get; set; }
+        //public string City { get; set; }
         public string DestinationId { get; set; }
         public string DestinationName { get; set; }
-        public string LocationId { get; set; }
-        public string ServiceId { get; set; }
-        public string PhoneNumber { get; set; }
-        public DateTime BookingDate { get; set; }
-        public float PriceOfTicket { get; set; }
+        //public string LocationId { get; set; }
+        //public string ServiceId { get; set; }
+        //public string PhoneNumber { get; set; }
+        //public DateTime BookingDate { get; set; }
+        //public float PriceOfTicket { get; set; }
         public DateTime ExpirationDate { get; set; }
         public float TotalPrice { get; set; }
         public string TicketTypeId { get; set; }
