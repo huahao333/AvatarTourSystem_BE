@@ -23,6 +23,7 @@ using System.Security.Cryptography;
 using System.Net.Http;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Services.Services
 {
@@ -319,6 +320,15 @@ namespace Services.Services
                 {
                     Status = false,
                     Message = "Invalid login attempt. Please check your email and password."
+                };
+            }
+
+            if (account.Status == -1)
+            {
+                return new APIAuthenticationResponseModel
+                {
+                    Status = false,
+                    Message = "Account is disabled. Please contact support for assistance."
                 };
             }
 
@@ -1132,6 +1142,70 @@ namespace Services.Services
                 return new APIResponseModel
                 {
                     Message = "An error occurred while retrieving accounts.",
+                    IsSuccess = false,
+                    Data = null
+                };
+            }
+        }
+
+        public async Task<APIResponseModel> BlockAndUnblockAccount(UpdateStatusViewModel updateStatusViewModel)
+        {
+            using var transaction = _unitOfWork.BeginTransaction();
+            try
+            {
+                var account = await _unitOfWork.AccountRepository.GetFirstOrDefaultAsync(query => query.Where(c=>c.Id == updateStatusViewModel.UserId));
+                if (account == null)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Account not found.",
+                        IsSuccess = false,
+                    };
+                }
+                if (account.Roles ==(int)ERole.Customer)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Can't block user account on zalo mini app.",
+                        IsSuccess = false,
+                    };
+                }
+
+                if (account.Status == -1)
+                {
+                    account.Status = 1;
+                }
+                else if (account.Status == 1)
+                {
+                    account.Status = -1;
+                }
+                else
+                {
+                    return new APIResponseModel
+                    {
+                        Message = account.Status == 1 ? "Account has been unblocked." : "Account has been blocked.",
+                        IsSuccess = false,
+                        Data = new {account.Id, account.Status}
+                    };
+                }
+
+                _unitOfWork.AccountRepository.UpdateAsync(account);
+                _unitOfWork.Save();
+                transaction.Commit();
+
+                return new APIResponseModel
+                {
+                    Message="Account Updated",
+                    IsSuccess=true,
+                    Data = account
+                };
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+                return new APIResponseModel
+                {
+                    Message = "An error occurred while updating accounts.",
                     IsSuccess = false,
                     Data = null
                 };

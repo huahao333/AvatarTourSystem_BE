@@ -42,4 +42,9 @@ namespace BusinessObjects.ViewModels.Account
         public string PhoneNumber { get; set; }
         public string AvatarUrl { get; set; }
     }
+
+    public class UpdateStatusViewModel
+    {
+        public string UserId { get; set; }
+    }
 }
