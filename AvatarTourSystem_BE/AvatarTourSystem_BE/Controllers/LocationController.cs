@@ -78,5 +78,13 @@ namespace AvatarTourSystem_BE.Controllers
             var result = await _locationService.DeleteLocation(id);
             return Ok(result);
         }
+
+
+        [HttpPost("locations")]
+        public async Task<IActionResult> UpdateLocation(LocationUpdateViewModel locationUpdateViewModel)
+        {
+            var result = await _locationService.UpdateLocation(locationUpdateViewModel);
+            return Ok(result);
+        }
     }
 }
