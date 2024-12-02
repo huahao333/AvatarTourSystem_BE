@@ -278,14 +278,14 @@ namespace Services.Services
                             await _unitOfWork.ServiceUsedByTicketRepository.AddAsync(serviceUsedByTicket);
                         }
                     }
-                    //var dailyTicketType = await _unitOfWork.DailyTicketRepository.GetAllAsyncs(query => query.Where(d => d.DailyTicketId == ticket.DailyTicketId));
-                    //var dailyTicketTypeCapa = dailyTicketType.FirstOrDefault();
-                    //if (dailyTicketTypeCapa != null)
-                    //{
-                    //    dailyTicketTypeCapa.Capacity -= ticket.TotalQuantity;
-                    //    dailyTicketTypeCapa.UpdateDate = DateTime.Now;
-                    //    await _unitOfWork.DailyTicketRepository.UpdateAsync(dailyTicketTypeCapa);
-                    //}
+                    var dailyTicketType = await _unitOfWork.DailyTicketRepository.GetAllAsyncs(query => query.Where(d => d.DailyTicketId == ticket.DailyTicketId));
+                    var dailyTicketTypeCapa = dailyTicketType.FirstOrDefault();
+                    if (dailyTicketTypeCapa != null)
+                    {
+                        dailyTicketTypeCapa.Capacity += ticket.TotalQuantity;
+                        dailyTicketTypeCapa.UpdateDate = DateTime.Now;
+                        await _unitOfWork.DailyTicketRepository.UpdateAsync(dailyTicketTypeCapa);
+                    }
                 }
                 var newPaymentId = Guid.NewGuid();
                 var newPayment = new Payment
