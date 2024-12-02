@@ -26,6 +26,7 @@ using CloudinaryDotNet;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using BusinessObjects.Enums;
 using BusinessObjects.ViewModels.Rate;
+using System.Collections.Concurrent;
 
 namespace Services.Services
 {
@@ -1105,14 +1106,14 @@ namespace Services.Services
                     ticket.UpdateDate = DateTime.Now;
                     await _unitOfWork.TicketRepository.UpdateAsync(ticket);
 
-                    //var dailyTicketType = await _unitOfWork.DailyTicketRepository.GetAllAsyncs(query => query.Where(d => d.DailyTicketId == ticket.DailyTicketId));
-                    //var dailyTicketTypeCapa = dailyTicketType.FirstOrDefault();
-                    //if (dailyTicketTypeCapa != null)
-                    //{
-                    //    dailyTicketTypeCapa.Capacity += ticket.Quantity;
-                    //    dailyTicketTypeCapa.UpdateDate = DateTime.Now;
-                    //    await _unitOfWork.DailyTicketRepository.UpdateAsync(dailyTicketTypeCapa);
-                    //}
+                    var dailyTicketType = await _unitOfWork.DailyTicketRepository.GetAllAsyncs(query => query.Where(d => d.DailyTicketId == ticket.DailyTicketId));
+                    var dailyTicketTypeCapa = dailyTicketType.FirstOrDefault();
+                    if (dailyTicketTypeCapa != null)
+                    {
+                        dailyTicketTypeCapa.Capacity += ticket.Quantity;
+                        dailyTicketTypeCapa.UpdateDate = DateTime.Now;
+                        await _unitOfWork.DailyTicketRepository.UpdateAsync(dailyTicketTypeCapa);
+                    }
                 }
 
                 foreach (var ticket in tickets)
@@ -1228,6 +1229,238 @@ namespace Services.Services
                 };
             }
         }
+
+        public async Task<APIResponseModel> CreateBookingFromCallbackDatas(
+    ExtraData extradata,
+    float totalAmount,
+    int transTime,
+    string orderId,
+    string tranId,
+    string appId,
+    string mechant,
+    string overallMac,
+    string mac,
+    int resultCode)
+        {
+            try
+            {
+                using (var transaction = _unitOfWork.BeginTransaction())
+                {
+                    // Lấy thông tin zalo account từ ZaloId
+                    var zaloAccount = await _unitOfWork.AccountRepository.GetFirstOrDefaultAsync(query => query
+                        .Where(a => a.ZaloUser == extradata.ZaloId));
+                    if (zaloAccount == null)
+                    {
+                        return new APIResponseModel
+                        {
+                            Message = "Account not found.",
+                            IsSuccess = false,
+                        };
+                    }
+
+                    // Lấy thông tin service IDs liên quan đến DailyTourId
+                    var serviceIds = await GetServiceIdsByDailyTourId(extradata.DailyTourId);
+                    if (serviceIds == null || !serviceIds.Any())
+                    {
+                        return new APIResponseModel
+                        {
+                            Message = "No Service IDs found.",
+                            IsSuccess = false,
+                        };
+                    }
+
+                    // Lấy chi tiết DailyTour
+                    var dailyTour = await _unitOfWork.DailyTourRepository.GetFirstOrDefaultAsync(query => query
+                        .Include(d => d.PackageTours)
+                            .ThenInclude(p => p.TourSegments)
+                            .ThenInclude(ts => ts.Destinations)
+                            .ThenInclude(l => l.Locations)
+                            .ThenInclude(l => l.Services)
+                        .Where(d => d.DailyTourId == extradata.DailyTourId));
+
+                    if (dailyTour == null)
+                    {
+                        return new APIResponseModel
+                        {
+                            Message = "Tour details not found.",
+                            IsSuccess = false,
+                        };
+                    }
+
+                    // Tạo Booking mới
+                    var newBooking = new Booking
+                    {
+                        BookingId = extradata.BookingId,
+                        UserId = zaloAccount.Id,
+                        DailyTourId = extradata.DailyTourId,
+                        BookingDate = DateTime.Now,
+                        ExpirationDate = dailyTour.ExpirationDate,
+                        TotalPrice = totalAmount,
+                        Status = 1,
+                        CreateDate = DateTime.Now,
+                    };
+                    await _unitOfWork.BookingRepository.AddAsync(newBooking);
+
+                    // Xử lý vé và dịch vụ song song
+                    var tickets = new List<Ticket>();
+                    var servicesByTickets = new ConcurrentBag<ServiceUsedByTicket>();
+                    var dailyTicketsToUpdate = new ConcurrentDictionary<string, DailyTicketType>();
+
+                    var destinationId = dailyTour?.PackageTours?.TourSegments?
+                                                   .Select(l => l.DestinationId)
+                                                   .ToList();
+                    var destinationName = dailyTour?.PackageTours?.TourSegments?
+                                            .Select(l => l.Destinations.DestinationName)
+                                            .ToList();
+                    var destinationIdJson = JsonConvert.SerializeObject(destinationId);
+                    var destinationNameJson = JsonConvert.SerializeObject(destinationName);
+
+                    // Đồng bộ quá trình tạo vé
+                    var lockObj = new object(); // Lock object để bảo vệ List<Ticket>
+
+                    await Task.WhenAll(extradata.Tickets.Select(async ticket =>
+                    {
+                        var dailyTicket = await _unitOfWork.DailyTicketRepository.GetFirstOrDefaultAsync(query =>
+                            query.Where(c => c.DailyTicketId == ticket.DailyTicketId));
+
+                        if (dailyTicket != null)
+                        {
+                            dailyTicketsToUpdate.TryAdd(dailyTicket.DailyTicketId, dailyTicket);
+
+                            for (int i = 0; i < ticket.TotalQuantity; i++)
+                            {
+                                var newTicketId = Guid.NewGuid().ToString();
+                                var qrData = new
+                                {
+                                    DailyTourId = newBooking.DailyTourId,
+                                    TourName = dailyTour.DailyTourName,
+                                    DestinationId = destinationIdJson,
+                                    DestinationName = destinationNameJson,
+                                    ExpirationDate = newBooking.ExpirationDate,
+                                    TotalPrice = newBooking.TotalPrice,
+                                    TicketTypeId = newTicketId,
+                                    DailyTicketId = ticket.DailyTicketId,
+                                    TicketName = ticket.TicketName,
+                                    Price = ticket.TotalPrice
+                                };
+                                var qrContent = _encryptionHelperService.EncryptString(JsonConvert.SerializeObject(qrData));
+                                var qrImageUrl = await GenerateQRCode(qrContent);
+
+                                var newTicket = new Ticket
+                                {
+                                    TicketId = newTicketId,
+                                    BookingId = newBooking.BookingId,
+                                    DailyTicketId = ticket.DailyTicketId,
+                                    TicketName = ticket.TicketName,
+                                    Price = ticket.TotalPrice,
+                                    QRImgUrl = qrImageUrl,
+                                    PhoneNumberReference = zaloAccount.PhoneNumber,
+                                    Quantity = 1,
+                                    Status = 1,
+                                    CreateDate = DateTime.Now,
+                                };
+
+                                // Dùng lock để bảo vệ danh sách tickets
+                                lock (lockObj)
+                                {
+                                    tickets.Add(newTicket);
+                                }
+
+                                foreach (var serviceId in serviceIds)
+                                {
+                                    var serviceUsedByTicket = new ServiceUsedByTicket
+                                    {
+                                        SUBTId = Guid.NewGuid().ToString(),
+                                        TicketId = newTicket.TicketId,
+                                        ServiceId = serviceId,
+                                        CreateDate = DateTime.Now,
+                                        Status = 1
+                                    };
+                                    servicesByTickets.Add(serviceUsedByTicket);
+                                }
+                            }
+                        }
+                    }));
+
+                    // Batch insert tickets và services
+                    await _unitOfWork.TicketRepository.AddRangeAsync(tickets);
+                    await _unitOfWork.ServiceUsedByTicketRepository.AddRangeAsync(servicesByTickets.ToList());
+
+                    // Batch update daily ticket capacities
+                    foreach (var entry in dailyTicketsToUpdate)
+                    {
+                        entry.Value.Capacity -= extradata.Tickets
+                            .Where(t => t.DailyTicketId == entry.Key)
+                            .Sum(t => t.TotalQuantity);
+                        entry.Value.UpdateDate = DateTime.Now;
+                    }
+                    await _unitOfWork.DailyTicketRepository.UpdateRangeAsync(dailyTicketsToUpdate.Values.ToList());
+
+                    // Tạo Payment
+                    var newPayment = new Payment
+                    {
+                        PaymentId = Guid.NewGuid().ToString(),
+                        PaymentMethodId = "1",
+                        BookingId = newBooking.BookingId,
+                        AppId = appId,
+                        OrderId = orderId,
+                        TransId = tranId,
+                        TransTime = transTime,
+                        Amount = totalAmount,
+                        MerchantTransId = mechant,
+                        Description = overallMac,
+                        ResultCode = resultCode,
+                        Message = mac,
+                        ExtraData = JsonConvert.SerializeObject(extradata),
+                        Status = 1,
+                        CreateDate = DateTime.Now,
+                    };
+                    await _unitOfWork.PaymentRepository.AddAsync(newPayment);
+
+                    // Tạo lịch sử giao dịch và thông báo
+                    var transactionHistory = new TransactionsHistory
+                    {
+                        TransactionId = Guid.NewGuid().ToString(),
+                        UserId = zaloAccount.Id,
+                        BookingId = newBooking.BookingId,
+                        OrderId = orderId,
+                        CreateDate = DateTime.Now,
+                        Status = 1
+                    };
+                    await _unitOfWork.TransactionsHistoryRepository.AddAsync(transactionHistory);
+
+                    var notification = new Notification
+                    {
+                        NotifyId = Guid.NewGuid().ToString(),
+                        UserId = zaloAccount.Id,
+                        SendDate = DateTime.Now,
+                        Message = "Bạn đã đặt tour du lịch thành công",
+                        Title = "Success",
+                        Type = "Thành công",
+                        Status = 1,
+                    };
+                    await _unitOfWork.NotificationRepository.AddAsync(notification);
+
+                    _unitOfWork.Save();
+                    transaction.Commit();
+
+                    return new APIResponseModel
+                    {
+                        Message = "Booking and tickets created successfully.",
+                        IsSuccess = true,
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new APIResponseModel
+                {
+                    Message = $"Error creating booking: {ex.Message}",
+                    IsSuccess = false,
+                };
+            }
+        }
+
 
     }
 }

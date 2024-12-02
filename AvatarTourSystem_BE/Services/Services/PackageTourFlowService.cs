@@ -1098,6 +1098,8 @@ namespace Services.Services
                 Status = 1
 
             };
+            bool isFirstTicketType = true;
+
             foreach (var ticketTypeModel in createModel.TicketTypesCreate)
             {
                 var ticketType = new TicketType
@@ -1105,12 +1107,14 @@ namespace Services.Services
                     TicketTypeId = Guid.NewGuid().ToString(),
                     TicketTypeName = ticketTypeModel.TicketTypeName,
                     PackageTourId = packageTour.PackageTourId,
-                    MinBuyTicket = 1,
+                    MinBuyTicket = isFirstTicketType ? 1 : ticketTypeModel.MinBuyTicket,
                     CreateDate = DateTime.Now,
                     PriceDefault = ticketTypeModel.PriceDefault,
                     Status = 1,
                 };
+
                 packageTour.TicketTypes.Add(ticketType);
+                isFirstTicketType = false; // Set flag to false after processing the first ticket type
             }
             await _unitOfWork.PackageTourRepository.AddAsync(packageTour);
 
