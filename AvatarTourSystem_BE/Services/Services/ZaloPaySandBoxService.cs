@@ -1106,14 +1106,14 @@ namespace Services.Services
                     ticket.UpdateDate = DateTime.Now;
                     await _unitOfWork.TicketRepository.UpdateAsync(ticket);
 
-                    //var dailyTicketType = await _unitOfWork.DailyTicketRepository.GetAllAsyncs(query => query.Where(d => d.DailyTicketId == ticket.DailyTicketId));
-                    //var dailyTicketTypeCapa = dailyTicketType.FirstOrDefault();
-                    //if (dailyTicketTypeCapa != null)
-                    //{
-                    //    dailyTicketTypeCapa.Capacity += ticket.Quantity;
-                    //    dailyTicketTypeCapa.UpdateDate = DateTime.Now;
-                    //    await _unitOfWork.DailyTicketRepository.UpdateAsync(dailyTicketTypeCapa);
-                    //}
+                    var dailyTicketType = await _unitOfWork.DailyTicketRepository.GetAllAsyncs(query => query.Where(d => d.DailyTicketId == ticket.DailyTicketId));
+                    var dailyTicketTypeCapa = dailyTicketType.FirstOrDefault();
+                    if (dailyTicketTypeCapa != null)
+                    {
+                        dailyTicketTypeCapa.Capacity += ticket.Quantity;
+                        dailyTicketTypeCapa.UpdateDate = DateTime.Now;
+                        await _unitOfWork.DailyTicketRepository.UpdateAsync(dailyTicketTypeCapa);
+                    }
                 }
 
                 foreach (var ticket in tickets)
