@@ -375,8 +375,8 @@ namespace Services.Services
                     UserId = zaloUser.Id,
                     SendDate = DateTime.Now,
                     Message = $"Bạn đã gửi yêu câu hoàn tiền thành công chúng tôi sẽ cố gắng phản hồi cho quý khách sớm nhất",
-                    Title = "Success",
-                    Type = "Thành công",
+                    Title = "Gửi yêu cầu thành công",
+                    Type = "Success",
                     Status = 1,
                 };
                 await _unitOfWork.NotificationRepository.AddAsync(notification);
