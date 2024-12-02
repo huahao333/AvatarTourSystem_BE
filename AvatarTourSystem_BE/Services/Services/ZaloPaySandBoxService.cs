@@ -84,7 +84,7 @@ namespace Services.Services
 
                         if (extradataObject != null)
                         {
-                            var createBookingResponse = await CreateBookingFromCallbackDatas(extradataObject,
+                            var createBookingResponse = await CreateBookingFromCallbackData(extradataObject,
                                                                                             totalAmount,
                                                                                             transTime,
                                                                                             orderId,
