@@ -715,8 +715,8 @@ namespace Services.Services
                     UserId = zaloAccount.Id,
                     SendDate = DateTime.Now,
                     Message = $"Bạn đã đặt tour du lịch thành công",
-                    Title = "Success",
-                    Type = "Thành công",
+                    Title = "Đặt Thành công",
+                    Type = "Success",
                     Status = 1,
                 };
                 await _unitOfWork.NotificationRepository.AddAsync(notification);

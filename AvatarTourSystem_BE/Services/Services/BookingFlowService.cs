@@ -1357,6 +1357,69 @@ namespace Services.Services
         {
             throw new NotImplementedException();
         }
+
+        public async Task<APIResponseModel> CheckBookingQuantity(BookingFlowCreateModel createModel)
+        {
+            using var transaction = _unitOfWork.BeginTransaction();
+            try
+            {
+                var dailyTickets = await _unitOfWork.DailyTicketRepository.GetAllAsyncs(query =>
+                                  query.Where(dt => dt.DailyTourId == createModel.DailyTourId));
+
+                if (dailyTickets == null || !dailyTickets.Any())
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "No tickets found for the specified DailyTourId.",
+                        IsSuccess = false
+                    };
+                }
+
+                foreach (var ticketModel in createModel.Tickets)
+                {
+                    var dailyTicket = dailyTickets.FirstOrDefault(dt => dt.DailyTicketId == ticketModel.DailyTicketId);
+                    if (dailyTicket == null)
+                    {
+                        return new APIResponseModel
+                        {
+                            Message = $"Ticket with ID {ticketModel.DailyTicketId} does not exist.",
+                            IsSuccess = false
+                        };
+                    }
+                    var bookedTickets = await _unitOfWork.TicketRepository.GetAllAsyncs(query =>
+                        query.Where(t => t.DailyTicketId == ticketModel.DailyTicketId && t.Status == 1));
+
+                    int totalBookedQuantity =(int) bookedTickets.Sum(t => t.Quantity);
+
+                    // Kiểm tra số lượng khả dụng
+                    if (totalBookedQuantity + ticketModel.TotalQuantity > dailyTicket.Capacity)
+                    {
+                        return new APIResponseModel
+                        {
+                            Message = $"Not enough tickets available for {dailyTicket.TicketTypes.TicketTypeName}.",
+                            IsSuccess = false
+                        };
+                    }
+                }
+
+                transaction.Commit();
+                return new APIResponseModel
+                {
+                    Message = "Booking quantity is valid.",
+                    IsSuccess = true
+                };
+
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+                return new APIResponseModel
+                {
+                    Message = $"Booking and ticket creation failed: {ex.Message}",
+                    IsSuccess = false,
+                };
+            }
+        }
     }
 
     //public class TwilioSettings

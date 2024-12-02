@@ -55,6 +55,13 @@ namespace AvatarTourSystem_BE.Controllers
             return Ok(result);
         }
 
+        [HttpPost("booking-capacity")]
+        public async Task<IActionResult> CheckBookingQuantity(BookingFlowCreateModel createModel)
+        {
+            var result = await _bookingFlowService.CheckBookingQuantity(createModel);
+            return Ok(result);
+        }
+
         [HttpPost("booking-status-payment-fail")]
         public async Task<IActionResult> UpdateBookingStatusFailPaymentAsync(BookingFlowModel updateModel)
         {
