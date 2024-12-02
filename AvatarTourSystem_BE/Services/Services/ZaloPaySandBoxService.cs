@@ -1169,7 +1169,7 @@ namespace Services.Services
                     };
                 }
 
-                transactionHis.Status = 5;
+                transactionHis.Status = status;
                 await _unitOfWork.TransactionsHistoryRepository.UpdateAsync(transactionHis);
 
                 booking.Status = status;
@@ -1206,7 +1206,7 @@ namespace Services.Services
                         IsSuccess = false,
                     };
                 }
-                paymentUpdate.Status = 5;
+                paymentUpdate.Status = status;
                 paymentUpdate.UpdateDate = DateTime.Now;
                 await _unitOfWork.PaymentRepository.UpdateAsync(paymentUpdate);
                 _unitOfWork.Save();
