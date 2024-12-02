@@ -16,7 +16,9 @@ namespace Repositories.Interfaces
     public interface IGenericCommandRepository<T> where T : class
     {
         Task<T> AddAsync(T entity);
+        Task<IEnumerable<T>> AddRangeAsync(IEnumerable<T> entities);
         Task<T> UpdateAsync(T entity);
+        Task UpdateRangeAsync(IEnumerable<T> entities);
         Task<T> DeleteAsync(T entity);
     }
 

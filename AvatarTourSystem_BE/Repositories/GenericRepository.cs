@@ -141,5 +141,25 @@ namespace Repositories
 
             return await query.FirstOrDefaultAsync();
         }
+
+        public async Task<IEnumerable<T>> AddRangeAsync(IEnumerable<T> entities)
+        {
+            if (entities == null) throw new ArgumentNullException(nameof(entities));
+
+            await _dbSet.AddRangeAsync(entities);
+            return entities;
+        }
+
+        public Task UpdateRangeAsync(IEnumerable<T> entities)
+        {
+            if (entities == null) throw new ArgumentNullException(nameof(entities));
+
+            foreach (var entity in entities)
+            {
+                _dbSet.Attach(entity);
+                _context.Entry(entity).State = EntityState.Modified;
+            }
+            return Task.CompletedTask;
+        }
     }
 }
