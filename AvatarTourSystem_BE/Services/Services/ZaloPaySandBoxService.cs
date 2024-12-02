@@ -1197,7 +1197,7 @@ namespace Services.Services
                         await _unitOfWork.ServiceUsedByTicketRepository.UpdateAsync(serviceUsed);
                     }
                 }
-                var paymentUpdate = await _unitOfWork.PaymentRepository.GetFirstOrDefaultAsync(query => query.Where(p => p.BookingId == paymentId));
+                var paymentUpdate = await _unitOfWork.PaymentRepository.GetFirstOrDefaultAsync(query => query.Where(p => p.PaymentId == paymentId));
                 if (paymentUpdate == null)
                 {
                     return new APIResponseModel
