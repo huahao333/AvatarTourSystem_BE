@@ -1231,16 +1231,16 @@ namespace Services.Services
         }
 
         public async Task<APIResponseModel> CreateBookingFromCallbackDatas(
-     ExtraData extradata,
-     float totalAmount,
-     int transTime,
-     string orderId,
-     string tranId,
-     string appId,
-     string mechant,
-     string overallMac,
-     string mac,
-     int resultCode)
+    ExtraData extradata,
+    float totalAmount,
+    int transTime,
+    string orderId,
+    string tranId,
+    string appId,
+    string mechant,
+    string overallMac,
+    string mac,
+    int resultCode)
         {
             try
             {
@@ -1302,18 +1302,21 @@ namespace Services.Services
                     await _unitOfWork.BookingRepository.AddAsync(newBooking);
 
                     // Xử lý vé và dịch vụ song song
-                    var tickets = new ConcurrentBag<Ticket>();
+                    var tickets = new List<Ticket>();
                     var servicesByTickets = new ConcurrentBag<ServiceUsedByTicket>();
                     var dailyTicketsToUpdate = new ConcurrentDictionary<string, DailyTicketType>();
 
                     var destinationId = dailyTour?.PackageTours?.TourSegments?
-                                                .Select(l => l.DestinationId)
-                                                .ToList();
+                                                   .Select(l => l.DestinationId)
+                                                   .ToList();
                     var destinationName = dailyTour?.PackageTours?.TourSegments?
-                                             .Select(l => l.Destinations.DestinationName)
-                                             .ToList();
+                                            .Select(l => l.Destinations.DestinationName)
+                                            .ToList();
                     var destinationIdJson = JsonConvert.SerializeObject(destinationId);
                     var destinationNameJson = JsonConvert.SerializeObject(destinationName);
+
+                    // Đồng bộ quá trình tạo vé
+                    var lockObj = new object(); // Lock object để bảo vệ List<Ticket>
 
                     await Task.WhenAll(extradata.Tickets.Select(async ticket =>
                     {
@@ -1356,7 +1359,12 @@ namespace Services.Services
                                     Status = 1,
                                     CreateDate = DateTime.Now,
                                 };
-                                tickets.Add(newTicket);
+
+                                // Dùng lock để bảo vệ danh sách tickets
+                                lock (lockObj)
+                                {
+                                    tickets.Add(newTicket);
+                                }
 
                                 foreach (var serviceId in serviceIds)
                                 {
@@ -1374,8 +1382,8 @@ namespace Services.Services
                         }
                     }));
 
-                    // Batch insert tickets and services
-                    await _unitOfWork.TicketRepository.AddRangeAsync(tickets.ToList());
+                    // Batch insert tickets và services
+                    await _unitOfWork.TicketRepository.AddRangeAsync(tickets);
                     await _unitOfWork.ServiceUsedByTicketRepository.AddRangeAsync(servicesByTickets.ToList());
 
                     // Batch update daily ticket capacities
@@ -1452,6 +1460,7 @@ namespace Services.Services
                 };
             }
         }
+
 
     }
 }
