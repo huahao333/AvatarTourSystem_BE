@@ -1306,6 +1306,15 @@ namespace Services.Services
                     var servicesByTickets = new ConcurrentBag<ServiceUsedByTicket>();
                     var dailyTicketsToUpdate = new ConcurrentDictionary<string, DailyTicketType>();
 
+                    var destinationId = dailyTour?.PackageTours?.TourSegments?
+                                                .Select(l => l.DestinationId)
+                                                .ToList();
+                    var destinationName = dailyTour?.PackageTours?.TourSegments?
+                                             .Select(l => l.Destinations.DestinationName)
+                                             .ToList();
+                    var destinationIdJson = JsonConvert.SerializeObject(destinationId);
+                    var destinationNameJson = JsonConvert.SerializeObject(destinationName);
+
                     await Task.WhenAll(extradata.Tickets.Select(async ticket =>
                     {
                         var dailyTicket = await _unitOfWork.DailyTicketRepository.GetFirstOrDefaultAsync(query =>
@@ -1322,6 +1331,8 @@ namespace Services.Services
                                 {
                                     DailyTourId = newBooking.DailyTourId,
                                     TourName = dailyTour.DailyTourName,
+                                    DestinationId = destinationIdJson,
+                                    DestinationName = destinationNameJson,
                                     ExpirationDate = newBooking.ExpirationDate,
                                     TotalPrice = newBooking.TotalPrice,
                                     TicketTypeId = newTicketId,
