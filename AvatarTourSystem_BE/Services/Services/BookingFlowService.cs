@@ -505,7 +505,7 @@ namespace Services.Services
                         IsSuccess = false,
                     };
                 }
-                foreach (var booking in bookings.OrderByDescending(b=>b.CreateDate).ThenByDescending(c=>c.Status==1))
+                foreach (var booking in bookings)
                 {
                     if (booking.ExpirationDate.HasValue && booking.ExpirationDate.Value.Date < utcNowDate)
                     {
@@ -551,7 +551,7 @@ namespace Services.Services
 
                 var bookingWithTickets = new List<object>();
 
-                foreach (var booking in bookings)
+                foreach (var booking in bookings.OrderByDescending(b => b.CreateDate).ThenByDescending(c => c.Status == 1))
                 {
                     var dailyTourDetails = await GetDailyTourDetails(booking.DailyTourId);
 
