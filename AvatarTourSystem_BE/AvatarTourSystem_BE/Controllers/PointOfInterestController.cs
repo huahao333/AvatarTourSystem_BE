@@ -76,5 +76,12 @@ namespace AvatarTourSystem_BE.Controllers
             var result = await _pointOfInterestService.DeletePointOfInterest(id);
             return Ok(result);
         }
+
+        [HttpPost("point-of-interest-location")]
+        public async Task<IActionResult> CreatePointOfInterestByLocation(POICreateByLocationViewModel pOICreateByLocation)
+        {
+            var result = await _pointOfInterestService.CreatePointOfInterestByLocation(pOICreateByLocation);
+            return Ok(result);
+        }
     }
 }

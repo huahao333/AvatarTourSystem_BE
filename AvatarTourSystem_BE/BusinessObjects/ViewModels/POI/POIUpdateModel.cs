@@ -23,4 +23,10 @@ namespace BusinessObjects.ViewModels.POI
         public EStatus? Status { get; set; }
 
     }
+
+    public class POICreateByLocationViewModel
+    {
+        public string? LocationId { get; set; }
+        public bool? StatusPOI { get; set; }
+    }
 }

@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ZXing;
 
 namespace Services.Services
 {
@@ -139,6 +140,58 @@ namespace Services.Services
                 IsSuccess = true,
                 Data = result,
             };
+        }
+
+        public async Task<APIResponseModel> CreatePointOfInterestByLocation(POICreateByLocationViewModel pOICreateByLocation)
+        {
+            try
+            {
+                var location = await _unitOfWork.PointOfInterestRepository.GetFirstOrDefaultAsync(query=>query.Where(a=>a.LocationId == pOICreateByLocation.LocationId));
+                if (location == null)
+                {
+                    var poi = new PointOfInterest
+                    {
+                        PointId = Guid.NewGuid().ToString(),
+                        PointName = "",
+                        LocationId = pOICreateByLocation.LocationId,
+                        Status =1,
+                        CreateDate = DateTime.Now,
+                    };
+                    await _unitOfWork.PointOfInterestRepository.AddAsync(poi);
+                    _unitOfWork.Save();
+                    return new APIResponseModel
+                    {
+                        Message = "Update POI success",
+                        IsSuccess = true
+                    };
+                }
+                int statusPOI = 0;
+                if(pOICreateByLocation.StatusPOI == true)
+                {
+                    statusPOI = 1;
+                }else if(pOICreateByLocation.StatusPOI == false)
+                {
+                    statusPOI = -1;
+                }
+
+                location.Status = statusPOI;
+                await _unitOfWork.PointOfInterestRepository.UpdateAsync(location);
+                _unitOfWork.Save();
+                return new APIResponseModel
+                {
+                    Message = "Update POI successfully",
+                    IsSuccess = true
+                };
+
+            }
+            catch (Exception ex)
+            {
+                return new APIResponseModel
+                {
+                    Message = "Error create POI",
+                    IsSuccess = false
+                };
+            }
         }
     }
 }

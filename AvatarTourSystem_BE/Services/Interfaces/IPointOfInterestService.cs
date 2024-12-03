@@ -16,5 +16,6 @@ namespace Services.Interfaces
         Task<APIResponseModel> CreatePointOfInterest(POICreateModel poiCreateModel);
         Task<APIResponseModel> UpdatePointOfInterest(POIUpdateModel poiUpdateModel);
         Task<APIResponseModel> DeletePointOfInterest(string id);
+        Task<APIResponseModel> CreatePointOfInterestByLocation(POICreateByLocationViewModel pOICreateByLocation);
     }
 }
