@@ -252,7 +252,7 @@ namespace Services.Services
                             CreateDate = t.CreateDate,
                         }).ToList(),
                     };
-                }).OrderByDescending(c=>c.CreateDateOfBoooking);
+                }).OrderByDescending(c=>c.CreateDateOfBoooking).ThenByDescending(i=>i.IsRefundTerms);
 
                 return new APIResponseModel
                 {
