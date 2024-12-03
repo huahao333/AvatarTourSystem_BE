@@ -1532,7 +1532,7 @@ namespace Services.Services
                                                     dailyTour.PackageTours?.PackageTourId == ts.PackageTourId &&
                                                     ts.ServiceByTourSegments.Any(sbts => sbts.Services?.LocationId == c.LocationId && 
                                                                                          sbts.Status == 1))
-                                        .Select(async lo => new
+                                        .Select(lo => new
                                         {
                                             lo.LocationId,
                                             lo.LocationName,
