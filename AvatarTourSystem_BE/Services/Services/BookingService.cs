@@ -208,7 +208,7 @@ namespace Services.Services
                             return false;
                         })?.CreateDate;
 
-                    var compareDate = dateCreateRequest ?? DateTime.Now.Date;
+                    var compareDate = dateCreateRequest.HasValue ? dateCreateRequest.Value : DateTime.Now.Date;
 
                     var isRefundTerms = false;
 
@@ -239,6 +239,7 @@ namespace Services.Services
                         MerchantId = booking.Payments.FirstOrDefault()?.MerchantTransId,
                         DateCreateRequest = dateCreateRequest,
                         Status = booking.Status,
+                        CreateDateOfBoooking = booking.CreateDate,
                         Tickets = booking.Tickets.Where(c => c.BookingId == booking.BookingId).Select(t => new
                         {
                             TicketId = t.TicketId,
@@ -251,7 +252,7 @@ namespace Services.Services
                             CreateDate = t.CreateDate,
                         }).ToList(),
                     };
-                });
+                }).OrderByDescending(c=>c.CreateDateOfBoooking);
 
                 return new APIResponseModel
                 {
