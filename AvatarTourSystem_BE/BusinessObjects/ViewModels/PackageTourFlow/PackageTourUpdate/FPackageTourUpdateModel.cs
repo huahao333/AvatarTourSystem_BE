@@ -10,7 +10,8 @@ namespace BusinessObjects.ViewModels.PackageTourFlow.PackageTourUpdate
 {
     public class FPackageTourUpdateModel
     {
-        public Guid PackageTourId { get; set; }      
+        public Guid PackageTourId { get; set; }
+        public string? PackageTourName { get; set; }
         public string? CityId { get; set; }
         [Required(ErrorMessage = "Package Price is required")]
         [Range(0, double.MaxValue, ErrorMessage = "Price must be greater than 0")]
@@ -20,5 +21,6 @@ namespace BusinessObjects.ViewModels.PackageTourFlow.PackageTourUpdate
         public int? Status { get; set; }
         // Danh sách các điểm đến
         public List<FDestinationUpdateModel> Destinations { get; set; } = new List<FDestinationUpdateModel>();
+        public List<FTicketTypeUpdateModel> fTicketTypeCreates { get; set; } = new List<FTicketTypeUpdateModel>();
     }
 }

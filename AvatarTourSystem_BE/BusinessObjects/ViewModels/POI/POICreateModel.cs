@@ -15,7 +15,6 @@ namespace BusinessObjects.ViewModels.POI
         //  [FromForm(Name = "location-id")]
         public string? LocationId { get; set; } = "";
         // [FromForm(Name = "poi-type-id")]
-        public string? POITypeId { get; set; } = "";
         //  [FromForm(Name = "create-date")]
         public EStatus? Status { get; set; }
 
