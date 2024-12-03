@@ -203,7 +203,7 @@ namespace Services.Services
                             if (match.Success)
                             {
                                 var extractedBookingId = match.Groups[1].Value;
-                                return extractedBookingId == booking.BookingId && c.Status==9;
+                                return extractedBookingId == booking.BookingId ;
                             }
                             return false;
                         })?.CreateDate;
