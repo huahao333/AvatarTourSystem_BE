@@ -505,7 +505,7 @@ namespace Services.Services
                         IsSuccess = false,
                     };
                 }
-                foreach (var booking in bookings)
+                foreach (var booking in bookings.OrderByDescending(b=>b.CreateDate).ThenByDescending(c=>c.Status==1))
                 {
                     if (booking.ExpirationDate.HasValue && booking.ExpirationDate.Value.Date < utcNowDate)
                     {
