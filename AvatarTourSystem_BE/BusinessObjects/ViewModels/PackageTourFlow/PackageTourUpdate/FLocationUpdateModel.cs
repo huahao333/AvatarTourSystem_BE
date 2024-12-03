@@ -14,7 +14,6 @@ namespace BusinessObjects.ViewModels.PackageTourFlow.PackageTourUpdate
 
       
 
-        [JsonIgnore]
         public int? Status { get; set; }
         public List<FServiceUpdateModel> Services { get; set; } = new List<FServiceUpdateModel>();
     }

@@ -11,7 +11,7 @@ namespace BusinessObjects.ViewModels.PackageTourFlow.PackageTourUpdate
     public class FServiceUpdateModel
     {
         public string? ServiceId { get; set; }
-        [JsonIgnore]
+        
         public int? Status { get; set; }
         
     }

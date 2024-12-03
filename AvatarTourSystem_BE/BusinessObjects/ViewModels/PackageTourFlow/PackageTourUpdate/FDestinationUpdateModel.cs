@@ -15,7 +15,7 @@ namespace BusinessObjects.ViewModels.PackageTourFlow.PackageTourUpdate
         public string? DestinationId { get; set; }
         [JsonIgnore]
         public string? CityId { get; set; }
-        [JsonIgnore]
+
         public int? Status { get; set; }
         public List<FLocationUpdateModel> Locations { get; set; } = new List<FLocationUpdateModel>();
     }
