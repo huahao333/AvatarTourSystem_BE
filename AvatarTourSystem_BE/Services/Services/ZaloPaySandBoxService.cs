@@ -718,6 +718,7 @@ namespace Services.Services
                     Title = "Đặt Thành công",
                     Type = "Success",
                     Status = 1,
+                    CreateDate = DateTime.Now,
                 };
                 await _unitOfWork.NotificationRepository.AddAsync(notification);
                 _unitOfWork.Save();
