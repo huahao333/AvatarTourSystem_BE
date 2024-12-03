@@ -666,7 +666,7 @@ namespace Services.Services
                 existingPackageTour.Status = updateModel.Status ?? 1;
 
             }
-            foreach (var tt in updateModel.fTicketTypeCreates)
+            foreach (var tt in updateModel.TicketType)
             {
                 var existingTicketType = await _unitOfWork.TicketTypeRepository.GetByConditionAsync(t => t.TicketTypeId == tt.TicketTypeId && updateModel.PackageTourId.ToString() == existingPackageTour.PackageTourId);
                 if (existingTicketType == null || !existingTicketType.Any())

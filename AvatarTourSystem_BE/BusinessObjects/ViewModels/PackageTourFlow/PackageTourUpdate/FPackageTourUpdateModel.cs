@@ -16,11 +16,12 @@ namespace BusinessObjects.ViewModels.PackageTourFlow.PackageTourUpdate
         [Required(ErrorMessage = "Package Price is required")]
         [Range(0, double.MaxValue, ErrorMessage = "Price must be greater than 0")]
         public float? PackageTourPrice { get; set; }
+        public string? PackageTourImgURL { get; set; }
         [JsonIgnore]
         public DateTime? UpdateDate { get; set; }
         public int? Status { get; set; }
         // Danh sách các điểm đến
         public List<FDestinationUpdateModel> Destinations { get; set; } = new List<FDestinationUpdateModel>();
-        public List<FTicketTypeUpdateModel> fTicketTypeCreates { get; set; } = new List<FTicketTypeUpdateModel>();
+        public List<FTicketTypeUpdateModel> TicketType { get; set; } = new List<FTicketTypeUpdateModel>();
     }
 }
