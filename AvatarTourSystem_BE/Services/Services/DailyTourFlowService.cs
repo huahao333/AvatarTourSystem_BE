@@ -556,12 +556,12 @@ namespace Services.Services
                             };
                         }
 
-                        var ticketTypeExists = await _unitOfWork.TicketTypeRepository.GetByIdStringAsync(ticketType.TicketTypeId);
+                        var ticketTypeExists = await _unitOfWork.DailyTicketRepository.GetByIdStringAsync(ticketType.TicketTypeId);
                         if (ticketTypeExists == null)
                         {
                             return new APIResponseModel
                             {
-                                Message = $"TicketTypeId {ticketType.TicketTypeId} does not exist.",
+                                Message = $"DailyTicketId {ticketType.TicketTypeId} does not exist.",
                                 IsSuccess = false,
                             };
                         }
@@ -576,7 +576,7 @@ namespace Services.Services
                         }
 
                         var existingTicket = (await _unitOfWork.DailyTicketRepository.GetByConditionAsync(x =>
-                                             x.DailyTourId == updateModel.DailyTourId && x.TicketTypeId == ticketType.TicketTypeId))
+                                             x.DailyTourId == updateModel.DailyTourId && x.DailyTicketId == ticketType.TicketTypeId))
                                              .FirstOrDefault();
 
                         if (existingTicket != null)
@@ -589,18 +589,18 @@ namespace Services.Services
                         else
                         {
                             // Add new ticket
-                            var newDailyTicket = new DailyTicketType
-                            {
-                                DailyTicketId = Guid.NewGuid().ToString(),
-                                DailyTourId = updateModel.DailyTourId,
-                                TicketTypeId = ticketType.TicketTypeId,
-                                Capacity = ticketType.Capacity ?? 0,
-                                DailyTicketPrice = ticketType.Price ?? 0,
-                                Status = 1,
-                                CreateDate = DateTime.Now
-                            };
+                            //var newDailyTicket = new DailyTicketType
+                            //{
+                            //    DailyTicketId = Guid.NewGuid().ToString(),
+                            //    DailyTourId = updateModel.DailyTourId,
+                            //    TicketTypeId = ticketType.TicketTypeId,
+                            //    Capacity = ticketType.Capacity ?? 0,
+                            //    DailyTicketPrice = ticketType.Price ?? 0,
+                            //    Status = 1,
+                            //    CreateDate = DateTime.Now
+                            //};
 
-                            await _unitOfWork.DailyTicketRepository.AddAsync(newDailyTicket);
+                            //await _unitOfWork.DailyTicketRepository.AddAsync(newDailyTicket);
                         }
                     }
                 }
