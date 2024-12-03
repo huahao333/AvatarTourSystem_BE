@@ -33,21 +33,58 @@ namespace Services.Services
         {
             try
             {
-               var location = await  _unitOfWork.LocationRepository.GetAllAsync();
+                //var location = await  _unitOfWork.LocationRepository.GetAllAsync();
 
-                var listLocation = location.Select(location => new LocationInforViewModel
+                // var listLocation = location.Select(location => new LocationInforViewModel
+                // {
+                //     LocationId = location.LocationId,
+                //     LocationName = location.LocationName,
+                //     LocationImgUrl = location.LocationImgUrl,
+                //     LocationHotline = location.LocationHotline,
+                //     LocationGoogleMap = location.LocationGoogleMap,
+                //     Address = location.LocationAddress,
+                //     LocationOpeningHours = location.LocationOpeningHours,
+                //     LocationClosingHours = location.LocationClosingHours,
+                //     DestinationId = location.DestinationId,
+                //     Status = location.Status
+                // }).ToList();
+
+                var locations = await _unitOfWork.LocationRepository.GetAllAsync();
+
+                var listLocation = new List<LocationInforViewModel>();
+
+                foreach (var location in locations)
                 {
-                    LocationId = location.LocationId,
-                    LocationName = location.LocationName,
-                    LocationImgUrl = location.LocationImgUrl,
-                    LocationHotline = location.LocationHotline,
-                    LocationGoogleMap = location.LocationGoogleMap,
-                    Address = location.LocationAddress,
-                    LocationOpeningHours = location.LocationOpeningHours,
-                    LocationClosingHours = location.LocationClosingHours,
-                    DestinationId = location.DestinationId,
-                    Status = location.Status
-                }).ToList();
+                    var pointOfInterests = await _unitOfWork.PointOfInterestRepository
+                        .GetAllAsyncs(poi => poi.Where(p=>p.LocationId== location.LocationId));
+
+                    bool statusPOI;
+                    if (!pointOfInterests.Any())
+                    {
+                        statusPOI = false;
+                    }
+                    else
+                    {
+                        statusPOI = pointOfInterests.Any(poi => poi.Status == 1);
+                    }
+
+                    var locationViewModel = new LocationInforViewModel
+                    {
+                        LocationId = location.LocationId,
+                        LocationName = location.LocationName,
+                        LocationImgUrl = location.LocationImgUrl,
+                        LocationHotline = location.LocationHotline,
+                        LocationGoogleMap = location.LocationGoogleMap,
+                        Address = location.LocationAddress,
+                        LocationOpeningHours = location.LocationOpeningHours,
+                        LocationClosingHours = location.LocationClosingHours,
+                        DestinationId = location.DestinationId,
+                        Status = location.Status,
+                        StatusPOI = statusPOI
+                    };
+
+                    listLocation.Add(locationViewModel);
+                }
 
                 return new APIResponseModel
                 {

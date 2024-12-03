@@ -40,5 +40,6 @@ namespace BusinessObjects.ViewModels.Location
         public DateTime? LocationClosingHours { get; set; }
         public string DestinationId { get; set; }
         public int? Status { get; set; }
+        public bool? StatusPOI { get; set; }
     }
 }
