@@ -204,5 +204,19 @@ namespace AvatarTourSystem_BE.Controllers
             var response = await _accountService.BlockAndUnblockAccount(updateStatusViewModel);
             return Ok(response);
         }
+
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPasswordAsync(AccountInforByRole accountInforByRole)
+        {
+            var response = await _accountService.ResetPasswordAsync(accountInforByRole);
+            return Ok(response);
+        }
+
+        [HttpPost("change-password")]
+        public async Task<IActionResult> ChangePasswordAsync(ChangePasswordModel changePasswordModel)
+        {
+            var response = await _accountService.ChangePasswordAsync(changePasswordModel);
+            return Ok(response);
+        }
     }
 }

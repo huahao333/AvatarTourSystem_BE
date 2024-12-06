@@ -30,5 +30,7 @@ namespace Services.Interfaces
         Task<APIResponseModel> GetAllAccountByRole(AccountInforByRole accountInforByRole);
         Task<APIResponseModel> UpdateProfile(UpdateProfile updateProfile);
         Task<APIResponseModel> BlockAndUnblockAccount(UpdateStatusViewModel updateStatusViewModel);
+        Task<APIResponseModel> ChangePasswordAsync(ChangePasswordModel changePasswordModel);
+        Task<APIResponseModel> ResetPasswordAsync(AccountInforByRole accountInforByRole);
     }
 }

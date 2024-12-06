@@ -1211,5 +1211,129 @@ namespace Services.Services
                 };
             }
         }
+
+        public async Task<APIResponseModel> ChangePasswordAsync(ChangePasswordModel changePasswordModel)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(changePasswordModel.UserName))
+                {
+                    return new APIResponseModel
+                    {
+                        IsSuccess = false,
+                        Message = "UserName cannot be empty."
+                    };
+                }
+
+                var user = await _unitOfWork.AccountRepository.GetFirstOrDefaultAsync(query => query.Where(a => a.UserName == changePasswordModel.UserName));
+                if (user == null)
+                {
+                    return new APIResponseModel
+                    {
+                        IsSuccess = false,
+                        Message = "Account does not exist."
+                    };
+                }
+
+                var passwordHasher = new PasswordHasher<Account>();
+                var passwordVerificationResult = passwordHasher.VerifyHashedPassword(user, user.PasswordHash, changePasswordModel.CurrentPassword);
+
+                if (passwordVerificationResult == PasswordVerificationResult.Failed)
+                {
+                    return new APIResponseModel
+                    {
+                        IsSuccess = false,
+                        Message = "Current password is incorrect."
+                    };
+                }
+
+                if (string.IsNullOrWhiteSpace(changePasswordModel.NewPassword) || changePasswordModel.NewPassword.Length < 8)
+                {
+                    return new APIResponseModel
+                    {
+                        IsSuccess = false,
+                        Message = "New password must be at least 8 characters."
+                    };
+                }
+
+                if (changePasswordModel.NewPassword != changePasswordModel.ConfirmPassword)
+                {
+                    return new APIResponseModel
+                    {
+                        IsSuccess = false,
+                        Message = "Confirm password does not match the new password."
+                    };
+                }
+
+                user.PasswordHash = passwordHasher.HashPassword(user, changePasswordModel.NewPassword);
+                user.UpdateDate = DateTime.Now; 
+                _unitOfWork.AccountRepository.UpdateAsync(user);
+                _unitOfWork.Save();
+
+                return new APIResponseModel
+                {
+                    IsSuccess = true,
+                    Message = "Password changed successfully."
+                };
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception: {ex.Message}");
+                return new APIResponseModel
+                {
+                    IsSuccess = false,
+                    Message = "An error occurred while changing the password."
+                };
+            }
+        }
+
+        public async Task<APIResponseModel> ResetPasswordAsync(AccountInforByRole accountInforByRole)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(accountInforByRole.UserName))
+                {
+                    return new APIResponseModel
+                    {
+                        IsSuccess = false,
+                        Message = "UserName cannot be empty."
+                    };
+                }
+
+                var user = await _unitOfWork.AccountRepository.GetFirstOrDefaultAsync(query => query.Where(a => a.Email == accountInforByRole.UserName));
+                if (user == null)
+                {
+                    return new APIResponseModel
+                    {
+                        IsSuccess = false,
+                        Message = "Account does not exist."
+                    };
+                }
+
+                var newPassword = "012345678";
+                var passwordHasher = new PasswordHasher<Account>();
+                user.PasswordHash = passwordHasher.HashPassword(user, newPassword);
+
+                user.UpdateDate = DateTime.Now;
+
+                _unitOfWork.AccountRepository.UpdateAsync(user);
+                 _unitOfWork.Save();
+
+                return new APIResponseModel
+                {
+                    IsSuccess = true,
+                    Message = "Password has been reset to the default value: 012345678."
+                };
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception: {ex.Message}");
+                return new APIResponseModel
+                {
+                    IsSuccess = false,
+                    Message = "An error occurred while resetting the password."
+                };
+            }
+        }
     }
 }
