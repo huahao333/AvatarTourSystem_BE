@@ -211,7 +211,7 @@ namespace Services.Services
                 }
 
                 var transactions = await _unitOfWork.TransactionsHistoryRepository.GetAllAsyncs(query => query
-                                                                 .Where(t => t.UserId == user.Id && t.Status != 5)
+                                                                 .Where(t => t.UserId == user.Id)
                                                                      .Include(b => b.Bookings)
                                                                           .ThenInclude(p => p.Payments)
                                                                      .Include(b => b.Bookings)
