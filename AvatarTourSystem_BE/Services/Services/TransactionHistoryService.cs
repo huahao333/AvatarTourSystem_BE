@@ -232,6 +232,7 @@ namespace Services.Services
                     DailyTourName = t.Bookings.DailyTours.DailyTourName,
                     TotalAmount = t.Bookings?.Payments.FirstOrDefault()?.Amount ?? 0,
                     ResultCode = t.Bookings?.Payments.FirstOrDefault()?.ResultCode.ToString() ?? "",
+                    Mac = t.Bookings?.Payments.FirstOrDefault()?.Message,
                     //Bookings = t.Bookings.Payments.Where(c => c.BookingId == t.BookingId).Select(c => new
                     //{
                     //    TotalAmount = c.Amount,

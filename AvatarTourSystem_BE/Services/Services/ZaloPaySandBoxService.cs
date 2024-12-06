@@ -704,8 +704,8 @@ namespace Services.Services
                     UserId = zaloAccount.Id,
                     BookingId = newBooking.BookingId,
                     OrderId= orderId,
-                    CreateDate = DateTime.UtcNow,
-                    UpdateDate = DateTime.UtcNow,
+                    CreateDate = DateTime.Now,
+                    UpdateDate = DateTime.Now,
                     Status=1
                 };
                 await _unitOfWork.TransactionsHistoryRepository.AddAsync(transaction);
