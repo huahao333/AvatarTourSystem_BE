@@ -229,12 +229,14 @@ namespace Services.Services
                     BookingId = t.BookingId,
                     DailyTourId = t.Bookings.DailyTourId,
                     DailyTourName = t.Bookings.DailyTours.DailyTourName,
-                    Bookings = t.Bookings.Payments.Where(c => c.BookingId == t.BookingId && c.Status!=5).Select(c => new
-                    {
-                        TotalAmount = c.Amount,
-                        ResultCode = c.ResultCode,
+                    TotalAmount = t.Bookings?.Payments.FirstOrDefault()?.Amount ?? 0,
+                    ResultCode = t.Bookings?.Payments.FirstOrDefault()?.ResultCode.ToString() ?? "",
+                    //Bookings = t.Bookings.Payments.Where(c => c.BookingId == t.BookingId).Select(c => new
+                    //{
+                    //    TotalAmount = c.Amount,
+                    //    ResultCode = c.ResultCode,
 
-                    }),
+                    //}),
                 }).ToList();
 
                 return new APIResponseModel
