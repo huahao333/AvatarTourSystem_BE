@@ -10,6 +10,7 @@ using Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using ZXing;
@@ -200,6 +201,7 @@ namespace Services.Services
         {
             try
             {
+                string privateKey = "c3c5e9083d1d294b3c887856487508dd";
                 var user = await _unitOfWork.AccountRepository.GetFirstOrDefaultAsync(query => query.Where(a => a.ZaloUser == getTransactionHistory.ZaloId));
                 if (user == null)
                 {
@@ -232,7 +234,11 @@ namespace Services.Services
                     DailyTourName = t.Bookings.DailyTours.DailyTourName,
                     TotalAmount = t.Bookings?.Payments.FirstOrDefault()?.Amount ?? 0,
                     ResultCode = t.Bookings?.Payments.FirstOrDefault()?.ResultCode.ToString() ?? "",
-                    Mac = t.Bookings?.Payments.FirstOrDefault()?.Message,
+                    AppId = t.Bookings?.Payments.FirstOrDefault()?.AppId,
+                    Mac = MacHelper.GenerateMac(
+                                          t.Bookings?.Payments.FirstOrDefault()?.AppId ?? "",
+                                          t.OrderId,
+                                          privateKey)
                     //Bookings = t.Bookings.Payments.Where(c => c.BookingId == t.BookingId).Select(c => new
                     //{
                     //    TotalAmount = c.Amount,
