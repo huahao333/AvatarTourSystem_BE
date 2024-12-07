@@ -35,7 +35,7 @@ namespace BusinessObjects.ViewModels.Booking
         public string DestinationId { get; set; }
         public string DestinationName { get; set; }
         //public string LocationId { get; set; }
-        //public string ServiceId { get; set; }
+        public string ServiceName { get; set; }
         //public string PhoneNumber { get; set; }
         //public DateTime BookingDate { get; set; }
         //public float PriceOfTicket { get; set; }

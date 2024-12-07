@@ -573,7 +573,7 @@ namespace Services.Services
 
                 var services = destination.SelectMany(l => l.Locations)
                                            .SelectMany(s => s.Services)
-                                           .Select(c => c.ServiceId).ToList();
+                                           .Select(c => c.ServiceName).ToList();
 
                 // Chuyển các thông tin về Destination, Location, và Services thành JSON
                 var destinationIdJson = JsonConvert.SerializeObject(destinationId);
@@ -620,7 +620,7 @@ namespace Services.Services
                             DestinationId = destinationIdJson,
                             DestinationName = destinationNameJson,
                             //LocationId = locationJson,
-                            //ServiceId = servicesJson,
+                            ServiceName = servicesJson,
                             //PhoneNumber = zaloAccount.PhoneNumber,
                             //BookingDate = newBooking.BookingDate,
                             //PriceOfTicket = priceByTicket.DailyTicketPrice,
