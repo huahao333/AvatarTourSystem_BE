@@ -51,6 +51,12 @@ var SecretKeyZalo = builder.Configuration.GetSection("ZaloAPI:SecretKeyZalo").Va
 builder.Services.Configure<CloudinaryOptions>(builder.Configuration.GetSection("Cloudinary"));
 builder.Services.AddScoped<CloudinaryService>();
 
+builder.Services.AddHttpClient<ZaloPaymentService>(client =>
+{
+    client.BaseAddress = new Uri("https://payment-mini.zalo.me/");
+    client.DefaultRequestHeaders.Add("Accept", "application/json");
+});
+
 builder.Services.AddSignalR();
 
 builder.Services.AddHttpClient();
