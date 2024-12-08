@@ -1165,6 +1165,7 @@ namespace Services.Services
 
                 foreach (var dailyTour in dailyTours)
                 {
+                    var bookingCount = await _unitOfWork.BookingRepository.CountAsync(b => b.DailyTourId == dailyTour.DailyTourId);
                     var pointOfI = await _unitOfWork.PointOfInterestRepository.GetAllAsyncs(query => query);
                     var result = new
                     {
@@ -1181,6 +1182,7 @@ namespace Services.Services
                             dailyTour.EndDate,
                             dailyTour.Discount,
                             StatusDailyTour = dailyTour.Status,
+                            BookingCount = bookingCount,
                             TicketTypes = dailyTour.DailyTickets
                                 .Where(c => c.DailyTourId == dailyTour.DailyTourId
                                            && c.TicketTypes?.PackageTourId==dailyTour.PackageTourId
