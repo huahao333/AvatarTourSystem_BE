@@ -1599,6 +1599,16 @@ namespace Services.Services
                         IsSuccess = false
                     };
                 }
+                var packageTour = await _unitOfWork.PackageTourRepository.GetFirstOrDefaultAsync(query => query.Where(p => p.PackageTourId == dailyTour.PackageTourId));
+                if (packageTour.Status == -1 || packageTour.Status ==0)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "DailyTour cannot be updated because the package this DailyTour uses has been removed or disabled.",
+                        IsSuccess = false
+                    };
+                }
+
                 dailyTour.Status = updateStatusDailyTourViewModel.Status;
                 dailyTour.UpdateDate = DateTime.Now;
                 await _unitOfWork.DailyTourRepository.UpdateAsync(dailyTour);
