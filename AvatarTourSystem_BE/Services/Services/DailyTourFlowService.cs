@@ -1140,7 +1140,7 @@ namespace Services.Services
             try
             {
                 var dailyTours = await _unitOfWork.DailyTourRepository.GetAllAsyncs(query => query
-                   .Where(dt=>dt.Status==1)
+               //    .Where(dt=>dt.Status==1)
                     .Include(dt => dt.PackageTours)
                         .ThenInclude(pt => pt.TourSegments)
                            .ThenInclude(des=>des.Destinations)
@@ -1440,7 +1440,7 @@ namespace Services.Services
                 var toDay = DateTime.Now.Date;
                 // Query all DailyTours with related entities in one query
                 var dailyTours = await _unitOfWork.DailyTourRepository.GetAllAsyncs(query => query
-                   .Where(dt =>dt.StartDate.Value.Date<=toDay && dt.EndDate.Value.Date >= toDay && dt.PackageTours.TourSegments.Any(c=>c.Destinations.Locations.Any(loca=>loca.PointOfInterests.Any(poi=>poi.LocationId==loca.LocationId && poi.Status==1))))
+                   .Where(dt =>dt.Status ==1 && dt.StartDate.Value.Date<=toDay && dt.EndDate.Value.Date >= toDay && dt.PackageTours.TourSegments.Any(c=>c.Destinations.Locations.Any(loca=>loca.PointOfInterests.Any(poi=>poi.LocationId==loca.LocationId && poi.Status==1))))
                     .Include(dt => dt.PackageTours)
                         .ThenInclude(pt => pt.TourSegments)
                            .ThenInclude(des => des.Destinations)
@@ -1586,6 +1586,47 @@ namespace Services.Services
             }
         }
 
+        public async Task<APIResponseModel> UpdateStatusDailyTour(UpdateStatusDailyTourViewModel updateStatusDailyTourViewModel)
+        {
+            try
+            {
+                var dailyTour = await _unitOfWork.DailyTourRepository.GetFirstOrDefaultAsync(query=> query.Where(d=>d.DailyTourId==updateStatusDailyTourViewModel.DailyTourId));
+                if (dailyTour == null)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "DailyTour not Found",
+                        IsSuccess = false
+                    };
+                }
+                dailyTour.Status = updateStatusDailyTourViewModel.Status;
+                dailyTour.UpdateDate = DateTime.Now;
+                await _unitOfWork.DailyTourRepository.UpdateAsync(dailyTour);
 
+                var dailyTickets = await _unitOfWork.DailyTicketRepository.GetAllAsyncs(query => query.Where(dt=>dt.DailyTourId==dailyTour.DailyTourId));
+                foreach (var dailyTicket in dailyTickets)
+                {
+                    dailyTicket.Status = updateStatusDailyTourViewModel.Status;
+                    dailyTicket.UpdateDate = DateTime.Now;
+                    await _unitOfWork.DailyTicketRepository.UpdateAsync(dailyTicket);
+                }
+                _unitOfWork.Save();
+
+                return new APIResponseModel
+                {
+                    Message = "Status updated successfully for DailyTour.",
+                    IsSuccess = true,
+                };
+
+            }
+            catch (Exception ex)
+            {
+                return new APIResponseModel
+                {
+                    Message = ex.Message,
+                    IsSuccess = false,
+                };
+            }
+        }
     }
 }   

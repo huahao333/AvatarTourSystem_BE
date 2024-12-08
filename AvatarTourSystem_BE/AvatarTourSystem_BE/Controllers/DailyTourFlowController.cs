@@ -92,5 +92,12 @@ namespace AvatarTourSystem_BE.Controllers
             var response = await _dailyTourFlowService.GetDailyToursHavePOI();
             return Ok(response);
         }
+
+        [HttpPost("daily-tour-status")]
+        public async Task<IActionResult> UpdateStatusDailyTour(UpdateStatusDailyTourViewModel updateStatusDailyTourViewModel)
+        {
+            var response = await _dailyTourFlowService.UpdateStatusDailyTour(updateStatusDailyTourViewModel);
+            return Ok(response);
+        }
     }
 }

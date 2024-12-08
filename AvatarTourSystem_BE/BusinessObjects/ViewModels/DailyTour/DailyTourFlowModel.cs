@@ -69,4 +69,10 @@ namespace BusinessObjects.ViewModels.DailyTour
         public int? Capacity { get; set; }
         public float? Price { get; set; }
     }
+
+    public class UpdateStatusDailyTourViewModel
+    {
+        public string DailyTourId { get; set; }
+        public int Status { get; set;}
+    }
 }
