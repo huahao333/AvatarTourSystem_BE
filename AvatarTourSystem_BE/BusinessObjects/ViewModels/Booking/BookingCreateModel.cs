@@ -25,4 +25,9 @@ namespace BusinessObjects.ViewModels.Booking
       //  [FromForm(Name = "status")]
         public EStatus? Status { get; set; }
     }
+
+    public class BookingByDailyTourIdViewModel
+    {
+        public string? DailyTourId { get; set; }
+    }
 }

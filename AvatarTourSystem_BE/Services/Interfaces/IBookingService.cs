@@ -18,5 +18,6 @@ namespace Services.Interfaces
         Task<APIResponseModel> UpdateBookingAsync(BookingUpdateModel updateModel);
         Task<APIResponseModel> DeleteBooking(string bookingId);
         Task<APIResponseModel> GetAllBookingsAsync();
+        Task<APIResponseModel> GetAllBookingsByDailyTourIdAsync(BookingByDailyTourIdViewModel bookingByDailyTourIdViewModel);
     }
 }

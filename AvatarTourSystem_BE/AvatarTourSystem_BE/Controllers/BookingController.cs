@@ -87,5 +87,12 @@ namespace AvatarTourSystem_BE.Controllers
             var result = await _bookingService.GetAllBookingsAsync();
             return Ok(result);
         }
+
+        [HttpGet("booking-dailytour")]
+        public async Task<IActionResult> GetAllBookingsByDailyTourIdAsync(BookingByDailyTourIdViewModel bookingByDailyTourIdViewModel)
+        {
+            var result = await _bookingService.GetAllBookingsByDailyTourIdAsync(bookingByDailyTourIdViewModel);
+            return Ok(result);
+        }
     }
 }
