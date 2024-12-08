@@ -111,6 +111,7 @@ namespace Services.Services
                         .Sum(sbts => sbts.Services?.ServicePrice ?? 0);
                     await _unitOfWork.PackageTourRepository.UpdateAsync(packageTour);
 
+                    var countDailyTour = await _unitOfWork.DailyTourRepository.CountAsync(q=>q.PackageTourId == packageTour.PackageTourId);
                     var result = new
                     {
                         PackageTour = new
@@ -120,6 +121,7 @@ namespace Services.Services
                             //    packageTour.PackageTourPrice, 
                             PackageTourImgUrl = packageTour.PackageTourImgUrl ?? string.Empty,
                             StatusPackageTour = packageTour.Status,
+                            DailyTourCount = countDailyTour,
                             packageTour.Cities?.CityName,
                             packageTour.CityId,
                             TourSegments = packageTour.TourSegments?
