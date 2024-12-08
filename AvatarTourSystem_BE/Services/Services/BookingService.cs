@@ -281,7 +281,14 @@ namespace Services.Services
                  .ThenInclude(cs => cs.CustomerSupports)
                  .Include(p => p.Payments)
                  .Include(d => d.DailyTours));
-
+                if (bookingInfor == null)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "This DailyTour has no bookings.",
+                        IsSuccess = false,
+                    };
+                }
 
                 var utcNowDate = DateTime.Now.Date;
                 foreach (var booking in bookingInfor)
