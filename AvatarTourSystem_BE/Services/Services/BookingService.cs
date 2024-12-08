@@ -275,6 +275,14 @@ namespace Services.Services
         {
             try
             {
+                if (string.IsNullOrEmpty(bookingByDailyTourIdViewModel.DailyTourId))
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "DailyTourId cannot be empty.",
+                        IsSuccess = false
+                    };
+                }
                 var bookingInfor = await _unitOfWork.BookingRepository.GetAllAsyncs(query =>
             query.Where(b=>b.DailyTourId == bookingByDailyTourIdViewModel.DailyTourId).Include(b => b.Tickets)
                  .Include(a => a.Accounts)
