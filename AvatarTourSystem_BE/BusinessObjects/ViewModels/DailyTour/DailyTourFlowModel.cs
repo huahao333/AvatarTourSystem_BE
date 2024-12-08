@@ -75,4 +75,10 @@ namespace BusinessObjects.ViewModels.DailyTour
         public string DailyTourId { get; set; }
         public int Status { get; set;}
     }
+
+    public class UpdateStatusPackageTourViewModel
+    {
+        public string PackageTourId { get; set; }
+        public int Status { get; set; }
+    }
 }

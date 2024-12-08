@@ -19,5 +19,6 @@ namespace Services.Interfaces
         Task<APIResponseModel> GetDailyToursHaveDiscount();
         Task<APIResponseModel> GetDailyToursHavePOI();
         Task<APIResponseModel> UpdateStatusDailyTour(UpdateStatusDailyTourViewModel updateStatusDailyTourViewModel);
+        Task<APIResponseModel> UpdateStatusPackageTour(UpdateStatusPackageTourViewModel updateStatusPackageTourViewModel);
     }
 }

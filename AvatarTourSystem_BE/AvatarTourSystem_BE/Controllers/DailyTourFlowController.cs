@@ -99,5 +99,12 @@ namespace AvatarTourSystem_BE.Controllers
             var response = await _dailyTourFlowService.UpdateStatusDailyTour(updateStatusDailyTourViewModel);
             return Ok(response);
         }
+
+        [HttpPost("package-tour-status")]
+        public async Task<IActionResult> UpdateStatusPackageTour(UpdateStatusPackageTourViewModel updateStatusPackageTourViewModel)
+        {
+            var response = await _dailyTourFlowService.UpdateStatusPackageTour(updateStatusPackageTourViewModel);
+            return Ok(response);
+        }
     }
 }

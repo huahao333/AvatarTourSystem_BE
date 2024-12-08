@@ -1628,5 +1628,66 @@ namespace Services.Services
                 };
             }
         }
+
+        public async Task<APIResponseModel> UpdateStatusPackageTour(UpdateStatusPackageTourViewModel updateStatusPackageTourViewModel)
+        {
+            try
+            {
+                var packageTour = await _unitOfWork.PackageTourRepository.GetFirstOrDefaultAsync(query => query.Where(p=>p.PackageTourId==updateStatusPackageTourViewModel.PackageTourId));
+                if (packageTour == null)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Package not Found",
+                        IsSuccess = false
+                    };
+                }
+                packageTour.Status = updateStatusPackageTourViewModel.Status;
+                packageTour.UpdateDate = DateTime.Now;
+                await _unitOfWork.PackageTourRepository.UpdateAsync(packageTour);
+
+                var ticketTypes = await _unitOfWork.TicketTypeRepository.GetAllAsyncs(query => query.Where(tt=>tt.PackageTourId == packageTour.PackageTourId));
+                foreach ( var ticketType in ticketTypes)
+                {
+                    ticketType.Status = updateStatusPackageTourViewModel.Status;
+                    ticketType.UpdateDate = DateTime.Now;
+                    await _unitOfWork.TicketTypeRepository.UpdateAsync(ticketType);
+                }
+
+                var dailyTours = await _unitOfWork.DailyTourRepository.GetAllAsyncs(query => query.Where(dt => dt.PackageTourId == packageTour.PackageTourId));
+                foreach (var dailyTour in dailyTours)
+                {
+                    dailyTour.Status = updateStatusPackageTourViewModel.Status;
+                    dailyTour.UpdateDate = DateTime.Now;
+                    await _unitOfWork.DailyTourRepository.UpdateAsync(dailyTour);
+
+                    var dailyTickets = await _unitOfWork.DailyTicketRepository.GetAllAsyncs(query => query.Where(dt => dt.DailyTourId == dailyTour.DailyTourId));
+                    foreach (var dailyTicket in dailyTickets)
+                    {
+                        dailyTicket.Status = updateStatusPackageTourViewModel.Status;
+                        dailyTicket.UpdateDate = DateTime.Now;
+                        await _unitOfWork.DailyTicketRepository.UpdateAsync(dailyTicket);
+                    }
+
+                }
+
+                _unitOfWork.Save();
+
+                return new APIResponseModel
+                {
+                    Message = "Status updated successfully for PackageTour.",
+                    IsSuccess = true,
+                };
+
+            }
+            catch (Exception ex)
+            {
+                return new APIResponseModel
+                {
+                    Message = ex.Message,
+                    IsSuccess = false,
+                };
+            }
+        }
     }
 }   
