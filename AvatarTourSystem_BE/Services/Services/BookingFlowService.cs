@@ -1193,7 +1193,7 @@ namespace Services.Services
             try
             {
                 var dailyTour = await _unitOfWork.DailyTourRepository.GetFirstOrDefaultAsync(query => query
-                    .Where(dt => dt.DailyTourId == dailyTourId && dt.Status == 1)
+                    .Where(dt => dt.DailyTourId == dailyTourId )
                     .Include(dt => dt.PackageTours)
                         .ThenInclude(pt => pt.TourSegments)
                             .ThenInclude(des => des.Destinations)
@@ -1249,7 +1249,7 @@ namespace Services.Services
                         StatusPackageTour = dailyTour.PackageTours?.Status,
                         dailyTour.PackageTours?.Cities?.CityName,
                         TourSegments = dailyTour.PackageTours?.TourSegments
-                            .Where(ts => ts.Status == 1 && ts.Destinations?.Status == 1)
+                        //    .Where(ts => ts.Status == 1 && ts.Destinations?.Status == 1)
                             .Select(ts => new
                             {
                                 ts.TourSegmentId,
@@ -1265,11 +1265,10 @@ namespace Services.Services
                                 ts.Destinations?.DestinationClosingHours,
                                 StatusDestinations = ts.Destinations?.Status,
                                 Locations = ts.Destinations?.Locations
-                                    .Where(c => c.Status == 1 &&
+                                    .Where(c => //c.Status == 1 &&
                                                 c.DestinationId == ts.DestinationId &&
                                                 dailyTour.PackageTours?.PackageTourId == ts.PackageTourId &&
-                                                ts.ServiceByTourSegments.Any(sbts => sbts.Services?.LocationId == c.LocationId &&
-                                                                                      sbts.Status == 1))
+                                                ts.ServiceByTourSegments.Any(sbts => sbts.Services?.LocationId == c.LocationId))
                                     .Select(lo => new
                                     {
                                         lo.LocationId,
@@ -1288,7 +1287,7 @@ namespace Services.Services
                                         StatusLocation = lo.Status,
                                         Services = ts.ServiceByTourSegments
                                             .Where(sbts => sbts.Services?.LocationId == lo.LocationId
-                                                           && sbts.Services?.Status == 1)
+                                                           )
                                             .Select(se => new
                                             {
                                                 se.Services?.ServiceId,
