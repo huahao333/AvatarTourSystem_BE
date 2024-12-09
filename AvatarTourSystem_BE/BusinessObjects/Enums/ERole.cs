@@ -13,5 +13,6 @@ namespace BusinessObjects.Enums
         Staff =2,
         Supplier=3,
         Customer=4,
+        Manager = 5,
     }
 }

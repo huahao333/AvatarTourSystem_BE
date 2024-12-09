@@ -20,6 +20,7 @@ namespace Services.Interfaces
         Task<APIResponseModel> DeleteAccount(string accountId);
         Task<APIResponseModel> SignUpAccountAsync(AccountSignUpModel signUpModel);
         Task<APIResponseModel> SignUpStaffAccountAsync(AccountSignUpModel signUpModel);
+        Task<APIResponseModel> SignUpManagerAccountAsync(AccountSignUpModel signUpModel);
         Task<APIResponseModel> SignUpSupplierAccountAsync(AccountSignUpModel signUpModel);
         Task<APIResponseModel> SignUpSuperAdminAccountAsync(AccountSignUpModel signUpModel);
         Task<APIResponseModel> SignUpAccountZaloAsync(AccountZaloIdModel accountZaloIdModel);
