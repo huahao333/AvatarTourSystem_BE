@@ -1077,6 +1077,15 @@ namespace Services.Services
                         Data = null
                     };
                 }
+                else if (requesterRole == ERole.Manager)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "No permission to view.",
+                        IsSuccess = false,
+                        Data = null
+                    };
+                }
 
                 if (accountsQuery == null || !accountsQuery.Any())
                 {
