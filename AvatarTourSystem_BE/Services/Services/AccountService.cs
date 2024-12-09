@@ -344,11 +344,12 @@ namespace Services.Services
                 };
             }
 
-             var authClaims = new List<Claim>
+            var authClaims = new List<Claim>
                {
                     new Claim(ClaimTypes.Name, account.UserName),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                    new Claim("UserId",account.Id.ToString())
+                    new Claim("UserId",account.Id.ToString()),
+                    new Claim("FullName",account.FullName.ToString()),
                 };
 
             if (!string.IsNullOrEmpty(account.Roles.ToString()))
