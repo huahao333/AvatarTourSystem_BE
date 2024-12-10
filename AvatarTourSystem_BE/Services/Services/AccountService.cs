@@ -350,6 +350,7 @@ namespace Services.Services
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                     new Claim("UserId",account.Id.ToString()),
                     new Claim("FullName",account.FullName.ToString()),
+                    new Claim("Status", account.Status.ToString()),
                 };
 
             if (!string.IsNullOrEmpty(account.Roles.ToString()))
