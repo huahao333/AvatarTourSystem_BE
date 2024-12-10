@@ -319,18 +319,10 @@ namespace Services.Services
                 return new APIAuthenticationResponseModel
                 {
                     Status = false,
-                    Message = "Invalid login attempt. Please check your email and password."
+                    Message = "Invalid login attempt. Please check your username and password."
                 };
             }
 
-            if (account.Status == -1)
-            {
-                return new APIAuthenticationResponseModel
-                {
-                    Status = false,
-                    Message = "Account is disabled. Please contact support for assistance."
-                };
-            }
 
             var passwordHasher = new PasswordHasher<Account>();
             var passwordVerificationResult = passwordHasher.VerifyHashedPassword(account, account.PasswordHash, signInModel.AccountPassword);
@@ -340,7 +332,17 @@ namespace Services.Services
                 return new APIAuthenticationResponseModel
                 {
                     Status = false,
-                    Message = "Invalid login attempt. Please check your email and password."
+                    Message = "Invalid login attempt. Please check your username and password."
+                };
+            }
+
+
+            if (account.Status == -1)
+            {
+                return new APIAuthenticationResponseModel
+                {
+                    Status = false,
+                    Message = "Account is blocked. Please contact support for assistance."
                 };
             }
 
