@@ -374,7 +374,7 @@ namespace Services.Services
                     NotifyId = Guid.NewGuid().ToString(),
                     UserId = zaloUser.Id,
                     SendDate = DateTime.Now,
-                    Message = $"Bạn đã gửi yêu câu hoàn tiền thành công chúng tôi sẽ cố gắng phản hồi cho quý khách sớm nhất",
+                    Message = $"Bạn đã gửi yêu cầu hoàn tiền thành công chúng tôi sẽ cố gắng phản hồi cho quý khách sớm nhất",
                     Title = "Gửi yêu cầu thành công",
                     Type = "Success",
                     Status = 1,
@@ -454,6 +454,65 @@ namespace Services.Services
                 {
                     Message = "Refund successfully and Status updated successfully for booking and related records.",
                     IsSuccess = true,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new APIResponseModel
+                {
+                    Message = ex.Message,
+                    IsSuccess = false,
+                };
+            }
+        }
+
+        public async Task<APIResponseModel> CreateRequestCustomerSupportByZaloId(SupportRequestByZaloIdViewModel supportRequestByZaloIdViewModel)
+        {
+            try
+            {
+                var zaloUser = await _unitOfWork.AccountRepository.GetFirstOrDefaultAsync(query => query.Where(c => c.ZaloUser == supportRequestByZaloIdViewModel.ZaloUser));
+                if ( zaloUser == null)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "UserId not found.",
+                        IsSuccess = false
+                    };
+                }
+
+                var newRequest = new CustomerSupport
+                {
+                    CusSupportId = Guid.NewGuid().ToString(),
+                    UserId = zaloUser.Id,
+                    RequestTypeId = supportRequestByZaloIdViewModel.RequestTypeId,
+                    Description = supportRequestByZaloIdViewModel.Description,
+                    Status = 9,
+                    CreateDate = DateTime.Now,
+                    UpdateDate = DateTime.Now
+                };
+
+                await _unitOfWork.CustomerSupportRepository.AddAsync(newRequest);
+
+                var notification = new BusinessObjects.Models.Notification
+                {
+                    NotifyId = Guid.NewGuid().ToString(),
+                    UserId = zaloUser.Id,
+                    SendDate = DateTime.Now,
+                    Message = $"Bạn đã gửi yêu cầu thành công chúng tôi sẽ cố gắng phản hồi cho quý khách sớm nhất",
+                    Title = "Gửi yêu cầu thành công",
+                    Type = "Success",
+                    Status = 1,
+                    CreateDate = DateTime.Now,
+                    UpdateDate = DateTime.Now,
+                };
+                await _unitOfWork.NotificationRepository.AddAsync(notification);
+                _unitOfWork.Save();
+
+
+                return new APIResponseModel
+                {
+                    Message = "Create successfully",
+                    IsSuccess = true
                 };
             }
             catch (Exception ex)

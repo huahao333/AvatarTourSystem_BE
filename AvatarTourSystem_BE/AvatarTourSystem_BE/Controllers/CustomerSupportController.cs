@@ -84,5 +84,12 @@ namespace AvatarTourSystem_BE.Controllers
             var response = await _customerSupportService.CreateRequestCustomerSupportForRefund(customerSupportRequestCreate);
             return Ok(response);
         }
+
+        [HttpPost("customer-supports-user-request")]
+        public async Task<IActionResult> CreateRequestCustomerSupportByZaloId(SupportRequestByZaloIdViewModel supportRequestByZaloIdViewModel)
+        {
+            var response = await _customerSupportService.CreateRequestCustomerSupportByZaloId(supportRequestByZaloIdViewModel);
+            return Ok(response);
+        }
     }
 }

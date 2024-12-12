@@ -238,12 +238,14 @@ namespace Services.Services
                     };
                 }
 
-                var feedbackAndRateDetails = bookingRate.Select(b => new
-                {
-                    DailyTourName = b.DailyTours?.DailyTourName,
-                    FeedbackMessages = b.Feedbacks?.Select(f => f.FeedbackMsg).ToList(),
-                    Rates = b.Rates?.Select(r => r.RateStar).ToList()
-                }).ToList();
+                var feedbackAndRateDetails = bookingRate
+                    .Where(b => (b.Rates != null && b.Rates.Any()) && (b.Feedbacks != null && b.Feedbacks.Any()))
+                    .Select(b => new
+                   {
+                        DailyTourName = b.DailyTours?.DailyTourName,
+                        FeedbackMessage = b.Feedbacks?.FirstOrDefault()?.FeedbackMsg,
+                        Rate = b.Rates?.FirstOrDefault()?.RateStar
+                    }).ToList();
 
                 return new APIResponseModel
                 {

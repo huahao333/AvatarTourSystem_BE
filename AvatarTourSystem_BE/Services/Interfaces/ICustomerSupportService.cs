@@ -21,5 +21,6 @@ namespace Services.Interfaces
         Task<APIResponseModel> GetAllRequest();
         Task<APIResponseModel> UpdateStatusCustomerSupport(CustomerSupportStatusViewModel customerSupportStatusViewModel);
         Task<APIResponseModel> CreateRequestCustomerSupportForRefund(CustomerSupportRequestCreateModel customerSupportRequestCreate);
+        Task<APIResponseModel> CreateRequestCustomerSupportByZaloId(SupportRequestByZaloIdViewModel supportRequestByZaloIdViewModel);
     }
 }
