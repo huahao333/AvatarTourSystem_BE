@@ -272,7 +272,7 @@ namespace Services.Services
                     }
                     else
                     {
-                        notificationType = "Default";
+                        notificationType = "Success";
                         notificationTitle = "Xử lý yêu cầu thành công";
                     }
                 }
@@ -280,7 +280,7 @@ namespace Services.Services
                 {
                     if (requestType.Type == "Yêu cầu hoàn tiền")
                     {
-                        notificationType = "Fail";
+                        notificationType = "Default";
                         notificationTitle = "Hoàn tiền thất bại";
                     }
                     else
@@ -514,6 +514,62 @@ namespace Services.Services
                     Message = "Create successfully",
                     IsSuccess = true
                 };
+            }
+            catch (Exception ex)
+            {
+                return new APIResponseModel
+                {
+                    Message = ex.Message,
+                    IsSuccess = false,
+                };
+            }
+        }
+        public async Task<APIResponseModel> GetListRequestByZaloId(GetListRequestViewModel getListRequestViewModel)
+        {
+            try
+            {
+                var zaloUser = await _unitOfWork.AccountRepository.GetFirstOrDefaultAsync(query => query.Where(c => c.ZaloUser == getListRequestViewModel.ZaloUser));
+                if (zaloUser == null)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "UserId not found.",
+                        IsSuccess = false
+                    };
+                }
+
+                var requests = await _unitOfWork.CustomerSupportRepository.GetAllAsyncs(query => query.Where(c=>c.UserId == zaloUser.Id && c.RequestTypes.Type != "Yêu cầu hoàn tiền")
+                                                                                                      .Include(r=>r.RequestTypes));
+                if (requests == null)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "Request not found.",
+                        IsSuccess = false
+                    };
+                }
+                var result = requests.Select(b => new
+                {
+                    CustomerSupportID = b.CusSupportId,
+                    UserId = b.UserId,
+                    FullName = zaloUser.FullName,
+                    RequestTypeId = b.RequestTypeId,
+                    Priority = b.RequestTypes?.Priority,
+                    Type = b.RequestTypes?.Type,
+                    Description = b.Description,
+                    CreateDate = b.CreateDate,
+                    DateResolved = b.DateResolved,
+                    Status = b.Status
+                }).ToList();
+
+
+                return new APIResponseModel
+                {
+                    Message = "Found Request.",
+                    IsSuccess = true,
+                    Data = result
+                };
+
             }
             catch (Exception ex)
             {

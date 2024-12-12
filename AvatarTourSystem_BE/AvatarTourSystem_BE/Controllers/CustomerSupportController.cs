@@ -91,5 +91,12 @@ namespace AvatarTourSystem_BE.Controllers
             var response = await _customerSupportService.CreateRequestCustomerSupportByZaloId(supportRequestByZaloIdViewModel);
             return Ok(response);
         }
+
+        [HttpPost("customer-supports-user-request-infor")]
+        public async Task<IActionResult> GetListRequestByZaloId(GetListRequestViewModel getListRequestViewModel)
+        {
+            var response = await _customerSupportService.GetListRequestByZaloId(getListRequestViewModel);
+            return Ok(response);
+        }
     }
 }

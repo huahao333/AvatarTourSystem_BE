@@ -53,4 +53,8 @@ namespace BusinessObjects.ViewModels.CustomerSupport
         public string? RequestTypeId { get; set; }
 
     }
+    public class GetListRequestViewModel
+    {
+        public string? ZaloUser { get; set; }
+    }
 }
