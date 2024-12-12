@@ -222,42 +222,34 @@ namespace Services.Services
                         IsSuccess = false
                     };
                 }
-                var userId = user.Id;
+               
 
-                var bookingIds = (await _unitOfWork.BookingRepository.GetAllAsyncs(
-                        query => query.Where(b => b.UserId == userId))).Select(b => b.BookingId).ToList();
+                var bookingRate = await _unitOfWork.BookingRepository.GetAllAsyncs(query => query.Where(b=>b.UserId==user.Id)
+                                                                                                           .Include(r=>r.Rates)
+                                                                                                           .Include(f=>f.Feedbacks)
+                                                                                                           .Include(d=>d.DailyTours));
 
-                if (!bookingIds.Any())
+                if (bookingRate == null || !bookingRate.Any())
                 {
                     return new APIResponseModel
                     {
-                        Message = "No bookings found for this user",
+                        Message = "Feedback not found",
                         IsSuccess = false
                     };
                 }
 
-                var feedbacks = await _unitOfWork.FeedbackRepository.GetAllAsyncs(
-                    query => query.Where(f => bookingIds.Contains(f.BookingId)));
-
-                var rates = await _unitOfWork.RateRepository.GetAllAsyncs(
-                    query => query.Where(r => bookingIds.Contains(r.BookingId)));
-
-                var tourName = await _unitOfWork.BookingRepository.GetAllAsyncs(query => query.Include(c=>c.DailyTours)
-                                                                   .Where(b=> bookingIds.Contains(b.BookingId)));
-
-                var result = new
+                var feedbackAndRateDetails = bookingRate.Select(b => new
                 {
-                    Feedbacks = feedbacks,
-                    Rates = rates,
-                    TourName = tourName.Select(c=>c.DailyTours.DailyTourName),
-                };
-
+                    DailyTourName = b.DailyTours?.DailyTourName,
+                    FeedbackMessages = b.Feedbacks?.Select(f => f.FeedbackMsg).ToList(),
+                    Rates = b.Rates?.Select(r => r.RateStar).ToList()
+                }).ToList();
 
                 return new APIResponseModel
                 {
                     Message = "Data retrieved successfully",
                     IsSuccess = true,
-                    Data = result
+                    Data = feedbackAndRateDetails
                 };
 
             }
