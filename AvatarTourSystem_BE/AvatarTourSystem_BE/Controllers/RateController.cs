@@ -108,5 +108,12 @@ namespace AvatarTourSystem_BE.Controllers
             var result = await _rateService.DeleteRate(id);
             return Ok(result);
         }
+
+        [HttpPost("feedback-rate-zaloid")]
+        public async Task<IActionResult> GetFeedbackAndRateByZaloId(RateAndFeedbackByzZaoloId rateAndFeedbackByzZaoloId)
+        {
+            var result = await _rateService.GetFeedbackAndRateByZaloId(rateAndFeedbackByzZaoloId);
+            return Ok(result);
+        }
     }
 }

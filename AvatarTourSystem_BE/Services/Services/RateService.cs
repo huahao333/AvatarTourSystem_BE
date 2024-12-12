@@ -3,6 +3,7 @@ using BusinessObjects.Enums;
 using BusinessObjects.Models;
 using BusinessObjects.ViewModels.Feedback;
 using BusinessObjects.ViewModels.Rate;
+using Microsoft.EntityFrameworkCore;
 using Repositories.Interfaces;
 using Services.Common;
 using Services.Interfaces;
@@ -11,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ZXing;
 
 namespace Services.Services
 {
@@ -205,6 +207,68 @@ namespace Services.Services
                 Data = result,
             };
 
+        }
+
+        public async Task<APIResponseModel> GetFeedbackAndRateByZaloId(RateAndFeedbackByzZaoloId rateAndFeedbackByzZaoloId)
+        {
+            try
+            {
+                var user = await _unitOfWork.AccountRepository.GetFirstOrDefaultAsync(query => query.Where(a=>a.ZaloUser==rateAndFeedbackByzZaoloId.ZaloId));
+                if (user == null)
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "ZaloId not found",
+                        IsSuccess = false
+                    };
+                }
+                var userId = user.Id;
+
+                var bookingIds = (await _unitOfWork.BookingRepository.GetAllAsyncs(
+                        query => query.Where(b => b.UserId == userId))).Select(b => b.BookingId).ToList();
+
+                if (!bookingIds.Any())
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "No bookings found for this user",
+                        IsSuccess = false
+                    };
+                }
+
+                var feedbacks = await _unitOfWork.FeedbackRepository.GetAllAsyncs(
+                    query => query.Where(f => bookingIds.Contains(f.BookingId)));
+
+                var rates = await _unitOfWork.RateRepository.GetAllAsyncs(
+                    query => query.Where(r => bookingIds.Contains(r.BookingId)));
+
+                var tourName = await _unitOfWork.BookingRepository.GetAllAsyncs(query => query.Include(c=>c.DailyTours)
+                                                                   .Where(b=> bookingIds.Contains(b.BookingId)));
+
+                var result = new
+                {
+                    Feedbacks = feedbacks,
+                    Rates = rates,
+                    TourName = tourName.Select(c=>c.DailyTours.DailyTourName),
+                };
+
+
+                return new APIResponseModel
+                {
+                    Message = "Data retrieved successfully",
+                    IsSuccess = true,
+                    Data = result
+                };
+
+            }
+            catch (Exception ex)
+            {
+                return new APIResponseModel
+                {
+                    Message = "Error get data",
+                    IsSuccess = false
+                };
+            }
         }
     }
 }

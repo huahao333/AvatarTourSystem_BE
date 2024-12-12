@@ -21,4 +21,8 @@ namespace BusinessObjects.ViewModels.Rate
      //   [FromForm(Name = "status")]
         public EStatus? Status { get; set; }
     }
+    public class RateAndFeedbackByzZaoloId
+    {
+        public string? ZaloId { get; set; }
+    }
 }

@@ -20,6 +20,7 @@ namespace Services.Interfaces
         Task<APIResponseModel> CreateRate(RateCreateModel rate);
         Task<APIResponseModel> UpdateRate(RateUpdateModel rate);
         Task<APIResponseModel> DeleteRate(string id);
+        Task<APIResponseModel> GetFeedbackAndRateByZaloId(RateAndFeedbackByzZaoloId rateAndFeedbackByzZaoloId);
 
     }
 }
