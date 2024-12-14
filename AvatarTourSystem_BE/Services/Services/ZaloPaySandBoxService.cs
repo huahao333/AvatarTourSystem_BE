@@ -776,7 +776,7 @@ namespace Services.Services
             try
             {
                 var dailyTour = await _unitOfWork.DailyTourRepository.GetFirstOrDefaultAsync(query => query
-                    .Where(dt => dt.DailyTourId == dailyTourId && dt.Status == 1)
+                    .Where(dt => dt.DailyTourId == dailyTourId)
                     .Include(dt => dt.PackageTours)
                         .ThenInclude(pt => pt.TourSegments)
                             .ThenInclude(ts => ts.Destinations)
@@ -792,7 +792,7 @@ namespace Services.Services
 
                 var serviceIds = dailyTour.PackageTours?.TourSegments
                     .SelectMany(ts => ts.ServiceByTourSegments)
-                    .Where(sbts => sbts.Services?.Status == 1)
+                //    .Where(sbts => sbts.Services?.Status == 1)
                     .Select(se => se.Services?.ServiceId)
                     .Distinct()
                     .ToList();
@@ -811,7 +811,7 @@ namespace Services.Services
             {
                 // Truy vấn lấy DailyTour với các điều kiện lọc ban đầu
                 var dailyTour = await _unitOfWork.DailyTourRepository.GetFirstOrDefaultAsync(query => query
-                    .Where(dt => dt.DailyTourId == dailyTourId && dt.Status == 1)
+                    .Where(dt => dt.DailyTourId == dailyTourId)
                     .Include(dt => dt.PackageTours)
                         .ThenInclude(pt => pt.TourSegments)
                             .ThenInclude(des => des.Destinations)
@@ -848,7 +848,7 @@ namespace Services.Services
                         StatusPackageTour = dailyTour.PackageTours?.Status,
                         CityName = dailyTour.PackageTours?.Cities?.CityName,
                         TourSegments = dailyTour.PackageTours?.TourSegments
-                            .Where(ts => ts.Status == 1 && ts.Destinations?.Status == 1)
+                         //   .Where(ts => ts.Status == 1 && ts.Destinations?.Status == 1)
                             .Select(ts => new TourSegmentsModel
                             {
                                 TourSegmentId = ts.TourSegmentId,
@@ -863,10 +863,10 @@ namespace Services.Services
                                 DestinationOpeningHours = ts.Destinations?.DestinationOpeningHours,
                                 DestinationClosingHours = ts.Destinations?.DestinationClosingHours,
                                 Locations = ts.Destinations?.Locations
-                                    .Where(c => c.Status == 1 &&
+                                    .Where(c =>
                                                 c.DestinationId == ts.DestinationId &&
                                                 dailyTour.PackageTours?.PackageTourId == ts.PackageTourId &&
-                                                ts.ServiceByTourSegments.Any(sbts => sbts.Services?.LocationId == c.LocationId && sbts.Status == 1))
+                                                ts.ServiceByTourSegments.Any(sbts => sbts.Services?.LocationId == c.LocationId))
                                     .Select(lo => new LocationsModel
                                     {
                                         LocationId = lo.LocationId,
@@ -878,7 +878,7 @@ namespace Services.Services
                                         LocationGoogleMap = lo.LocationGoogleMap,
                                         DestinationId = lo.DestinationId,
                                         Services = ts.ServiceByTourSegments
-                                            .Where(sbts => sbts.Services?.LocationId == lo.LocationId && sbts.Services?.Status == 1)
+                                            .Where(sbts => sbts.Services?.LocationId == lo.LocationId)
                                             .Select(se => new ServicesModel
                                             {
                                                 ServiceId = se.Services?.ServiceId,

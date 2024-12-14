@@ -1151,7 +1151,7 @@ namespace Services.Services
             try
             {
                 var dailyTour = await _unitOfWork.DailyTourRepository.GetFirstOrDefaultAsync(query => query
-                    .Where(dt => dt.DailyTourId == dailyTourId && dt.Status == 1)
+                    .Where(dt => dt.DailyTourId == dailyTourId )
                     .Include(dt => dt.PackageTours)
                         .ThenInclude(pt => pt.TourSegments)
                             .ThenInclude(ts => ts.Destinations)
@@ -1170,7 +1170,7 @@ namespace Services.Services
                 var pointOfI = await _unitOfWork.PointOfInterestRepository.GetAllAsyncs(query => query);
 
                 var servicesForDestination = dailyTour.PackageTours?.TourSegments
-                    .Where(ts => ts.Status == 1 && ts.Destinations?.Status == 1)
+                   // .Where(ts => ts.Status == 1 && ts.Destinations?.Status == 1)
                     .SelectMany(ts => ts.Destinations?.Locations
                         .Where(l => l.Status == 1 && l.DestinationId == destinationId)
                         .SelectMany(l => l.Services
