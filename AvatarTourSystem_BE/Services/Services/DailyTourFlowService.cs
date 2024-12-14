@@ -263,7 +263,7 @@ namespace Services.Services
                     };
                 }
 
-                if (dailyTourFlowModel.StartDate.Value <= DateTime.Now.Date)
+                if (dailyTourFlowModel.StartDate.Value < DateTime.Now.Date)
                 {
                     return new APIResponseModel
                     {
@@ -459,7 +459,7 @@ namespace Services.Services
                 // Validate StartDate if provided
                 if (updateModel.StartDate.HasValue)
                 {
-                    if (updateModel.StartDate.Value <= DateTime.Now.Date && updateModel.StartDate.Value != existingDailyTour.StartDate)
+                    if (updateModel.StartDate.Value < DateTime.Now.Date && updateModel.StartDate.Value != existingDailyTour.StartDate)
                     {
                         return new APIResponseModel
                         {
