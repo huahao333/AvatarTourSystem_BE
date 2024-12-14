@@ -1172,9 +1172,9 @@ namespace Services.Services
                 var servicesForDestination = dailyTour.PackageTours?.TourSegments
                    // .Where(ts => ts.Status == 1 && ts.Destinations?.Status == 1)
                     .SelectMany(ts => ts.Destinations?.Locations
-                        .Where(l => l.Status == 1 && l.DestinationId == destinationId)
+                        .Where(l => l.DestinationId == destinationId)
                         .SelectMany(l => l.Services
-                            .Where(s => s.Status == 1)
+                            //.Where(s => s.Status == 1)
                             .Select(s => s.ServiceId))
                         ?? Enumerable.Empty<string>())
                     .Distinct()
