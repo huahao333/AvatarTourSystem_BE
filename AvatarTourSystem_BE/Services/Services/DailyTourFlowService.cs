@@ -1139,7 +1139,7 @@ namespace Services.Services
         {
             try
             {
-                var dailyTours = await _unitOfWork.DailyTourRepository.GetAllAsyncs(query => query.OrderBy(s=> s.Status==1)
+                var dailyTours = await _unitOfWork.DailyTourRepository.GetAllAsyncs(query => query.OrderByDescending(s=> s.Status==1)
                //    .Where(dt=>dt.Status==1)
                     .Include(dt => dt.PackageTours)
                         .ThenInclude(pt => pt.TourSegments)
