@@ -431,7 +431,8 @@ namespace Services.Services
         tt.PriceDefault,
         tt.Status
     })
-        .OrderByDescending(tt => tt.MinBuyTicket)
+        .OrderByDescending(tt => tt.TicketTypeName.Length)
+        
 
     .ToList(),
 
