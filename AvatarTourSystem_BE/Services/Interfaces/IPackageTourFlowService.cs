@@ -13,6 +13,7 @@ namespace Services.Interfaces
     public interface IPackageTourFlowService
     {
         Task<APIResponseModel> GetPackageTourFlowAsync();
+        Task<APIResponseModel> GetPackageTourFlowActiveAsync();
         Task<APIResponseModel> GetPackageTourFlowByIdAsync(string id);
         Task<APIResponseModel> GetDestinationByCityIdAsync(GetDestinationByCityModel cityId);
         Task<APIResponseModel> GetLocationsByDestinationIdAsync(GetLocationByDestinationModel destinationId);

@@ -210,6 +210,135 @@ namespace Services.Services
             }
         }
 
+        public async Task<APIResponseModel> GetPackageTourFlowActiveAsync()
+        {
+            try
+            {
+                var packageToursRespone = await _unitOfWork.PackageTourRepository.GetAllAsyncs(query => query.OrderByDescending(s => s.Status == 1)
+     .Where(pt => pt.Status == 1)
+    .Include(pt => pt.TourSegments)
+        .ThenInclude(ts => ts.Destinations)
+        .ThenInclude(d => d.Locations)
+        .ThenInclude(l => l.Services)
+        .ThenInclude(sbt => sbt.ServiceByTourSegments)
+    .Include(pt => pt.TicketTypes)
+);
+                if (packageToursRespone == null || !packageToursRespone.Any())
+                {
+                    return new APIResponseModel
+                    {
+                        Message = "No Package Tours Found",
+                        IsSuccess = false,
+                    };
+                }
+                var resultList = new List<object>();
+                foreach (var packageTour in packageToursRespone)
+                {
+                    float totalServicePrice = packageTour.TourSegments
+                        .SelectMany(ts => ts.ServiceByTourSegments)
+                        .Where(sbts => sbts.Status != -1 && sbts.Services?.Status == 1)
+                        .Sum(sbts => sbts.Services?.ServicePrice ?? 0);
+                    await _unitOfWork.PackageTourRepository.UpdateAsync(packageTour);
+
+                    var countDailyTour = await _unitOfWork.DailyTourRepository.CountAsync(q => q.PackageTourId == packageTour.PackageTourId);
+                    var result = new
+                    {
+                        PackageTour = new
+                        {
+                            packageTour.PackageTourId,
+                            packageTour.PackageTourName,
+                            //    packageTour.PackageTourPrice, 
+                            PackageTourImgUrl = packageTour.PackageTourImgUrl ?? string.Empty,
+                            StatusPackageTour = packageTour.Status,
+                            DailyTourCount = countDailyTour,
+                            packageTour.Cities?.CityName,
+                            packageTour.CityId,
+                            TourSegments = packageTour.TourSegments?
+                                .Where(ts => ts.Status == 1)
+                                .Select(ts => new
+                                {
+                                    ts.TourSegmentId,
+                                    ts.DestinationId,
+                                    ts.Destinations?.DestinationName,
+                                    ts.Destinations?.DestinationOpeningDate,
+                                    ts.Destinations?.DestinationClosingDate,
+                                    ts.Destinations?.DestinationOpeningHours,
+                                    ts.Destinations?.DestinationClosingHours,
+                                    ts.Destinations?.DestinationHotline,
+                                    ts.Destinations?.DestinationGoogleMap,
+                                    ts.Destinations?.DestinationImgUrl,
+                                    ts.Destinations?.DestinationAddress,
+                                    ts.Destinations?.CityId,
+                                    StatusDestinations = ts.Destinations?.Status,
+                                    Locations = ts.Destinations?.Locations?
+                                        .Where(l => l.Status == 1 &&
+                                                    l.DestinationId == ts.DestinationId &&
+                                                    packageTour.PackageTourId == ts.PackageTourId &&
+                                                    ts.ServiceByTourSegments.Any(sbts => sbts.Services?.LocationId == l.LocationId))
+                                        .Select(l => new
+                                        {
+                                            l.LocationId,
+                                            l.LocationName,
+                                            l.LocationImgUrl,
+                                            l.LocationOpeningHours,
+                                            l.LocationClosingHours,
+                                            l.LocationGoogleMap,
+                                            l.LocationHotline,
+                                            l.DestinationId,
+                                            Services = ts.ServiceByTourSegments?
+                                                .Where(sbts => sbts.Services?.LocationId == l.LocationId)
+                                                .Select(s => new
+                                                {
+                                                    s.Services?.ServiceId,
+                                                    s.Services?.ServiceName,
+                                                    s.Services?.ServicePrice,
+                                                    s.Services?.Suppliers?.SupplierName,
+                                                    s.Services?.LocationId,
+                                                    s.Services?.ServiceTypes?.ServiceTypeName,
+                                                    StatusServices = s.Services?.Status,
+
+                                                    StatusInServiceByTourSegment = s.Status,
+
+                                                    CalculatedServicePrice = s.Status != -1 ? s.Services?.ServicePrice ?? 0 : 0
+                                                }).ToList(),
+                                        }).ToList(),
+                                }).ToList(),
+
+                            TicketTypes = packageTour.TicketTypes
+    .Where(tt => tt.Status != -1) // Loại bỏ các phần tử có Status = -1
+    .Select(tt => new
+    {
+        tt.TicketTypeId,
+        tt.TicketTypeName,
+        tt.MinBuyTicket,
+        tt.PriceDefault,
+        tt.Status
+    }).ToList(),
+
+                            // Tổng giá dịch vụ
+                            //TotalServicePrice = totalServicePrice
+                        }
+                    };
+
+                    resultList.Add(result);
+                }
+                _unitOfWork.Save();
+                return new APIResponseModel
+                {
+                    IsSuccess = true,
+                    Data = resultList,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new APIResponseModel
+                {
+                    Message = ex.Message,
+                    IsSuccess = false,
+                };
+            }
+        }
+
         public async Task<APIResponseModel> GetPackageTourFlowByIdAsync(string id)
         {
             #region

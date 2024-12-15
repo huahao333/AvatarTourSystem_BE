@@ -57,6 +57,14 @@ namespace AvatarTourSystem_BE.Controllers
                 return StatusCode(StatusCodes.Status404NotFound, result);
             }
         }
+
+        [HttpGet("get-package-tour-active")]
+        public async Task<IActionResult> GetPackageTourFlowActiveAsync()
+        {
+            var result = await _packageTourFlow.GetPackageTourFlowActiveAsync();
+            return Ok(result);
+        }
+
         [Authorize]
         [HttpPut("create-detail-package-tours")]
         public async Task<IActionResult> AddPartToPackageTour([FromBody] FPackageTourUpdateModel packageTourFlowModel)
