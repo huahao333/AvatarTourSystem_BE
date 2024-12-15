@@ -85,8 +85,8 @@ namespace Services.Services
         {
             try
             {
-                var packageToursRespone = await _unitOfWork.PackageTourRepository.GetAllAsyncs(query => query
-   // .Where(pt => pt.Status == 1)
+                var packageToursRespone = await _unitOfWork.PackageTourRepository.GetAllAsyncs(query => query.OrderBy(s => s.Status == 1)
+    // .Where(pt => pt.Status == 1)
     .Include(pt => pt.TourSegments)
         .ThenInclude(ts => ts.Destinations)
         .ThenInclude(d => d.Locations)
