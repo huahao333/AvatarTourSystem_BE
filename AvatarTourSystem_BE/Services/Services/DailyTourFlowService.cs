@@ -263,7 +263,7 @@ namespace Services.Services
                     };
                 }
 
-                if (dailyTourFlowModel.StartDate.Value < DateTime.Now.Date)
+                if (dailyTourFlowModel.StartDate.Value < DateTime.UtcNow.Date)
                 {
                     return new APIResponseModel
                     {
