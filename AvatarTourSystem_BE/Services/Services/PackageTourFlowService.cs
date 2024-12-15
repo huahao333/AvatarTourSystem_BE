@@ -174,7 +174,7 @@ namespace Services.Services
                                 }).ToList(),
 
                             TicketTypes = packageTour.TicketTypes
-    .Where(tt => tt.Status != -1) 
+    
     .Select(tt => new
     {
         tt.TicketTypeId,
@@ -183,7 +183,7 @@ namespace Services.Services
         tt.PriceDefault,
         tt.Status
     })
-  .OrderBy(tt => tt.MinBuyTicket)
+    .OrderByDescending(tt => tt.MinBuyTicket)  
     .ToList(),
 
                            
@@ -421,7 +421,6 @@ namespace Services.Services
                                 }).ToList(),
 
                             TicketTypes = packageTour.TicketTypes
-    .Where(tt => tt.Status != -1) // Loại bỏ các phần tử có Status = -1
     .Select(tt => new
     {
         tt.TicketTypeId,
@@ -429,7 +428,10 @@ namespace Services.Services
         tt.MinBuyTicket,
         tt.PriceDefault,
         tt.Status
-    }).ToList(),
+    })
+        .OrderByDescending(tt => tt.MinBuyTicket)
+
+    .ToList(),
 
                             // Tổng giá dịch vụ
                             //TotalServicePrice = totalServicePrice
@@ -1160,7 +1162,7 @@ namespace Services.Services
                     TicketTypeId = Guid.NewGuid().ToString(),
                     TicketTypeName = ticketTypeModel.TicketTypeName,
                     PackageTourId = packageTour.PackageTourId,
-                    MinBuyTicket = isFirstTicketType ? 1 : ticketTypeModel.MinBuyTicket,
+                    MinBuyTicket = isFirstTicketType ? 1 : 0,
                     CreateDate = DateTime.Now,
                     PriceDefault = ticketTypeModel.PriceDefault,
                     Status = 1,
