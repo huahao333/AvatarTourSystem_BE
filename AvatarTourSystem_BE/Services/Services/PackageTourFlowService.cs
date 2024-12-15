@@ -183,9 +183,8 @@ namespace Services.Services
         tt.PriceDefault,
         tt.Status
     })
-        .OrderBy(tt => tt.TicketTypeName == "Vé người lớn" ? 0 : 1)  
+                .OrderByDescending(tt => tt.TicketTypeName.Length)
 
-    .OrderByDescending(tt => tt.MinBuyTicket)  
     .ToList(),
 
                            
