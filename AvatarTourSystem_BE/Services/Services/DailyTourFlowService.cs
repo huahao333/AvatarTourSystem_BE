@@ -1039,6 +1039,7 @@ namespace Services.Services
                                 .Where(c => c.DailyTourId == dailyTour.DailyTourId
                                            && c.TicketTypes?.PackageTourId == dailyTour.PackageTourId
                                            && c.Capacity > 0 || c.TicketTypes.TicketTypeName == "Vé người lớn")
+                                .OrderByDescending(c=>c.TicketTypes.TicketTypeName.Length)
                                 .Select(tt => new
                                 {
                                     tt.DailyTicketId,
@@ -1340,6 +1341,7 @@ namespace Services.Services
                                 .Where(c => c.DailyTourId == dailyTour.DailyTourId
                                            && c.TicketTypes?.PackageTourId == dailyTour.PackageTourId
                                            && c.Capacity > 0 || c.TicketTypes.TicketTypeName == "Vé người lớn")
+                                 .OrderByDescending(c => c.TicketTypes.TicketTypeName.Length)
                                 .Select(tt => new
                                 {
                                     tt.DailyTicketId,
@@ -1492,6 +1494,7 @@ namespace Services.Services
                                 .Where(c => c.DailyTourId == dailyTour.DailyTourId
                                            && c.TicketTypes?.PackageTourId == dailyTour.PackageTourId
                                            && c.Capacity > 0 || c.TicketTypes.TicketTypeName=="Vé người lớn")
+                                 .OrderByDescending(c => c.TicketTypes.TicketTypeName.Length)
                                 .Select(tt => new
                                 {
                                     tt.DailyTicketId,
