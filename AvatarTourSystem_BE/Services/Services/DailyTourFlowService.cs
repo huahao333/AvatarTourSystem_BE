@@ -459,7 +459,7 @@ namespace Services.Services
                 // Validate StartDate if provided
                 if (updateModel.StartDate.HasValue)
                 {
-                    if (updateModel.StartDate.Value < DateTime.Now.Date && updateModel.StartDate.Value != existingDailyTour.StartDate)
+                    if (updateModel.StartDate.Value < DateTime.UtcNow.Date && updateModel.StartDate.Value != existingDailyTour.StartDate)
                     {
                         return new APIResponseModel
                         {
