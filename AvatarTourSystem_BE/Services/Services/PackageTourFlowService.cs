@@ -305,7 +305,7 @@ namespace Services.Services
                                 }).ToList(),
 
                             TicketTypes = packageTour.TicketTypes
-    .Where(tt => tt.Status != -1) // Loại bỏ các phần tử có Status = -1
+    .Where(tt => tt.Status != -1) 
     .Select(tt => new
     {
         tt.TicketTypeId,
@@ -313,10 +313,12 @@ namespace Services.Services
         tt.MinBuyTicket,
         tt.PriceDefault,
         tt.Status
-    }).ToList(),
+    })
+        .OrderBy(tt => tt.TicketTypeName == "Vé người lớn" ? 0 : 1)
 
-                            // Tổng giá dịch vụ
-                            //TotalServicePrice = totalServicePrice
+    .ToList(),
+
+                           
                         }
                     };
 
