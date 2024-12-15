@@ -184,7 +184,9 @@ namespace Services.Services
         tt.MinBuyTicket,
         tt.PriceDefault,
         tt.Status
-    }).ToList(),
+    })
+    .OrderByDescending(tt => tt.TicketTypeName.Length)
+    .ToList(),
 
                             // Tổng giá dịch vụ
                             //TotalServicePrice = totalServicePrice
