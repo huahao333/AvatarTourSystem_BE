@@ -72,6 +72,7 @@ namespace Services.Services
             ticketType.TicketTypeId = Guid.NewGuid().ToString();
             ticketType.CreateDate = DateTime.Now;
             ticketType.MinBuyTicket = createModel.MinBuyTicket;
+            ticketType.Status = (int)EStatus.Active;
             var result = await _unitOfWork.TicketTypeRepository.AddAsync(ticketType);
             _unitOfWork.Save();
             return new APIResponseModel
