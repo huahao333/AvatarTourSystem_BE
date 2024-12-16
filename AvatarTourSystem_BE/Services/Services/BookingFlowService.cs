@@ -692,8 +692,8 @@ namespace Services.Services
                     UserId = userIdReceive.Id,
                     SendDate = DateTime.Now,
                     Message = $"Bạn đã nhận được vé do số điện thoại {userId?.Bookings?.Accounts?.PhoneNumber} chia sẻ",
-                    Title = "Success",
-                    Type = "Thành công",
+                    Title = "Chia sẻ thành công",
+                    Type = "Success",
                     Status = 1,
                 };
                 await _unitOfWork.NotificationRepository.AddAsync(notificationRe);
