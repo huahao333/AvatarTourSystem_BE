@@ -576,7 +576,8 @@ namespace Services.Services
                     CreateDate = b.CreateDate,
                     DateResolved = b.DateResolved,
                     Status = b.Status
-                }).ToList();
+                }).OrderByDescending(c=>c.CreateDate)
+                    .ToList();
 
 
                 return new APIResponseModel
