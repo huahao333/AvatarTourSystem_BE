@@ -679,8 +679,8 @@ namespace Services.Services
                     UserId = userId?.Bookings?.Accounts?.Id,
                     SendDate = DateTime.Now,
                     Message = $"Bạn đã chia sẻ thành công vé cho số điện thoại {updateModel.PhoneNumber}" ,
-                    Title= "Success",
-                    Type = "Thành công",
+                    Title= "Chia sẻ thành công",
+                    Type = "Success",
                     Status = 1,
                 };
                 await _unitOfWork.NotificationRepository.AddAsync(notification);
@@ -692,7 +692,7 @@ namespace Services.Services
                     UserId = userIdReceive.Id,
                     SendDate = DateTime.Now,
                     Message = $"Bạn đã nhận được vé do số điện thoại {userId?.Bookings?.Accounts?.PhoneNumber} chia sẻ",
-                    Title = "Chia sẻ thành công",
+                    Title = "Nhận được vé chia sẻ",
                     Type = "Success",
                     Status = 1,
                 };
