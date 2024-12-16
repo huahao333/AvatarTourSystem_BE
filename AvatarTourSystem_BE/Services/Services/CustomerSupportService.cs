@@ -548,6 +548,22 @@ namespace Services.Services
                         IsSuccess = false
                     };
                 }
+
+                string CleanDescription(string description)
+                {
+                    if (string.IsNullOrEmpty(description))
+                        return description;
+
+                    var specialCharStart = description.IndexOf('ᡣ');
+                    var specialCharEnd = description.LastIndexOf("୨ৎ");
+
+                    if (specialCharStart >= 0 && specialCharEnd > specialCharStart)
+                    {
+                        return description.Remove(specialCharStart, specialCharEnd - specialCharStart + 1).Trim();
+                    }
+                    return description;
+                }
+
                 var result = requests.Select(b => new
                 {
                     CustomerSupportID = b.CusSupportId,
@@ -556,7 +572,7 @@ namespace Services.Services
                     RequestTypeId = b.RequestTypeId,
                     Priority = b.RequestTypes?.Priority,
                     Type = b.RequestTypes?.Type,
-                    Description = b.Description,
+                    Description = CleanDescription(b.Description),
                     CreateDate = b.CreateDate,
                     DateResolved = b.DateResolved,
                     Status = b.Status
