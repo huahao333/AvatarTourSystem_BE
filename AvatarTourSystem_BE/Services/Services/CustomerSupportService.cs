@@ -555,7 +555,7 @@ namespace Services.Services
                         return description;
 
                     var specialCharStart = description.IndexOf('ᡣ');
-                    var specialCharEnd = description.LastIndexOf("୨ৎ");
+                    var specialCharEnd = description.LastIndexOf('ৎ');
 
                     if (specialCharStart >= 0 && specialCharEnd > specialCharStart)
                     {
