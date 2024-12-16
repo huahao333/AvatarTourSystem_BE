@@ -1187,7 +1187,7 @@ namespace Services.Services
                             TicketTypes = dailyTour.DailyTickets
                                 .Where(c => c.DailyTourId == dailyTour.DailyTourId
                                            && c.TicketTypes?.PackageTourId==dailyTour.PackageTourId
-                                           && c.Capacity>0)
+                                           && c.Capacity>=0)
                                 .OrderByDescending(c => c.TicketTypes.TicketTypeName.Length)
                                 .Select(tt => new
                                 {
