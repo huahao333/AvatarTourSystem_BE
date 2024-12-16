@@ -538,7 +538,7 @@ namespace Services.Services
                     };
                 }
 
-                var requests = await _unitOfWork.CustomerSupportRepository.GetAllAsyncs(query => query.Where(c=>c.UserId == zaloUser.Id && c.RequestTypes.Type != "Yêu cầu hoàn tiền")
+                var requests = await _unitOfWork.CustomerSupportRepository.GetAllAsyncs(query => query.Where(c=>c.UserId == zaloUser.Id)
                                                                                                       .Include(r=>r.RequestTypes));
                 if (requests == null)
                 {
