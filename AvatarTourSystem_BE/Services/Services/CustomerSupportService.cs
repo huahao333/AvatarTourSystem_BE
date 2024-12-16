@@ -260,8 +260,8 @@ namespace Services.Services
                         IsSuccess = false
                     };
                 }
-                string notificationType = "";
-                string notificationTitle = "";
+                string notificationType = "Success";
+                string notificationTitle = "Xử lý yêu cầu thành công";
                 var requestType = await _unitOfWork.RequestTypeRepository.GetByIdStringAsync(updateRequests.RequestTypeId);
                 if (customerSupportStatusViewModel.Status == 4)
                 {
