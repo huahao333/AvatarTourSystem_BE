@@ -587,6 +587,9 @@ namespace Services.Services
                             booking.BookingId,
                             booking.UserId,
                             FullName = FullName.FullName,
+                            PhoneOwner = FullName.PhoneNumber.StartsWith("84")
+                                                             ? "0" + FullName.PhoneNumber[2..]
+                                                             : FullName.PhoneNumber,
                             booking.DailyTourId,
                             booking.BookingDate,
                             booking.ExpirationDate,
