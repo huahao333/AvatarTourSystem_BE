@@ -28,7 +28,8 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 namespace Services.Services
 {
     public class AccountService : IAccountService
-    {
+    { 
+        //
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly UserManager<Account> _userManager;
